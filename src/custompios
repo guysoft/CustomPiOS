@@ -62,7 +62,7 @@ pushd $OCTOPI_WORKSPACE
       fixLd
     fi
     #sed -i 's@include /etc/ld.so.conf.d/\*.conf@\#include /etc/ld.so.conf.d/\*.conf@' etc/ld.so.conf
-
+    
     # if an additional pre-script is defined, execute that now
     if [ -n "$OCTOPI_PRESCRIPT" ] && [ -f $OCTOPI_PRESCRIPT/chroot_script ]; then
       echo "Injecting environment pre script from $OCTOPI_PRESCRIPT..."
