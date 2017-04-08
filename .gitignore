@@ -1,4 +1,3 @@
 src/config.local
 src/image/*.zip
 **/key.json
-/src/modules/*

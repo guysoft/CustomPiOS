@@ -24,7 +24,7 @@ then
   source $CONFIG_DIR/config.local
 fi
 
-MODULES=octopi
+MODULES=base,octopi
 
 for module in $(echo $MODULES | tr "," "\n")
 do

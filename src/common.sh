@@ -187,7 +187,7 @@ function cleanup() {
 function install_fail_on_error_trap() {
   set -e
   trap 'previous_command=$this_command; this_command=$BASH_COMMAND' DEBUG
-  trap 'if [ $? -ne 0 ]; then echo -e "\nexit $? due to $previous_command \nBUILD FAILED!" && echo "unmounting image..." && ( unmount_image $OCTOPI_MOUNT_PATH force || true ); fi;' EXIT
+  trap 'if [ $? -ne 0 ]; then echo -e "\nexit $? due to $previous_command \nBUILD FAILED!" && echo "unmounting image..." && ( unmount_image $BASE_MOUNT_PATH force || true ); fi;' EXIT
 }
 
 function install_chroot_fail_on_error_trap() {

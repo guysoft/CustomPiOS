@@ -4,7 +4,7 @@
 # Written by Guy Sheffer <guysoft at gmail dot com>
 # GPL V3
 
-source $OCTOPI_SCRIPT_PATH/common.sh
+source $BASE_SCRIPT_PATH/common.sh
 
 function execute_chroot_script() {
   #move OctoPi filesystem files
@@ -15,7 +15,7 @@ function execute_chroot_script() {
   
   cp $2 chroot_script
   chmod 755 chroot_script
-  cp $OCTOPI_SCRIPT_PATH/common.sh common.sh
+  cp $BASE_SCRIPT_PATH/common.sh common.sh
   chmod 755 common.sh
   
   chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
@@ -25,48 +25,48 @@ function execute_chroot_script() {
   rm -rfv filesystem
 }
 
-mkdir -p $OCTOPI_WORKSPACE
-mkdir -p $OCTOPI_MOUNT_PATH
+mkdir -p $BASE_WORKSPACE
+mkdir -p $BASE_MOUNT_PATH
 
 install_cleanup_trap
-install_fail_on_error_trap $OCTOPI_MOUNT_PATH
-unmount_image $OCTOPI_MOUNT_PATH force || true
+install_fail_on_error_trap $BASE_MOUNT_PATH
+unmount_image $BASE_MOUNT_PATH force || true
 
-pushd $OCTOPI_WORKSPACE
+pushd $BASE_WORKSPACE
   if [ -e *.img ]; then  
     rm *.img
   fi
-  unzip $OCTOPI_ZIP_IMG
-  OCTOPI_IMG_PATH=`ls | grep '.img\|.raw' | head -n 1`
-  export OCTOPI_BUILDBASE=$(basename $OCTOPI_IMG_PATH)
+  unzip $BASE_ZIP_IMG
+  BASE_IMG_PATH=`ls | grep '.img\|.raw' | head -n 1`
+  export BASE_BUILDBASE=$(basename $BASE_IMG_PATH)
 
-  if [ -n "$OCTOPI_IMAGE_ENLARGEROOT" ]
+  if [ -n "$BASE_IMAGE_ENLARGEROOT" ]
   then
     # make our image a bit larger so we don't run into size problems...
-    enlarge_ext $OCTOPI_IMG_PATH $OCTOPI_ROOT_PARTITION $OCTOPI_IMAGE_ENLARGEROOT
+    enlarge_ext $BASE_IMG_PATH $BASE_ROOT_PARTITION $BASE_IMAGE_ENLARGEROOT
   fi
 
   # mount root and boot partition
-  mount_image $OCTOPI_IMG_PATH $OCTOPI_ROOT_PARTITION $OCTOPI_MOUNT_PATH
-  if [ -n "$OCTOPI_APT_CACHE" ]
+  mount_image $BASE_IMG_PATH $BASE_ROOT_PARTITION $BASE_ROOT_PARTITION
+  if [ -n "$BASE_APT_CACHE" ]
   then
-    mkdir -p "$OCTOPI_APT_CACHE"
-    mount --bind "$OCTOPI_APT_CACHE" $OCTOPI_MOUNT_PATH/var/cache/apt
+    mkdir -p "$BASE_APT_CACHE"
+    mount --bind "$BASE_APT_CACHE" $BASE_MOUNT_PATH/var/cache/apt
   fi
 
   #Edit pi filesystem
-  pushd $OCTOPI_MOUNT_PATH
+  pushd $BASE_MOUNT_PATH
 
     #make QEMU boot (remember to return)
-    if [ "$OCTOPI_IMAGE_RASPBIAN" == "yes" ]; then
+    if [ "$BASE_IMAGE_RASPBIAN" == "yes" ]; then
       fixLd
     fi
     #sed -i 's@include /etc/ld.so.conf.d/\*.conf@\#include /etc/ld.so.conf.d/\*.conf@' etc/ld.so.conf
     
     # if an additional pre-script is defined, execute that now
-    if [ -n "$OCTOPI_PRESCRIPT" ] && [ -f $OCTOPI_PRESCRIPT/chroot_script ]; then
-      echo "Injecting environment pre script from $OCTOPI_PRESCRIPT..."
-      execute_chroot_script $OCTOPI_PRESCRIPT $OCTOPI_PRESCRIPT/chroot_script
+    if [ -n "$BASE_PRESCRIPT" ] && [ -f $BASE_PRESCRIPT/chroot_script ]; then
+      echo "Injecting environment pre script from $BASE_PRESCRIPT..."
+      execute_chroot_script $BASE_PRESCRIPT $BASE_PRESCRIPT/chroot_script
     fi
 
     # if building a variant, execute its pre-chroot script
@@ -76,7 +76,7 @@ pushd $OCTOPI_WORKSPACE
     fi
  
     # execute the base chroot script
-    execute_chroot_script $OCTOPI_SCRIPT_PATH $OCTOPI_CHROOT_SCRIPT_PATH
+    execute_chroot_script $BASE_SCRIPT_PATH $BASE_CHROOT_SCRIPT_PATH
     
     # if building a variant, execute its post-chroot script
     if [ -n "$VARIANT_BASE" ] && [ -f $VARIANT_BASE/post_chroot_script ]; then
@@ -85,23 +85,23 @@ pushd $OCTOPI_WORKSPACE
     fi
 
     # if an additional post-script is defined, execute that now
-    if [ -n "$OCTOPI_POSTSCRIPT" ] && [ -f $OCTOPI_POSTSCRIPT/chroot_script ]; then
-      echo "Injecting environment post script from $OCTOPI_POSTSCRIPT..."
-      execute_chroot_script $OCTOPI_POSTSCRIPT $OCTOPI_POSTSCRIPT/chroot_script
+    if [ -n "$BASE_POSTSCRIPT" ] && [ -f $BASE_POSTSCRIPT/chroot_script ]; then
+      echo "Injecting environment post script from $BASE_POSTSCRIPT..."
+      execute_chroot_script $BASE_POSTSCRIPT $BASE_POSTSCRIPT/chroot_script
     fi
-    if [ "$OCTOPI_IMAGE_RASPBIAN" == "yes" ]; then
+    if [ "$BASE_IMAGE_RASPBIAN" == "yes" ]; then
       restoreLd
     fi
   popd
   
   # unmount first boot, then root partition
-  unmount_image $OCTOPI_MOUNT_PATH
-  chmod 777 $OCTOPI_IMG_PATH
+  unmount_image $BASE_MOUNT_PATH
+  chmod 777 $BASE_IMG_PATH
 
-  if [ -n "$OCTOPI_IMAGE_RESIZEROOT" ]
+  if [ -n "$BASE_IMAGE_RESIZEROOT" ]
   then
     # resize image to minimal size + provided size
-    minimize_ext $OCTOPI_IMG_PATH $OCTOPI_ROOT_PARTITION $OCTOPI_IMAGE_RESIZEROOT
+    minimize_ext $BASE_IMG_PATH $BASE_ROOT_PARTITION $BASE_IMAGE_RESIZEROOT
   fi
 popd
 

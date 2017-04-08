@@ -1,0 +1,60 @@
+###############################################################################
+# All our config settings must start with FULLPAGEOS_
+
+[ -n "$FULLPAGEOS_SCRIPT_PATH" ] || FULLPAGEOS_SCRIPT_PATH=$CONFIG_DIR
+[ -n "$FULLPAGEOS_IMAGE_PATH" ] || FULLPAGEOS_IMAGE_PATH=$FULLPAGEOS_SCRIPT_PATH/image
+
+[ -n "$FULLPAGEOS_ZIP_IMG" ] || FULLPAGEOS_ZIP_IMG=`ls -t $FULLPAGEOS_IMAGE_PATH/*-raspbian*.zip | head -n 1`
+
+[ -n "$FULLPAGEOS_WORKSPACE" ] || FULLPAGEOS_WORKSPACE=$FULLPAGEOS_SCRIPT_PATH/workspace$WORKSPACE_POSTFIX
+[ -n "$FULLPAGEOS_CHROOT_SCRIPT_PATH" ] || FULLPAGEOS_CHROOT_SCRIPT_PATH=$FULLPAGEOS_SCRIPT_PATH/chroot_script
+[ -n "$FULLPAGEOS_MOUNT_PATH" ] || FULLPAGEOS_MOUNT_PATH=$FULLPAGEOS_WORKSPACE/mount
+
+# if set will enlarge root parition prior to build by provided size in MB
+[ -n "$FULLPAGEOS_IMAGE_ENLARGEROOT" ] || FULLPAGEOS_IMAGE_ENLARGEROOT=1000
+
+# if set will resize root partition on image after build to minimum size + 
+# provided size in MB
+[ -n "$FULLPAGEOS_IMAGE_RESIZEROOT" ] || FULLPAGEOS_IMAGE_RESIZEROOT=200
+
+# a local directory on the build server to bind mount under /var/cache/apt
+[ -n "$FULLPAGEOS_APT_CACHE" ] || FULLPAGEOS_APT_CACHE=$FULLPAGEOS_WORKSPACE/aptcache
+
+# a host:port combo for a apt-proxy (such as apt-cacher-ng) to use
+[ -n "$FULLPAGEOS_APT_PROXY" ] || FULLPAGEOS_APT_PROXY=
+
+# an alternative pypi index url to use, e.g. a proxy such as devpi
+[ -n "$FULLPAGEOS_PYPI_INDEX" ] || FULLPAGEOS_PYPI_INDEX=
+
+[ -n "$FULLPAGEOS_OVERRIDE_HOSTNAME" ] || FULLPAGEOS_OVERRIDE_HOSTNAME=fullpageos
+
+#override timezone, otherwise use image timezone
+[ -n "$FULLPAGEOS_OVERRIDE_TIMEZONE" ] || FULLPAGEOS_OVERRIDE_TIMEZONE=default
+
+#override locale, otherwise use image locale
+[ -n "$FULLPAGEOS_OVERRIDE_LOCALE" ] || FULLPAGEOS_OVERRIDE_LOCALE=default
+
+#override password, otherwise use image default
+[ -n "$FULLPAGEOS_OVERRIDE_PASSWORD" ] || FULLPAGEOS_OVERRIDE_PASSWORD=default
+
+[ -n "$FULLPAGEOS_INCLUDE_CHROMIUM" ] || FULLPAGEOS_INCLUDE_CHROMIUM=yes
+[ -n "$FULLPAGEOS_INCLUDE_LIGHTTPD" ] || FULLPAGEOS_INCLUDE_LIGHTTPD=yes
+
+# FullPageDashboard repo & branch
+[ -n "$FULLPAGEOS_DASHBOARD_REPO_SHIP" ] || FULLPAGEOS_DASHBOARD_REPO_SHIP=https://github.com/amitdar/FullPageDashboard.git
+[ -n "$FULLPAGEOS_DASHBOARD_REPO_BUILD" ] || FULLPAGEOS_DASHBOARD_REPO_BUILD=
+[ -n "$FULLPAGEOS_DASHBOARD_REPO_BRANCH" ] || FULLPAGEOS_DASHBOARD_REPO_BRANCH=master
+[ -n "$FULLPAGEOS_INCLUDE_DASHBOARD" ] || FULLPAGEOS_INCLUDE_DASHBOARD=yes
+
+# FullPageDashboard repo & branch
+[ -n "$FULLPAGEOS_WELCOME_REPO_SHIP" ] || FULLPAGEOS_WELCOME_REPO_SHIP=https://github.com/tailorvj/FullPageOSWelcome.git
+[ -n "$FULLPAGEOS_WELCOME_REPO_BUILD" ] || FULLPAGEOS_WELCOME_REPO_BUILD=
+[ -n "$FULLPAGEOS_WELCOME_REPO_BRANCH" ] || FULLPAGEOS_WELCOME_REPO_BRANCH=master
+[ -n "$FULLPAGEOS_INCLUDE_WELCOME" ] || FULLPAGEOS_INCLUDE_WELCOME=yes
+
+# Add GPU acceleration
+[ -n "$FULLPAGEOS_INCLUDE_ACCELERATION" ] || FULLPAGEOS_INCLUDE_ACCELERATION=yes
+
+
+###############################################################################
+
