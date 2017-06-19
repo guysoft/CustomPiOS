@@ -33,3 +33,6 @@ then
   cat /home/pi/.pip/pip.conf
   cat /home/pi/.pydistutils.cfg
 fi
+
+# Store version buildbase
+echo "$CUSTOM_PI_OS_BUILDBASE_BUILDBASE" > /etc/custompios_buildbase
