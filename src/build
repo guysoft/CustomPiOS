@@ -2,6 +2,8 @@
 
 set -e
 
+set -x
+
 [ -n "$LOG" ] || LOG="build.log"
 
 define(){ IFS='\n' read -r -d '' ${1} || true; }
@@ -35,11 +37,11 @@ if [ $BUILD_VARIANT != 'default' ]; then
 
   if [ $BUILD_FLAVOR == '' ] || [ $BUILD_FLAVOR == 'default' ]
   then
-    VARIANT_CONFIG=$VARIANT_BASE/config
+    VARIANT_CONFIG=$VARIANT_BASE/src/config
     FLAVOR_CONFIG=
   else
-    VARIANT_CONFIG=$VARIANT_BASE/config
-    FLAVOR_CONFIG=$VARIANT_BASE/config.$BUILD_FLAVOR
+    VARIANT_CONFIG=$VARIANT_BASE/src/config
+    FLAVOR_CONFIG=$VARIANT_BASE/src/config.$BUILD_FLAVOR
   fi
 
   if [ -n "$FLAVOR_CONFIG" ] && [ ! -f $FLAVOR_CONFIG ]
@@ -50,9 +52,15 @@ fi
 
 echo -e "--> Building VARIANT $BUILD_VARIANT, FLAVOR $BUILD_FLAVOR"
 
-source $CUSTOM_OS_PATH/config
+source ${CUSTOM_PI_OS_PATH}/config
+${CUSTOM_PI_OS_PATH}/config_sanity
 
-[ "$CONFIG_ONLY" == "yes" ] || source $CUSTOM_OS_PATH/custompios
+[ "$CONFIG_ONLY" == "yes" ] || source ${CUSTOM_OS_PATH}/custompios
 EOF
 
-[ "$LOG" != "no" ] && (eval "$SCRIPT" 2>&1 | tee "$LOG") || eval "$SCRIPT"
+if [ "$LOG" != "no" ]; then
+    eval "$SCRIPT" 2>&1 | tee "$LOG"
+    exit ${PIPESTATUS}
+else
+    eval "$SCRIPT"
+fi

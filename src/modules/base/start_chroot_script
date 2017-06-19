@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -x
+set -e
+# OctoPI generation script
+# Helper script that runs in a Raspbian chroot to create the OctoPI distro
+# Written by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+
+export LC_ALL=C
+
+source /common.sh
+install_cleanup_trap
+
+if [ -n "$BASE_APT_PROXY" ]
+then
+  echo "Acquire::http { Proxy \"http://$BASE_APT_PROXY\"; };" > /etc/apt/apt.conf.d/02octopi_build_proxy
+fi
+
+if [ -n "$BASE_PYPI_INDEX" ]
+then
+  pip_index_config="[global]\nindex-url = $BASE_PYPI_INDEX"
+  easyinstall_index_config="[easy_install]\nindex-url = $BASE_PYPI_INDEX"
+
+  mkdir -p /root/.pip
+  echo -e "$pip_index_config" > /root/.pip/pip.conf
+  echo -e "$easyinstall_index_config" > /root/.pydistutils.cfg
+
+  mkdir -p /home/pi/.pip
+  sudo -u pi echo -e "$pip_index_config" > /home/pi/.pip/pip.conf
+  sudo -u pi echo -e "$easyinstall_index_config" > /home/pi/.pydistutils.cfg
+
+  echo "Configured pypi index url $BASE_PYPI_INDEX"
+  cat /home/pi/.pip/pip.conf
+  cat /home/pi/.pydistutils.cfg
+fi

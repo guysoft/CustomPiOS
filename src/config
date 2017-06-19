@@ -24,12 +24,26 @@ then
   source $CONFIG_DIR/config.local
 fi
 
-MODULES=base,octopi
+source ${DIST_PATH}/config
 
-for module in $(echo $MODULES | tr "," "\n")
+# Get only a list
+TMP="${MODULES/(/,}"
+MODULES_LIST="${TMP/)/,}"
+
+for module in $(echo "${MODULES_LIST}" | tr "," "\n")
 do
-    echo loading $module config
-    source $CUSTOM_OS_PATH/modules/${module}/config
+    if [ -d "${DIST_PATH}/modules/${module}" ]; then
+        export MODULE_PATH="${DIST_PATH}/modules/${module}"
+    elif   [ -d "${CUSTOM_PI_OS_PATH}/modules/${module}" ]; then
+        export MODULE_PATH="${CUSTOM_PI_OS_PATH}/modules/${module}"
+    fi
+    
+    echo loading $module config at ${MODULE_PATH}/config
+    if [ -f ${MODULE_PATH}/config ]; then
+        source ${MODULE_PATH}/config
+    else
+        echo "WARNING: module ${module} has no config file"
+    fi
     
     ###############################################################################
     # Print and export the final configuration.

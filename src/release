@@ -6,7 +6,8 @@ else
 fi
 
 FILENAME=$(basename `ls . |  grep -e .img -e .raw | tail -n 1`)
-OCTOPI_FILENAME=$(echo "${FILENAME::-4}"-`cat ../filesystem/root/etc/octopi_version` | sed 's/raspbian/octopi/').img
+#TODO change from ${CUSTOM_PI_OS_PATH}
+OCTOPI_FILENAME=$(echo "${FILENAME::-4}"-`cat ${CUSTOM_PI_OS_PATH}/modules/octopi/filesystem/root/etc/octopi_version` | sed 's/raspbian/octopi/').img
 mv ${FILENAME} $OCTOPI_FILENAME
 zip ${OCTOPI_FILENAME::-4}.zip $OCTOPI_FILENAME
 

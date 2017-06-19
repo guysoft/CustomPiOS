@@ -1,27 +1,33 @@
 #!/bin/bash -x
 whoami
-OCTOPIPATH=/OctoPi
+export DIST_PATH=/distro
+export CUSTOM_PI_OS_PATH=/OctoPi
 
 #Update repos used
 #sudo -u guy /home/guy/stuff/scripts/gitmirror/update_git_mirrors
 
-for i in `lsof ${OCTOPIPATH}/src/workspace/mount | awk '{print $2}'`; do kill -9 $i; done
+for i in `lsof ${DIST_PATH}/workspace/mount | awk '{print $2}'`; do kill -9 $i; done
 
-rm ${OCTOPIPATH}/src/workspace/*.img
-rm ${OCTOPIPATH}/src/workspace/*.zip
+rm ${DIST_PATH}/workspace/*.img
+rm ${DIST_PATH}/workspace/*.zip
+$exit_code
+pushd ${DIST_PATH}
+    umount ${DIST_PATH}/workspace/mount/boot
 
-pushd ${OCTOPIPATH}
-    umount ${OCTOPIPATH}/src/workspace/mount/boot
-    umount ${OCTOPIPATH}/src/workspace/mount/dev/pts
-    umount ${OCTOPIPATH}/src/workspace/mount
-    git pull origin devel
+    umount ${DIST_PATH}/workspace/mount/dev/pts
+    umount ${DIST_PATH}/workspace/mount
+    #git pull origin devel
     #export OCTOPI_OCTOPRINT_REPO_BUILD='http://localhost/git/OctoPrint.git/'
     #export OCTOPI_MJPGSTREAMER_REPO_BUILD='http://localhost/git/mjpg-streamer.git/'
     #export OCTOPI_WIRINGPI_REPO_BUILD='http://localhost/git/wiringPi.git/'
-    
-    ${OCTOPIPATH}/src/build $1
-    pushd src
-    ${OCTOPIPATH}/src/release $1
-    popd
-    chmod 777 ${OCTOPIPATH}/src/*
+    #pushd src
+    ${CUSTOM_PI_OS_PATH}/build_custom_os $1
+    exit_code=$?
+    if [ $exit_code -ne 0 ]; then
+        echo "build script failed"
+        exit $exit_code
+    fi
+    ${CUSTOM_PI_OS_PATH}/release $1
+    #popd
+    chmod 777 ${DIST_PATH}/workspace/*
 popd

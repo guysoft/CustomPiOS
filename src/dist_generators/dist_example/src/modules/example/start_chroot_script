@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#This is an example module of how to set things up
+
+source /common.sh
+install_cleanup_trap
+
+unpack /filesystem/home/pi /home/pi pi
+unpack /filesystem/home/root /root root
+unpack /filesystem/boot /boot
+
+echo "This is an example module, install and set up what you need here!"
+
+# Unpack root at the end, so files are modified before
+unpack /filesystem/root /

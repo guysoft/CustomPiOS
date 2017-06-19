@@ -1,0 +1,2 @@
+DISRO_NAME=ExampleOS
+export MODULES="base(example)"

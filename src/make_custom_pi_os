@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source "$DIR/argparse.bash" || exit 1
+argparse "$@" <<EOF || exit 1
+
+parser.add_argument('dest', help="The destination folder")
+parser.add_argument('-g', '--get_image', action='store_true',
+                    help='Pick a number [default %(default)s]')
+EOF
+
+echo Settings: 
+echo making dstro in "$DEST"
+
+for a in "${MULTIPLE[@]}"; do
+    echo "  $a"
+done
+
+if [ -d ${DEST} ]; then
+    echo "Error, folder already exists: ${DEST}"
+    exit 1
+fi
+
+if [ -f ${DEST} ]; then
+    echo "Error, file already exists: ${DEST}"
+    exit 1
+fi
+
+cp -a ${DIR}/dist_generators/dist_example ${DEST}
+chown $USER:$USER -R ${DEST}
+
+if [ $GET_IMAGE ]; then
+    echo "Downloading latest Raspbian image"
+    
+    CURRENT_RASPBIAN=$(curl https://downloads.raspberrypi.org/raspbian_lite/images/ | grep raspbian | tail -n 1 | awk -F "href=\"" '{print $2}' | awk -F "/" '{print $1}')
+    CURRENT_RASPBIAN_DATE=$(echo raspbian_lite-2017-04-10 | awk -F "lite-" '{print $2}')
+    curl -L -o "${DEST}/src/image/${CURRENT_RASPBIAN_DATE}-raspbian-jessie-lite.zip" https://downloads.raspberrypi.org/raspbian_lite/images/${CURRENT_RASPBIAN}/${CURRENT_RASPBIAN_DATE}-raspbian-jessie-lite.zip
+fi
+
+
+sed -i "s@.*o.vm.synced_folder.*\"/OctoPi\".*@o.vm.synced_folder \"${DIR}\", \"/OctoPi\", create:true, type: \"nfs\"@g" ${DEST}/src/vagrant/Vagrantfile

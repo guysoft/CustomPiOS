@@ -4,14 +4,14 @@
 [ -n "$BASE_PRESCRIPT" ] || BASE_PRESCRIPT=
 [ -n "$BASE_POSTSCRIPT" ] || BASE_POSTSCRIPT=
 
-[ -n "$BASE_SCRIPT_PATH" ] || BASE_SCRIPT_PATH=$CONFIG_DIR
-[ -n "$BASE_IMAGE_PATH" ] || BASE_IMAGE_PATH=$BASE_SCRIPT_PATH/image
+#[ -n "$BASE_SCRIPT_PATH" ] || BASE_SCRIPT_PATH=$CONFIG_DIR
+[ -n "$BASE_IMAGE_PATH" ] || BASE_IMAGE_PATH=${DIST_PATH}/image
 [ -n "$BASE_IMAGE_RASPBIAN" ] || BASE_IMAGE_RASPBIAN=yes
 
 [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-raspbian*.zip | head -n 1`
 
-[ -n "$BASE_WORKSPACE" ] || BASE_WORKSPACE=$BASE_SCRIPT_PATH/workspace$WORKSPACE_POSTFIX
-[ -n "$BASE_CHROOT_SCRIPT_PATH" ] || BASE_CHROOT_SCRIPT_PATH=$BASE_SCRIPT_PATH/chroot_script
+[ -n "$BASE_WORKSPACE" ] || BASE_WORKSPACE=${DIST_PATH}/workspace$WORKSPACE_POSTFIX
+# [ -n "$BASE_CHROOT_SCRIPT_PATH" ] || BASE_CHROOT_SCRIPT_PATH=$BASE_SCRIPT_PATH/chroot_script
 [ -n "$BASE_MOUNT_PATH" ] || BASE_MOUNT_PATH=$BASE_WORKSPACE/mount
 
 # The root partiton of the image filesystem, 2 for raspbian
@@ -33,7 +33,7 @@
 # an alternative pypi index url to use, e.g. a proxy such as devpi
 [ -n "$BASE_PYPI_INDEX" ] || BASE_PYPI_INDEX=
 
-[ -n "$BASE_OVERRIDE_HOSTNAME" ] || BASE_OVERRIDE_HOSTNAME=octopi
+[ -n "$BASE_OVERRIDE_HOSTNAME" ] || BASE_OVERRIDE_HOSTNAME=${DISRO_NAME,,}
 
 # a git mirror to use for git clones instead of original remotes
 [ -n "$BASE_BUILD_REPO_MIRROR" ] || BASE_BUILD_REPO_MIRROR=
