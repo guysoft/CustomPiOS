@@ -38,7 +38,7 @@ pushd $BASE_WORKSPACE
   fi
   unzip $BASE_ZIP_IMG
   BASE_IMG_PATH=`ls | grep '.img\|.raw' | head -n 1`
-  export BASE_BUILDBASE=$(basename $BASE_IMG_PATH)
+  export CUSTOM_PI_OS_BUILDBASE=$(basename $BASE_IMG_PATH)
 
   if [ -n "$BASE_IMAGE_ENLARGEROOT" ]
   then

@@ -19,7 +19,7 @@ How to use it?
 #. Run ``src/make_custom_pi_os -g <distro folder>`` in the repo. This will both create a folder to build a new distro from, and also download the latest raspbian lite image.
 #. cd to ``<distro folder>/src``
 #. Edit your ``<distro folder>/src/config``, you can also edit the example module at ``modules/example_module``. More on that in the Developing section.
-#. Run ``<distro folder>/src/build_dist_example`` to build an image. If this failes use the method discribed in the vagrant build the section (which makes sure sfdisk and other things work right).
+#. Run ``<distro folder>/src/build_dist`` to build an image. If this failes use the method discribed in the vagrant build the section (which makes sure sfdisk and other things work right).
 
 Features
 --------
@@ -115,7 +115,7 @@ You can build it by issuing the following commands::
     ./make_custom_pi_os -g /path/to/new_distro
     cd /path/to/new_distro/src
     sudo modprobe loop
-    sudo bash -x ./build_dist_example
+    sudo bash -x ./build_dist
     
 Building Distro Variants
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -124,7 +124,7 @@ CustomPiOS supports building variants, which are builds with changes from the ma
 
 To build a variant use::
 
-    sudo bash -x ./build_dist_example [Variant]
+    sudo bash -x ./build_dist [Variant]
     
 Building Using Vagrant
 ~~~~~~~~~~~~~~~~~~~~~~

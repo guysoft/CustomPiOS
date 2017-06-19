@@ -37,5 +37,4 @@ if [ $GET_IMAGE ]; then
     curl -L -o "${DEST}/src/image/${CURRENT_RASPBIAN_DATE}-raspbian-jessie-lite.zip" https://downloads.raspberrypi.org/raspbian_lite/images/${CURRENT_RASPBIAN}/${CURRENT_RASPBIAN_DATE}-raspbian-jessie-lite.zip
 fi
 
-
-sed -i "s@.*o.vm.synced_folder.*\"/OctoPi\".*@o.vm.synced_folder \"${DIR}\", \"/OctoPi\", create:true, type: \"nfs\"@g" ${DEST}/src/vagrant/Vagrantfile
+"$DIR/update-custompios-paths" "${DEST}/src"
