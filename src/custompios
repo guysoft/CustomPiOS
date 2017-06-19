@@ -89,7 +89,7 @@ pushd $BASE_WORKSPACE
     # execute the base chroot script
     ### execute_chroot_script $BASE_SCRIPT_PATH $BASE_CHROOT_SCRIPT_PATH
     CHROOT_SCRIPT=${BASE_WORKSPACE}/chroot_script
-    python3 ${CUSTOM_PI_OS_PATH}/execution_order.py ${MODULES} ${CHROOT_SCRIPT}
+    python3 ${CUSTOM_PI_OS_PATH}/execution_order.py "${MODULES}" ${CHROOT_SCRIPT}
     export -f execute_chroot_script
     ${CHROOT_SCRIPT}
     
