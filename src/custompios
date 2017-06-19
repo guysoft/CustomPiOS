@@ -36,8 +36,16 @@ pushd $BASE_WORKSPACE
   if [ -e *.img ]; then  
     rm *.img
   fi
+  if [ ! -f $BASE_ZIP_IMG ] || [ "$BASE_ZIP_IMG" == "" ]; then
+    echo "Error: could not find image: $BASE_ZIP_IMG"
+    exit 1
+  fi
   unzip $BASE_ZIP_IMG
   BASE_IMG_PATH=`ls | grep '.img\|.raw' | head -n 1`
+  if [ ! -f "$BASE_IMG_PATH" ]; then
+    echo "Error, can't find image path, did you place an image in the image folder?"
+    exit 1
+  fi
   export CUSTOM_PI_OS_BUILDBASE=$(basename $BASE_IMG_PATH)
 
   if [ -n "$BASE_IMAGE_ENLARGEROOT" ]
