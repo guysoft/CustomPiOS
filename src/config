@@ -52,15 +52,12 @@ do
     echo "Using the following config:"
     module_up=$(echo $module | awk '{print toupper($0)}')_
     
-    vars=`compgen -A variable | grep "^${module_up}" || true`
-    if [ "$vars" == "" ]; then
-    echo "burr"
+    vars=`compgen -A variable | grep "^${module_up}"` || true
     for var in $vars
         do
                 echo "$var = ${!var}"
                 eval export $var
         done
-    fi
 
     echo "================================================================"
 done
