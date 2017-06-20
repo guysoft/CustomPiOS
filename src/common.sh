@@ -114,7 +114,6 @@ function mount_image() {
   image_path=$1
   root_partition=$2
   mount_path=$3
-  echo "burr"
   echo $2
 
   # dump the partition table, locate boot partition and root partition
