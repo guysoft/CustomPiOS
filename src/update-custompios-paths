@@ -8,5 +8,4 @@ fi
 # CustomPiOS path
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-sed -i "s@.*o.vm.synced_folder.*\"/OctoPi\".*@o.vm.synced_folder \"${DIR}\", \"/OctoPi\", create:true, type: \"nfs\"@g" ${DEST}/vagrant/Vagrantfile
-sed -i "s@.*export CUSTOM_PI_OS_PATH=.*@export CUSTOM_PI_OS_PATH=${DIR}@g" ${DEST}/build_dist
+echo "${DIR}" > ${DEST}/custompios_path
