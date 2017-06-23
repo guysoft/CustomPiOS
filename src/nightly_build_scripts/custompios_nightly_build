@@ -1,7 +1,7 @@
 #!/bin/bash -x
 whoami
 export DIST_PATH=/distro
-export CUSTOM_PI_OS_PATH=/OctoPi
+export CUSTOM_PI_OS_PATH=/CustomPiOS
 
 #Update repos used
 #sudo -u guy /home/guy/stuff/scripts/gitmirror/update_git_mirrors
