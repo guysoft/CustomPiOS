@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+IFACE=$1
+
+if grep -q "^\s*iface $IFACE-DIST_NAME_PLACEHOLDER " /boot/DIST_NAME_PLACEHOLDER-network.txt
+then
+	echo "$IFACE-DIST_NAME_PLACEHOLDER"
+	echo "Using /boot/DIST_NAME_PLACEHOLDER-network.txt for configuring $IFACE..." >> /var/log/map_iface.log
+else
+	echo "$IFACE-raspbian"
+	echo "Using original Raspbian configuration for configuring $IFACE..." >> /var/log/map_iface.log
+fi

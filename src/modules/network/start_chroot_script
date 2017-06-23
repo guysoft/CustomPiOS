@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -x
+set -e
+# Netwrok generation script
+# allow network configuration via /boot/${DIST_NAME}-network.txt
+# Helper script that runs in a Raspbian chroot to create the OctoPI distro
+# Written by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+
+export LC_ALL=C
+
+source /common.sh
+install_cleanup_trap
+
+# Fix filesystem paths
+sed -i "s@DIST_NAME_PLACEHOLDER@${DIST_NAME,,}@g" /filesystem/boot/custompios-network.txt
+sed -i "s@DIST_NAME_PLACEHOLDER@${DIST_NAME,,}@g" /filesystem/home/root/bin/check_wpa_link
+sed -i "s@DIST_NAME_PLACEHOLDER@${DIST_NAME,,}@g" /filesystem/home/root/bin/map_iface
+
+unpack /filesystem/home/root /root root
+unpack /filesystem/boot /boot
+
+export DIST_NETWORK_FILE=/boot/${DIST_NAME,,}-network.txt
+
+
+mv /boot/custompios-network.txt ${DIST_NETWORK_FILE}
+sed -i "s@iface wlan0 @iface wlan0-raspbian @g" /etc/network/interfaces
+sed -i "s@iface wlan1 @iface wlan1-raspbian @g" /etc/network/interfaces
+echo "mapping wlan0" >> /etc/network/interfaces
+echo "  script /root/bin/map_iface" >> /etc/network/interfaces
+echo "mapping wlan1" >> /etc/network/interfaces
+echo "  script /root/bin/map_iface" >> /etc/network/interfaces
+echo "source ${DIST_NETWORK_FILE}" >> /etc/network/interfaces
+
+# allow configuring multiple wifi networks via /boot/octopi-wpa-supplicant.txt
+mv /etc/wpa_supplicant/wpa_supplicant.conf /boot/octopi-wpa-supplicant.txt
+ln -s /boot/octopi-wpa-supplicant.txt /etc/wpa_supplicant/wpa_supplicant.conf
+cat <<EOT >> /etc/wpa_supplicant/wpa_supplicant.conf
+
+# This is only used to configure multiple wifi networks or other advanced wifi features.
+# take a look into ${DIST_NAME,,}-network.txt instead if you only need basic wifi configuration
+# 'man -s 5 wpa_supplicant.conf' for advanced options
+#network={
+#  ssid="Your Wifi SSID"
+#  psk="supersecretwifipassword"
+#}
+
+## You can configure more than 1 wifi networks by adding more 'network' blocks
+#network={
+#  ssid="Another Wifi"
+#  psk="password"
+#}
+EOT
+
+# copy /etc/wpa_supplicant/ifupdown.sh to /etc/ifplugd/action.d/ifupdown - for wlan auto reconnect
+[ -f /etc/ifplugd/action.d/ifupdown ] && mv /etc/ifplugd/action.d/ifupdown /etc/ifplugd/action.d/ifupdown.original
+[ -f /etc/wpa_supplicant/ifupdown.sh ] && ln -s /etc/wpa_supplicant/ifupdown.sh /etc/ifplugd/action.d/ifupdown
+
+# prevent ntp updates from failing due to some Rpi3 weirdness, see also "Fix SSH" further below
+sed -i 's@exit 0@@' /etc/rc.local
+echo '/sbin/iptables -t mangle -I POSTROUTING 1 -o wlan0 -p udp --dport 123 -j TOS --set-tos 0x00' >> /etc/rc.local
+echo 'exit 0' >> /etc/rc.local
+
+systemctl_if_exists enable check_wpa_link.service
+
+

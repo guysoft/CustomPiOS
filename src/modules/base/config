@@ -33,7 +33,7 @@
 # an alternative pypi index url to use, e.g. a proxy such as devpi
 [ -n "$BASE_PYPI_INDEX" ] || BASE_PYPI_INDEX=
 
-[ -n "$BASE_OVERRIDE_HOSTNAME" ] || BASE_OVERRIDE_HOSTNAME=${DISRO_NAME,,}
+[ -n "$BASE_OVERRIDE_HOSTNAME" ] || BASE_OVERRIDE_HOSTNAME=${DIST_NAME,,}
 
 # a git mirror to use for git clones instead of original remotes
 [ -n "$BASE_BUILD_REPO_MIRROR" ] || BASE_BUILD_REPO_MIRROR=
