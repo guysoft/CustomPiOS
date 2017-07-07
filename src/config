@@ -5,7 +5,9 @@ CONFIG_DIR=$(dirname $(realpath -s $BASH_SOURCE))
 if [ -n "$VARIANT_CONFIG" ] && [ -f $VARIANT_CONFIG ]
 then
   echo "Sourcing variant config $VARIANT_CONFIG..."
+  set -a
   source $VARIANT_CONFIG
+  set +a
 fi
 
 # Import the flavor config if we have one

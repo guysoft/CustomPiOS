@@ -3,19 +3,29 @@ whoami
 export DIST_PATH=/distro
 export CUSTOM_PI_OS_PATH=/CustomPiOS
 
+if [ "$#" -gt 0 ]; then
+  BUILD_VARIANT=$1
+fi
+
+WORKSPACE_POSTFIX=
+if [ $BUILD_VARIANT != 'default' ]; then
+  WORKSPACE_POSTFIX=-$BUILD_VARIANT
+fi
+
 #Update repos used
 #sudo -u guy /home/guy/stuff/scripts/gitmirror/update_git_mirrors
 
-for i in `lsof ${DIST_PATH}/workspace/mount | awk '{print $2}'`; do kill -9 $i; done
+for i in `lsof ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/mount | awk '{print $2}'`; do kill -9 $i; done
 
-rm ${DIST_PATH}/workspace/*.img
-rm ${DIST_PATH}/workspace/*.zip
+rm ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/*.img
+rm ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/*.raw
+rm ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/*.zip
 $exit_code
 pushd ${DIST_PATH}
-    umount ${DIST_PATH}/workspace/mount/boot
+    umount ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/mount/boot
 
-    umount ${DIST_PATH}/workspace/mount/dev/pts
-    umount ${DIST_PATH}/workspace/mount
+    umount ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/mount/dev/pts
+    umount ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/mount
     #git pull origin devel
     #export OCTOPI_OCTOPRINT_REPO_BUILD='http://localhost/git/OctoPrint.git/'
     #export OCTOPI_MJPGSTREAMER_REPO_BUILD='http://localhost/git/mjpg-streamer.git/'
@@ -29,5 +39,5 @@ pushd ${DIST_PATH}
     fi
     ${CUSTOM_PI_OS_PATH}/release $1
     #popd
-    chmod 777 ${DIST_PATH}/workspace/*
+    chmod 777 ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/*
 popd

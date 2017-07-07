@@ -31,17 +31,22 @@ fi
 
 if [ $BUILD_VARIANT != 'default' ]; then
   WORKSPACE_POSTFIX=-$BUILD_VARIANT
-
-  export VARIANT_BASE="$CUSTOM_OS_PATH/variants/$BUILD_VARIANT"
-  [ -d $VARIANT_BASE ] || die "Could not find Variant $BUILD_VARIANT"
+  
+  if [ -d "${DIST_PATH}/variants/$BUILD_VARIANT" ]; then
+    export VARIANT_BASE="${DIST_PATH}/variants/$BUILD_VARIANT"
+  elif [ -d "${CUSTOM_OS_PATH}/variants/$BUILD_VARIANT" ]; then
+    export VARIANT_BASE="$CUSTOM_OS_PATH/variants/$BUILD_VARIANT"
+  else
+    die "Could not find Variant $BUILD_VARIANT"
+  fi
 
   if [ $BUILD_FLAVOR == '' ] || [ $BUILD_FLAVOR == 'default' ]
   then
-    VARIANT_CONFIG=$VARIANT_BASE/src/config
+    VARIANT_CONFIG=$VARIANT_BASE/config
     FLAVOR_CONFIG=
   else
-    VARIANT_CONFIG=$VARIANT_BASE/src/config
-    FLAVOR_CONFIG=$VARIANT_BASE/src/config.$BUILD_FLAVOR
+    VARIANT_CONFIG=$VARIANT_BASE/config
+    FLAVOR_CONFIG=$VARIANT_BASE/config.$BUILD_FLAVOR
   fi
 
   if [ -n "$FLAVOR_CONFIG" ] && [ ! -f $FLAVOR_CONFIG ]
