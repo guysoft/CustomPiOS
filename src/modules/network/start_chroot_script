@@ -19,6 +19,7 @@ sed -i "s@DIST_NAME_PLACEHOLDER@${DIST_NAME,,}@g" /filesystem/home/root/bin/map_
 
 unpack /filesystem/home/root /root root
 unpack /filesystem/boot /boot
+unpack /filesystem/root /
 
 export DIST_NETWORK_FILE=/boot/${DIST_NAME,,}-network.txt
 
@@ -32,9 +33,9 @@ echo "mapping wlan1" >> /etc/network/interfaces
 echo "  script /root/bin/map_iface" >> /etc/network/interfaces
 echo "source ${DIST_NETWORK_FILE}" >> /etc/network/interfaces
 
-# allow configuring multiple wifi networks via /boot/octopi-wpa-supplicant.txt
-mv /etc/wpa_supplicant/wpa_supplicant.conf /boot/octopi-wpa-supplicant.txt
-ln -s /boot/octopi-wpa-supplicant.txt /etc/wpa_supplicant/wpa_supplicant.conf
+# allow configuring multiple wifi networks via /boot/${DIST_NAME,,}-wpa-supplicant.txt
+mv /etc/wpa_supplicant/wpa_supplicant.conf /boot/${DIST_NAME,,}-wpa-supplicant.txt
+ln -s /boot/${DIST_NAME,,}-wpa-supplicant.txt /etc/wpa_supplicant/wpa_supplicant.conf
 cat <<EOT >> /etc/wpa_supplicant/wpa_supplicant.conf
 
 # This is only used to configure multiple wifi networks or other advanced wifi features.
