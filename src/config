@@ -29,8 +29,9 @@ fi
 source ${DIST_PATH}/config
 
 # Get only a list
-TMP="${MODULES/(/,}"
-MODULES_LIST="${TMP/)/,}"
+TMP="${MODULES//(/,}"
+TMP="${TMP// /}"
+MODULES_LIST="${TMP//)/,}"
 
 for module in $(echo "${MODULES_LIST}" | tr "," "\n")
 do
