@@ -33,7 +33,11 @@ if [ $GET_IMAGE ]; then
     echo "Downloading latest Raspbian image"
     
     CURRENT_RASPBIAN=$(curl https://downloads.raspberrypi.org/raspbian_lite/images/ | grep raspbian | tail -n 1 | awk -F "href=\"" '{print $2}' | awk -F "/" '{print $1}')
-    CURRENT_RASPBIAN_DATE=$(echo raspbian_lite-2017-04-10 | awk -F "lite-" '{print $2}')
+    if [ $? -ne 0 ]; then
+        echo "error getting date"
+        exit 1
+    fi
+    CURRENT_RASPBIAN_DATE=$(echo ${CURRENT_RASPBIAN} | awk -F "lite-" '{print $2}')
     curl -L -o "${DEST}/src/image/${CURRENT_RASPBIAN_DATE}-raspbian-jessie-lite.zip" https://downloads.raspberrypi.org/raspbian_lite/images/${CURRENT_RASPBIAN}/${CURRENT_RASPBIAN_DATE}-raspbian-jessie-lite.zip
 fi
 
