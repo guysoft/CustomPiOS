@@ -9,6 +9,7 @@ unpack /filesystem/home/root /root root
 unpack /filesystem/boot /boot
 
 echo "This is an example module, install and set up what you need here!"
+echo "$EXAMPLE_VAR"
 
 # Unpack root at the end, so files are modified before
 unpack /filesystem/root /
