@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+unpack /filesystem/root /
+
+
+#set up gui service
+sed -i 's/#user-session=.*/user-session=guisession/g' /etc/lightdm/lightdm.conf
+sed -i 's/#autologin-user=.*/autologin-user=pi/g' /etc/lightdm/lightdm.conf
+
+# set the gui to run the main script of the GUI session
+sed -i "s@GUI_SESSION_PLACEHOLDEFR@${GUI_STARTUP_SCRIPT}@g" /home/pi/scripts/start_gui
+
+rm -r /usr/sbin/policy-rc.d

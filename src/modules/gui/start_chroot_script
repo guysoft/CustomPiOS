@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -x
+set -e
+# OctoPI generation script
+# Helper script that runs in a Raspbian chroot to create the OctoPI distro
+# Written by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+
+source /common.sh
+
+unpack /filesystem/home/pi /home/pi pi
+unpack /filesystem/root_init /
+
+echo exit 101 > /usr/sbin/policy-rc.d
+chmod +x /usr/sbin/policy-rc.d
+
+apt-get update
+apt-get install -y --force-yes matchbox-window-manager xorg lightdm
+if [ "$GUI_INCLUDE_ACCELERATION" == "yes" ]
+    then
+        apt-get update
+        apt-get -y --force-yes install xcompmgr libgl1-mesa-dri mesa-utils compton libconfig9
+        
+        # Hack to pass non-interactive install
+        mv /usr/bin/whiptail /usr/bin/whiptail.bak
+        echo "#!/bin/bash" > /usr/bin/whiptail
+        echo "exit 0" >> /usr/bin/whiptail
+        chmod 755 /usr/bin/whiptail
+        apt-get -y --force-yes install rpi-chromium-mods
+        rm /usr/bin/whiptail
+        mv /usr/bin/whiptail.bak /usr/bin/whiptail
+        if [ -e /usr/share/X11/xorg.conf.d/99-fbturbo.conf ]; then
+            mv /usr/share/X11/xorg.conf.d/99-fbturbo.conf /usr/share/X11/xorg.conf.d/99-fbturbo.~
+        fi
+        
+        systemctl enable enable_gpu_first_boot.service
+        
+    else
+        echo "gpu_mem=128" >> /boot/config.txt
+fi

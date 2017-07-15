@@ -1,0 +1,5 @@
+# Add GPU acceleration
+[ -n "$GUI_INCLUDE_ACCELERATION" ] || GUI_INCLUDE_ACCELERATION=yes
+
+# The script that starts in the session, if it ends the session would close
+[ -n "$GUI_STARTUP_SCRIPT" ] || GUI_STARTUP_SCRIPT=xterm
