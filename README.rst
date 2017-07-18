@@ -165,4 +165,12 @@ Usage
 #. The final image will be created at the ``src/workspace``
 
 
+List of Distributions using CustomPiOS
+--------------------------------------
+
+* `OctoPi <https://octopi.octoprint.org/>`_  - The ready-to-go Raspberry Pi image with OctoPrint
+* `FullPageOS <https://github.com/guysoft/FullPageOS>`_  - A raspberrypi distro to display a full page browser on boot
+* `ElectricSheepPi <https://github.com/guysoft/ElectricSheepPi>`_  - A Raspberry Pi distribution to to run Electric Sheep digital art
+
+
 Code contribution would be appreciated!
