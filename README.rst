@@ -70,10 +70,10 @@ See the ``example`` module in the example disro.
 List of Standard library modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-*base* - This is the base module you must have in your distro. It sets what image is selected and critical things in the distro
-*gui* - Lets you add a gui that will start on boot, autologin and GPU out of the box.
-*network* - This module is enabled by default, it creates a file in ``/boot/${DIST_NAME}-network.txt`` and ``/boot/${DIST_NAME}-wpa-supplicant.txt`` that lets you set up the wifi configuration from a text file that is accessable even from a windows machine.
-*raspicam* - Enables the pi camera by default
+* base - This is the base module you must have in your distro. It sets what image is selected and critical things in the distro
+* gui - Lets you add a gui that will start on boot, autologin and GPU out of the box.
+* network - This module is enabled by default, it creates a file in ``/boot/${DIST_NAME}-network.txt`` and ``/boot/${DIST_NAME}-wpa-supplicant.txt`` that lets you set up the wifi configuration from a text file that is accessable even from a windows machine.
+* raspicam - Enables the pi camera by default
 
 chroot_script
 ~~~~~~~~~~~~~
