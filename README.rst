@@ -44,6 +44,11 @@ Requirements
 #. sudo (the script itself calls it, running as root without sudo won't work)
 #. Python 2.6+ or 3.2+
 
+Known to work building configurations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. Linux (Ubuntu / Debian etc)
+2. OS X -  `See this tread for information <https://github.com/guysoft/OctoPi/issues/388#issuecomment-316327106>`_
+
 
 Modules 
 -------
