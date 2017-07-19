@@ -38,4 +38,7 @@
 # a git mirror to use for git clones instead of original remotes
 [ -n "$BASE_BUILD_REPO_MIRROR" ] || BASE_BUILD_REPO_MIRROR=
 
+# Enable ssh daemon
+[ -n "$BASE_SSH_ENABLE" ] || BASE_SSH_ENABLE=yes
+
 

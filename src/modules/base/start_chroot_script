@@ -34,5 +34,9 @@ then
   cat /home/pi/.pydistutils.cfg
 fi
 
+if [ "$BASE_SSH_ENABLED" == "yes" ]
+  touch /boot/ssh
+fi
+
 # Store version buildbase
 echo "$CUSTOM_PI_OS_BUILDBASE_BUILDBASE" > /etc/custompios_buildbase
