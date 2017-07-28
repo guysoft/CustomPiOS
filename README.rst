@@ -44,6 +44,11 @@ Requirements
 #. sudo (the script itself calls it, running as root without sudo won't work)
 #. Python 2.6+ or 3.2+
 
+Known to work building configurations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. Linux (Ubuntu / Debian etc)
+2. OS X -  `See this tread for information <https://github.com/guysoft/OctoPi/issues/388#issuecomment-316327106>`_
+
 
 Modules 
 -------
@@ -163,6 +168,14 @@ Usage
 #. If needed, override existing config settings by creating a new file ``src/config.local``. You can override all settings found in ``src/config``. If you need to override the path to the Raspbian image to use for building yoru dstro, override the path to be used in ``BASE_ZIP_IMG``, which is part of the base module. By default the most recent file matching ``*-raspbian.zip`` found in ``src/image`` will be used.
 #. Run ``src/build`` as root.
 #. The final image will be created at the ``src/workspace``
+
+
+List of Distributions using CustomPiOS
+--------------------------------------
+
+* `OctoPi <https://octopi.octoprint.org/>`_  - The ready-to-go Raspberry Pi image with OctoPrint
+* `FullPageOS <https://github.com/guysoft/FullPageOS>`_  - A raspberrypi distro to display a full page browser on boot
+* `ElectricSheepPi <https://github.com/guysoft/ElectricSheepPi>`_  - A Raspberry Pi distribution to to run Electric Sheep digital art
 
 
 Code contribution would be appreciated!
