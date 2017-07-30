@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-set -x
-set -e
-# OctoPI generation script
-# Helper script that runs in a Raspbian chroot to create the OctoPI distro
+# Base script
+# Basic and manditory settings for the base of a CustomPiOS build
 # Written by Guy Sheffer <guysoft at gmail dot com>
 # GPL V3
+########
+set -x
+set -e
 
 export LC_ALL=C
 
