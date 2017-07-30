@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# ffmpeg
+# Provides ffmpeg in the os
+# Written by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+########
+
+source /common.sh
+install_cleanup_trap
+
+apt-get update
+apt-get install -y checkinstall git
+
+pushd /usr/src
+    git clone git://git.videolan.org/x264
+    pushd x264
+        ./configure --host=arm-unknown-linux-gnueabi --enable-static --disable-opencl
+        make -j 2
+        checkinstall -y --pkgversion=1 
+    popd
+    
+    git clone https://github.com/FFmpeg/FFmpeg.git
+    pushd FFmpeg
+        ./configure --arch=armel --target-os=linux --enable-gpl --enable-libx264 --enable-nonfree
+        make -j 2
+        checkinstall -y --fstrans=no
+    popd
+    
+popd
