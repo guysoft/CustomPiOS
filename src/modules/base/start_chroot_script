@@ -36,6 +36,7 @@ then
 fi
 
 if [ "$BASE_SSH_ENABLE" == "yes" ]
+then
   touch /boot/ssh
 fi
 
