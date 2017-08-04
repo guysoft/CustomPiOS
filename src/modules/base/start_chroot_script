@@ -35,7 +35,7 @@ then
   cat /home/pi/.pydistutils.cfg
 fi
 
-if [ "$BASE_SSH_ENABLED" == "yes" ]
+if [ "$BASE_SSH_ENABLE" == "yes" ]
   touch /boot/ssh
 fi
 
