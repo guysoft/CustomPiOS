@@ -76,6 +76,7 @@ List of Standard library modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * base - This is the base module you must have in your distro. It sets what image is selected and critical things in the distro
+* disable-services - Disables systemd services to start up right after installing them. If your module is installing something, say lighttpd. You should wrap your module with this one. Eg ``disable-services(lighttpd)``.
 * ffmpeg - Module builds and installs latest ffmpeg from git
 * gui - Lets you add a gui that will start on boot, autologin and GPU out of the box.
 * network - This module is enabled by default, it creates a file in ``/boot/${DIST_NAME}-network.txt`` and ``/boot/${DIST_NAME}-wpa-supplicant.txt`` that lets you set up the wifi configuration from a text file that is accessable even from a windows machine.

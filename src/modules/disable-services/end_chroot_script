@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# disable-services
+# A wrapper that makes any module running inside it not start services once then are installed
+# Written by Guy Sheffer <guysoft at gmail dot com> and Gina Häußge <osd@foosel.net>
+# GPL V3
+########
+rm -r /usr/sbin/policy-rc.d 
