@@ -3,6 +3,7 @@
 # This script takes a Raspbian image and adds to it octoprint and verions addons
 # Written by Guy Sheffer <guysoft at gmail dot com>
 # GPL V3
+export LC_ALL=C
 
 source ${CUSTOM_PI_OS_PATH}/common.sh
 
