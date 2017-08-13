@@ -1,7 +1,7 @@
 CustomPiOS
 ==========
 
-A `Raspberry Pi <http://www.raspberrypi.org/>`_ and other ARM devices) distribution builder. CustomPiOS is opens an already existing image, modifies it and repackages the image ready to ship.
+A `Raspberry Pi <http://www.raspberrypi.org/>`_ and other ARM devices distribution builder. CustomPiOS is opens an already existing image, modifies it and repackages the image ready to ship.
 
 This repository contains the source script to generate a distribution out of an existing `Raspbian <http://www.raspbian.org/>`_ distro image, or Armbian devices.
 
