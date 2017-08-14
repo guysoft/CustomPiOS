@@ -8,7 +8,7 @@ mount -o remount,rw /
 
 password=$(perl -e 'printf("%s\n", crypt($ARGV[0], "password"))' "raspberry")
 useradd -m -p "${password}" -s /bin/bash pi
-usermod -aG video,audio,plugdev,games,netdev,i2c,sudo pi
+usermod -aG video,audio,plugdev,games,netdev,sudo pi
 
 source /common.sh
 install_chroot_fail_on_error_trap
