@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+DEST_FOLDER="$1"
+
+DIST_NAME=$(basename $DEST_FOLDER)
+
+pushd "${DEST_FOLDER}" > /dev/null
+    pushd src/modules > /dev/null
+        mv example ${DIST_NAME,,}
+        pushd ${DIST_NAME,,} > /dev/null
+            DIST_NAME_UPPER=$(echo $DIST_NAME | awk '{print toupper($0)}')
+            sed -i "s/EXAMPLE_VAR/${DIST_NAME_UPPER}_VAR/g" config start_chroot_script
+        popd > /dev/null
+    popd > /dev/null
+    pushd src > /dev/null
+        sed -i "s/export DIST_NAME=.*/export DIST_NAME=${DIST_NAME}/g" config
+        sed -i "s/example/${DIST_NAME,,}/g" config
+    popd > /dev/null
+popd > /dev/null

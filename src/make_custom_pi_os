@@ -12,6 +12,8 @@ EOF
 echo Settings: 
 echo making dstro in "$DEST"
 
+DIST_NAME=$(basename "$DEST")
+
 for a in "${MULTIPLE[@]}"; do
     echo "  $a"
 done
@@ -26,8 +28,10 @@ if [ -f ${DEST} ]; then
     exit 1
 fi
 
-cp -a ${DIR}/dist_generators/dist_example ${DEST}
+cp -a ${DIR}/dist_generators/dist_example "${DEST}"
 chown $USER:$USER -R ${DEST}
+
+${DIR}/dist_generators/dist_example_script "${DEST}"
 
 if [ $GET_IMAGE ]; then
     echo "Downloading latest Raspbian image"
