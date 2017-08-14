@@ -3,18 +3,17 @@ DEST_FOLDER="$1"
 
 DIST_NAME=$(basename $DEST_FOLDER)
 DIST_NAME=${DIST_NAME,,}
-echo a
-pushd "${DEST_FOLDER}"
-    pushd src/modules
+
+pushd "${DEST_FOLDER}" > /dev/null
+    pushd src/modules > /dev/null
         mv example ${DIST_NAME}
-        pushd ${DIST_NAME}
+        pushd ${DIST_NAME} > /dev/null
             DIST_NAME_UPPER=$(echo $DIST_NAME | awk '{print toupper($0)}')
             sed -i "s/EXAMPLE_VAR/${DIST_NAME_UPPER}_VAR/g" config start_chroot_script
-        popd
-    popd
-    pushd src
+        popd > /dev/null
+    popd > /dev/null
+    pushd src > /dev/null
         sed -i "s/export DIST_NAME=.*/export DIST_NAME=${DIST_NAME}_VAR/g" config
         sed -i "s/example/${DIST_NAME}/g" config
-    popd
-popd
-echo b
+    popd > /dev/null
+popd > /dev/null
