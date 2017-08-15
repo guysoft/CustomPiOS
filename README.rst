@@ -16,9 +16,9 @@ How to use it?
 --------------
 
 #. Clone this image ``git clone https://github.com/guysoft/CustomPiOS.git``
-#. Run ``src/make_custom_pi_os -g <distro folder>`` in the repo. This will both create a folder to build a new distro from, and also download the latest raspbian lite image.
+#. Run ``src/make_custom_pi_os -g <distro folder>`` in the repo, distro folder should not exist and contain no spaces. This will both create a folder to build a new distro from, and also download the latest raspbian lite image. The initial distro has a module that has the name of your distro, and you can find it under ``<distro folder>/src/modules/<distro name>`` (there should be only one module in the modules folder).
 #. cd to ``<distro folder>/src``
-#. Edit your ``<distro folder>/src/config``, you can also edit the example module at ``modules/example_module``. More on that in the Developing section.
+#. Edit your ``<distro folder>/src/config``, you can also edit the starting module, which is named as your distro at ``modules/<dstro name>``. More on that in the Developing section.
 #. Run ``<distro folder>/src/build_dist`` to build an image. If this failes use the method discribed in the vagrant build the section (which makes sure sfdisk and other things work right).
 
 Features
