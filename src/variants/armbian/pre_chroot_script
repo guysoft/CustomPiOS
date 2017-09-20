@@ -1,20 +1,37 @@
 #!/usr/bin/env bash
 set -x
+set -e
+
+export LC_ALL=C
+
+source /common.sh
+install_cleanup_trap
+
+# install dhclient.conf and possibly other files
+unpack /filesystem/root /
+
+mv /etc/resolv.conf /etc/resolv.conf.orig || true
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+
 echo "" > /dev/null
 
 #fix W: Not using locking for nfs mounted lock file /var/cache/apt/archives/lock
 mount -o remount,rw /
 
+if_group_exists_run(){
+   group=$1
+   if grep -q $group /etc/group
+    then
+         "${@:2}"
+    fi
+}
+
+
 
 password=$(perl -e 'printf("%s\n", crypt($ARGV[0], "password"))' "raspberry")
 useradd -m -p "${password}" -s /bin/bash pi
-usermod -aG video,audio,plugdev,games,netdev,i2c,sudo pi
-
-source /common.sh
-install_chroot_fail_on_error_trap
-
-# install dhclient.conf and possibly other files
-unpack /filesystem/root /
+if_group_exists_run i2c usermod -aG i2c pi
+usermod -aG video,audio,plugdev,games,netdev,sudo pi
 
 #cleanup
 mkdir -p /var/cache/apt/archives
@@ -23,6 +40,10 @@ apt-get update
 apt-get -y --force-yes install avahi-daemon || true
 apt-get -y --force-yes install -f
 apt-get -y --force-yes install python-pip
+pip install pip --upgrade
 pip install virtualenv --upgrade
 
 mkdir -p /var/run/wpa_supplicant
+
+apt-get remove -y python-pip python3-pip
+
