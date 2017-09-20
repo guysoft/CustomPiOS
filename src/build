@@ -64,6 +64,8 @@ ${CUSTOM_PI_OS_PATH}/config_sanity
 EOF
 
 if [ "$LOG" != "no" ]; then
+    touch "$LOG"
+    chmod 666 "$LOG"
     eval "$SCRIPT" 2>&1 | tee "$LOG"
     exit ${PIPESTATUS}
 else
