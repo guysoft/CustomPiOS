@@ -42,7 +42,7 @@ Requirements
 #. git
 #. realpath
 #. sudo (the script itself calls it, running as root without sudo won't work)
-#. Python 2.6+ or 3.2+
+#. Python 3.2+
 
 Known to work building configurations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
