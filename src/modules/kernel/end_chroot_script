@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Custom Kernel Build end script
+# Custom RaspberryPi Kernel builder
+# Written by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+########
+
+set -x
+
+# Source error handling, leave this in place
+source /common.sh
+install_cleanup_trap
+
+
+function build_kernel(){
+    KERNEL_SELECT=$1
+    pushd /home/pi
+        pushd linux
+            if [ "$KERNEL_SELECT" == "kernel7" ]; then
+                KERNEL="kernel7" make ARCH=arm bcm2709_defconfig
+            elif [ "$KERNEL_SELECT" == "kernel" ]; then
+                KERNEL="kernel" make ARCH=arm bcmrpi_defconfig
+            fi
+            echo "${KERNEL_CONFIG_APPEND}" >> .config
+            # CROSS_COMPILE=arm-linux-gnueabihf-
+            make -j4 zImage modules dtbs
+            
+            mkdir kernel-rt
+            INSTALL_MOD_PATH=kernel-rt make modules_install
+            cp -v arch/arm/boot/Image /boot/${KERNEL_SELECT}.img
+            
+            # TODO: figure out which dtbo to move
+            cp -v arch/arm/boot/dts/overlays/*.dtb* /boot/overlays/
+            cp -v arch/arm/boot/dts/overlays/README /boot/overlays/
+            
+            pushd arch/arm/boot/dts
+                if [ "$KERNEL" == "kernel7" ]; then
+                    cp bcm2709-rpi-2-b.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb /boot/
+                elif [ "$KERNEL" == "kernel" ]; then
+                    cp bcm2708-rpi-0-w.dtb bcm2708-rpi-b-plus.dtb bcm2708-rpi-b.dtb bcm2708-rpi-cm.dtb /boot/
+                fi
+            popd
+
+            cp -va kernel-rt/lib /
+            rm -rf kernel-rt
+        popd
+    popd
+}
+
+pushd /home/pi
+    pushd linux
+
+        if [ "$KERNEL_TYPE" == "both" ] || ["$KERNEL_TYPE"  == "v7" ]; then
+            build_kernel "kernel7"
+        fi
+            
+        make clean
+        
+        if [ "$KERNEL_TYPE" == "both" ] || ["$KERNEL_TYPE"  == "v6" ]; then
+            build_kernel "kernel"
+        fi
+    
+
+        
+    popd
+    
+    if [ "$KERNEL_SOURCE_CLEANUP" == "yes" ]; then
+        rm -rf linux
+    fi
+    
+    echo "$KERNEL_COMMIT" > /etc/kernel_commit
+popd

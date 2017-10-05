@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Custom Kernel Build start script
+# Custom RaspberryPi Kernel builder
+# Written by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+########
+
+set -x
+
+# Source error handling, leave this in place
+source /common.sh
+install_cleanup_trap
+
+
+pushd /home/pi
+    sudo apt-get update
+    sudo apt-get install make gcc git bc
+    
+    # git clone --depth=1 https://github.com/raspberrypi/linux
+    # COMMIT=48564b51ac75d81f3f3b584fab8c3be44c7248a8 # fails on recipe for target 'bcm2709_defconfig' failed
+    #REVERT_COMMIT="120ec1e4cdddfc16c31581c2c30511c6c16fe0fd" # patch fail
+    # page 1
+    
+    wget ${KERNEL_URL}/${KERNEL_COMMIT}.zip
+    
+    unzip -q ${KERNEL_COMMIT}.zip
+    mv linux-${KERNEL_COMMIT} linux
+popd
