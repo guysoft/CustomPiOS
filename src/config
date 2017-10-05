@@ -28,6 +28,12 @@ fi
 
 source ${DIST_PATH}/config
 
+if [ -f ${DIST_PATH}/config.local ]
+then
+  echo "Sourcing distro config.local..."
+  source ${DIST_PATH}/config.local
+fi
+
 # Get only a list
 TMP="${MODULES//(/,}"
 TMP="${TMP// /}"
