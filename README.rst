@@ -184,6 +184,7 @@ List of Distributions using CustomPiOS
 * `FullPageOS <https://github.com/guysoft/FullPageOS>`_  - A raspberrypi distro to display a full page browser on boot
 * `ElectricSheepPi <https://github.com/guysoft/ElectricSheepPi>`_  - A Raspberry Pi distribution to run Electric Sheep digital art
 * `AlarmPi <https://github.com/guysoft/AlarmPi>`_  - A Raspberry Pi distribution that turns a raspberrypi to an IOT telegram-controlled alarm clock
+* `RealtimePi <https://github.com/guysoft/RealtimePi>`_  - An out-of-the-box raspebrrypi/raspbian distro with a realtime kernel
 
 
 Code contribution would be appreciated!
