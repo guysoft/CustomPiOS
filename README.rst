@@ -125,7 +125,7 @@ CustomPiOS distros can be built from Debian, Ubuntu, Raspbian, or even within a 
 Build requires about 2.5 GB of free space available, depending on what you install.
 You can build it by issuing the following commands::
 
-    sudo apt-get install gawk util-linux realpath qemu-user-static git
+    sudo apt-get install gawk util-linux realpath qemu-user-static p7zip-full git
     
     git clone https://github.com/guysoft/CustomPiOS.git
     cd CustomPiOS/src
