@@ -41,7 +41,7 @@ pushd $BASE_WORKSPACE
     echo "Error: could not find image: $BASE_ZIP_IMG"
     exit 1
   fi
-  7za x "$BASE_ZIP_IMG"
+  7za x -aoa "$BASE_ZIP_IMG"
   BASE_IMG_PATH=`ls | grep '.img\|.raw' | head -n 1`
   if [ ! -f "$BASE_IMG_PATH" ]; then
     echo "Error, can't find image path, did you place an image in the image folder?"
