@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# password-for-sudo
+#
+# Reverts Raspbian's default of allowing sudo to be always invoked without having to
+# reenter the user's password.
+#
+# Written by Gina Häußge <gina@octoprint.org>
+# GPL V3
+########
+
+source /common.sh
+install_cleanup_trap
+
+# do NOT allow passwordless sudo for all commands for the user pi (taken from raspberrypi-sys-mods postinst script)
+[ -f /etc/sudoers.d/010_pi-nopasswd ] && sed -e '/^pi/ s/^#*/#/' -i /etc/sudoers.d/010_pi-nopasswd
