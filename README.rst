@@ -82,6 +82,7 @@ List of Standard library modules
 * gui - Lets you add a gui that will start on boot, autologin and GPU out of the box.
 * kernel - Builds and installs a custom kernel. Warning: building a kernel can take as long as 6 hours. And with two it takes 12 hours. If you are building them a lot its recommended to create a base image and build on top of that. `See RealtimePi <https://github.com/guysoft/RealtimePi>`_ for usage example.
 * network - This module is enabled by default, it creates a file in ``/boot/${DIST_NAME}-network.txt`` and ``/boot/${DIST_NAME}-wpa-supplicant.txt`` that lets you set up the wifi configuration from a text file that is accessable even from a windows machine.
+* password-for-sudo - Revert Raspbian's "no password for sudo"
 * raspicam - Enables the pi camera by default
 
 chroot_script
