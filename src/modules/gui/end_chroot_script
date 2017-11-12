@@ -7,9 +7,6 @@ set -e
 source /common.sh
 install_cleanup_trap
 
-unpack /filesystem/root /
-
-
 #set up gui service
 sed -i 's/#user-session=.*/user-session=guisession/g' /etc/lightdm/lightdm.conf
 sed -i 's/#autologin-user=.*/autologin-user=pi/g' /etc/lightdm/lightdm.conf
