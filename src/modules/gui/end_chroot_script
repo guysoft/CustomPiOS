@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# VlcOS generation script
+########
+set -x
+set -e
+
+source /common.sh
+install_cleanup_trap
+
 unpack /filesystem/root /
 
 
