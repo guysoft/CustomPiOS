@@ -53,37 +53,8 @@ Known to work building configurations
 
 Modules 
 -------
-One of the main features in CustomPiOS is writing modules. A module is a structured piece of code that adds a function to a distro. 
+`See Modules entry in wiki <https://github.com/guysoft/CustomPiOS/wiki/Modules>`_
 
-Setting Modules
-~~~~~~~~~~~~~~~
-
-To set what the distro does, you can add and remove modules. The modules are defined in the ``MODULES`` variable set in your distro ``<distro folder>/src/config`` file. Modules can be nested, the enables you to provide namespaces or run cleanup functions after other module have run. For example ``MODULES=base(network(octopi, picamera))``, in this example base will start first, and end last, network will start second and end one before last, octopi will start third and end first.
-
-Writing Modules
-~~~~~~~~~~~~~~~
-* Module are places in folders whose names are small letters and with hyphens.
-* The can be placed either in ``CustomPiOS/src/modules`` or ``<distro folder>/src/modules``.
-
-See the ``example`` module in the example disro.
-
-*Modules are made from 3 parts:*
-
-* ``start_chroot_script`` / ``end_chroot_script``
-* ``filesystem`` folder
-* ``config`` file
-
-List of Standard library modules
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-* base - This is the base module you must have in your distro. It sets what image is selected and critical things in the distro
-* disable-services - Disables systemd services to start up right after installing them. If your module is installing something, say lighttpd. You should wrap your module with this one. Eg ``disable-services(lighttpd)``.
-* ffmpeg - Module builds and installs latest ffmpeg from git
-* gui - Lets you add a gui that will start on boot, autologin and GPU out of the box.
-* kernel - Builds and installs a custom kernel. Warning: building a kernel can take as long as 6 hours. And with two it takes 12 hours. If you are building them a lot its recommended to create a base image and build on top of that. `See RealtimePi <https://github.com/guysoft/RealtimePi>`_ for usage example.
-* network - This module is enabled by default, it creates a file in ``/boot/${DIST_NAME}-network.txt`` and ``/boot/${DIST_NAME}-wpa-supplicant.txt`` that lets you set up the wifi configuration from a text file that is accessable even from a windows machine.
-* password-for-sudo - Revert Raspbian's "no password for sudo"
-* raspicam - Enables the pi camera by default
 
 chroot_script
 ~~~~~~~~~~~~~
@@ -121,54 +92,15 @@ The naming convention is the module name in
 
 Build a Distro From within Raspbian / Debian / Ubuntu / CustomPiOS Distros
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-CustomPiOS distros can be built from Debian, Ubuntu, Raspbian, or even within a distro itself (for other systems use the Vagrant build option).
-Build requires about 2.5 GB of free space available, depending on what you install.
-You can build it by issuing the following commands::
-
-    sudo apt-get install gawk util-linux realpath qemu-user-static p7zip-full git
-    
-    git clone https://github.com/guysoft/CustomPiOS.git
-    cd CustomPiOS/src
-    ./make_custom_pi_os -g /path/to/new_distro
-    cd /path/to/new_distro/src
-    sudo modprobe loop
-    sudo bash -x ./build_dist
+`See building entry in wiki <https://github.com/guysoft/CustomPiOS/wiki/Building>`_
     
 Building Distro Variants
 ~~~~~~~~~~~~~~~~~~~~~~~~
-
-CustomPiOS supports building variants, which are builds with changes from the main release build. An example and other variants are available in the folder ``src/variants/example``.
-
-To build a variant use::
-
-    sudo bash -x ./build_dist [Variant]
+`See building entry in wiki <https://github.com/guysoft/CustomPiOS/wiki/Building>`_
     
 Building Using Vagrant
 ~~~~~~~~~~~~~~~~~~~~~~
-There is a vagrant machine configuration to let build a CustomPiOS distro in case your build environment behaves differently. Unless you do extra configuration, vagrant must run as root to have nfs folder sync working.
-
-Make sure you have a version of vagrant later than 1.9!
-
-If you are using older versions of Ubuntu/Debian and not using apt-get `from the download page <https://www.vagrantup.com/downloads.html>`_.
-
-To use it::
-
-    sudo apt-get install vagrant nfs-kernel-server virtualbox
-    sudo vagrant plugin install vagrant-nfs_guest
-    sudo modprobe nfs
-    cd <distro folder>/src/vagrant
-    sudo vagrant up
-
-After provisioning the machine, its also possible to run a nightly build which updates from devel using::
-
-    cd <distro folder>//src/vagrant
-    run_vagrant_build.sh
-    
-To build a variant on the machine simply run::
-
-    cd <distro folder>/src/vagrant
-    run_vagrant_build.sh [Variant]
+`See Building with Vagrant entry in wiki <https://github.com/guysoft/CustomPiOS/wiki/Building-with-Vagrant>`_
     
 
 Usage
