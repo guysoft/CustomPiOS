@@ -7,7 +7,7 @@ fi
 
 source "${DIST_PATH}/config"
 
-FILENAME=$(basename `ls . |  grep -e .img -e .raw | tail -n 1`)
+FILENAME=$(basename `ls . |  grep -e .img$ -e .raw$ | tail -n 1`)
 OCTOPI_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/raspbian/${DIST_NAME,,}/").img
 mv ${FILENAME} $OCTOPI_FILENAME
 zip ${OCTOPI_FILENAME::-4}.zip $OCTOPI_FILENAME
