@@ -14,7 +14,7 @@ install_cleanup_trap
 
 pushd /home/pi
     sudo apt-get update
-    sudo apt-get install make gcc git bc
+    sudo apt-get -y install make gcc git bc p7zip-full
     
     # git clone --depth=1 https://github.com/raspberrypi/linux
     # COMMIT=48564b51ac75d81f3f3b584fab8c3be44c7248a8 # fails on recipe for target 'bcm2709_defconfig' failed
@@ -23,6 +23,7 @@ pushd /home/pi
     
     wget ${KERNEL_URL}/${KERNEL_COMMIT}.zip
     
-    unzip -q ${KERNEL_COMMIT}.zip
+    # unzip -q ${KERNEL_COMMIT}.zip
+    7za x -aoa ${KERNEL_COMMIT}.zip
     mv linux-${KERNEL_COMMIT} linux
 popd
