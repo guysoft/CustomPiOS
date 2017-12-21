@@ -40,6 +40,7 @@ apt-get update
 apt-get -y --force-yes install avahi-daemon || true
 apt-get -y --force-yes install -f
 apt-get -y --force-yes install python-pip
+apt-get -y --force-yes install iptables
 pip install pip --upgrade
 pip install virtualenv --upgrade
 
