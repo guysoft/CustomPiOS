@@ -18,5 +18,12 @@ then
 fi
 
 #reach device by name
+if [ -f /etc/hostname ]; then
+    read FILE_HOST_NAME < /etc/hostname
+        FILE_HOST_NAME=${FILE_HOST_NAME//$'\n'/}
+    else
+	    FILE_HOST_NAME=raspberrypi
+fi
+
 echo "$BASE_OVERRIDE_HOSTNAME" > /etc/hostname
-sed -i -e "s@raspberrypi@$BASE_OVERRIDE_HOSTNAME@g" /etc/hosts
+sed -i -e "s@${FILE_HOST_NAME}@$BASE_OVERRIDE_HOSTNAME@g" /etc/hosts
