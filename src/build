@@ -9,8 +9,8 @@ set -x
 define(){ IFS='\n' read -r -d '' ${1} || true; }
 
 define SCRIPT <<'EOF'
-BUILD_SCRIPT__PATH=$(dirname $(realpath -s $BASH_SOURCE))
-source ${BUILD_SCRIPT__PATH}/common.sh
+BUILD_SCRIPT_PATH=$(dirname $(realpath -s $BASH_SOURCE))
+source ${BUILD_SCRIPT_PATH}/common.sh
 install_cleanup_trap
 
 CUSTOM_OS_PATH=$(dirname $(realpath -s $0))

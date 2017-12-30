@@ -21,6 +21,14 @@ function pause() {
   read -p "$*"
 }
 
+function echo_red(){
+  echo -e "\e[91m$1\e[0m"
+}
+
+function echo_green(){
+  echo -e "\e[92m$1\e[0m"
+}
+
 function gitclone(){
   # call like this: gitclone OCTOPI_OCTOPRINT_REPO someDirectory -- this will do:
   #
@@ -186,13 +194,13 @@ function cleanup() {
 function install_fail_on_error_trap() {
   set -e
   trap 'previous_command=$this_command; this_command=$BASH_COMMAND' DEBUG
-  trap 'if [ $? -ne 0 ]; then echo -e "\nexit $? due to $previous_command \nBUILD FAILED!" && echo "unmounting image..." && ( unmount_image $BASE_MOUNT_PATH force || true ); fi;' EXIT
+  trap 'if [ $? -ne 0 ]; then echo_red -e "\nexit $? due to $previous_command \nBUILD FAILED!" && echo_red "unmounting image..." && ( unmount_image $BASE_MOUNT_PATH force || true ); fi;' EXIT
 }
 
 function install_chroot_fail_on_error_trap() {
   set -e
   trap 'previous_command=$this_command; this_command=$BASH_COMMAND' DEBUG
-  trap 'if [ $? -ne 0 ]; then echo -e "\nexit $? due to $previous_command \nBUILD FAILED!"; fi;' EXIT
+  trap 'if [ $? -ne 0 ]; then echo_red -e "\nexit $? due to $previous_command \nBUILD FAILED!"; fi;' EXIT
 }
 
 function install_cleanup_trap() {
@@ -372,3 +380,5 @@ function systemctl_if_exists() {
         echo "no systemctl, not running"
     fi
 }
+
+
