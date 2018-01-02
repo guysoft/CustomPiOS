@@ -1,5 +1,5 @@
 VARIANT_CONFIG_DIR=$(realpath -s $(dirname $(realpath -s $BASH_SOURCE))/../..)
-BASE_ZIP_IMG=`ls -t ${DIST_PATH}/image-variants/Armbian*.{zip,7z} | head -n 1`
+BASE_ZIP_IMG=`ls -t ${DIST_PATH}/image-variants/*.{zip,7z} | head -n 1`
 BASE_APT_CACHE=""
 OCTOPI_INCLUDE_WIRINGPI=no
 # The root partiton of the image filesystem, 2 for raspbian, 1 for armbian
