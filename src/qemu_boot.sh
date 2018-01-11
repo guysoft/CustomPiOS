@@ -12,13 +12,12 @@ IMG_NAME=$(unzip -Z "${ZIP_IMG}" | head -n 3 | tail -n 1 | awk '{ print $9 }')
 BASE_IMG_PATH=${DEST}/"${IMG_NAME}"
 
 
-mkdir -p ${BASE_MOUNT_PATH}
-
 if [ ! -f "${BASE_IMG_PATH}" ]; then
     unzip -o "${ZIP_IMG}" -d "${DEST}"
     
     BASE_ROOT_PARTITION=2
     BASE_MOUNT_PATH=${DEST}/mount
+    mkdir -p "${BASE_MOUNT_PATH}"
 
     sudo bash -c "$(declare -f mount_image); mount_image $BASE_IMG_PATH $BASE_ROOT_PARTITION $BASE_MOUNT_PATH"
 
@@ -33,7 +32,7 @@ KERNEL_VERSION=kernel-qemu-4.4.34-jessie
 KERNEL_PATH=${DEST}/${KERNEL_VERSION}
 
 if [ ! -f "${KERNEL_PATH}" ] ; then
-    wget https://github.com/dhruvvyas90/qemu-rpi-kernel/raw/master/{KERNEL_VERSION} -O ${DEST}/{KERNEL_VERSION}
+    wget https://github.com/dhruvvyas90/qemu-rpi-kernel/raw/master/${KERNEL_VERSION} -O "${DEST}/${KERNEL_VERSION}"
 fi
 
 
