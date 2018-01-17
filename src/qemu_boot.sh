@@ -36,7 +36,8 @@ if [ ! -f "${KERNEL_PATH}" ] ; then
 fi
 
 
-/usr/bin/qemu-system-arm -kernel ${KERNEL_PATH} -cpu arm1176 -m 256 -M versatilepb -no-reboot -serial stdio -append 'root=/dev/sda2 panic=1 rootfstype=ext4 rw' -hda ${BASE_IMG_PATH} -redir tcp:5022::22
+/usr/bin/qemu-system-arm -kernel ${KERNEL_PATH} -cpu arm1176 -m 256 -M versatilepb -no-reboot -serial stdio -append 'root=/dev/sda2 panic=1 rootfstype=ext4 rw' -hda ${BASE_IMG_PATH} -net nic -net user,hostfwd=tcp::5022-:22
+
 
 #sudo umount ${BASE_MOUNT_PATH}
 
