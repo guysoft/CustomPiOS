@@ -50,13 +50,13 @@ function build_kernel(){
 pushd /home/pi
     pushd linux
 
-        if [ "$KERNEL_TYPE" == "both" ] || ["$KERNEL_TYPE"  == "v6" ]; then
+        if [ "$KERNEL_TYPE" == "both" ] || [ "$KERNEL_TYPE"  == "v6" ]; then
             build_kernel "kernel"
         fi
             
         make clean
         
-        if [ "$KERNEL_TYPE" == "both" ] || ["$KERNEL_TYPE"  == "v7" ]; then
+        if [ "$KERNEL_TYPE" == "both" ] || [ "$KERNEL_TYPE"  == "v7" ]; then
             build_kernel "kernel7"
         fi
     
