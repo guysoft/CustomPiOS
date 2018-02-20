@@ -1,7 +1,1 @@
-###############################################################################
-# All our config settings must start with OCTOPI_
-
-[ -n "NETWORK_CONFIG_DEVICE" ] || NETWORK_CONFIG_DEVICE=${DIST_NAME}
-[ -n "NETWORK_CONFIG_FILE" ] || NETWORK_CONFIG_FILE=${DIST_NAME}-network.txt
-
-
+# intentionally left blank

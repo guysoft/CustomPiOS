@@ -19,7 +19,7 @@ unpack /filesystem/home/root /root root
 unpack /filesystem/boot /boot
 unpack /filesystem/root /
 
-export DIST_NETWORK_FILE=/boot/${DIST_NAME,,}-wpa-supplicant.txt
+DIST_NETWORK_FILE=/boot/${DIST_NAME,,}-wpa-supplicant.txt
 
 # allow configuring multiple wifi networks via /boot/DIST_NAME-wpa-supplicant.txt
 mv /boot/custompios-wpa-supplicant.txt ${DIST_NETWORK_FILE}
