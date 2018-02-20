@@ -19,13 +19,11 @@ unpack /filesystem/home/root /root root
 unpack /filesystem/boot /boot
 unpack /filesystem/root /
 
-export DIST_NETWORK_FILE=/boot/${DIST_NAME,,}-wpa-supplicant.txt
-
 # allow configuring multiple wifi networks via /boot/DIST_NAME-wpa-supplicant.txt
-mv /boot/custompios-wpa-supplicant.txt ${DIST_NETWORK_FILE}
-cat /etc/wpa_supplicant/wpa_supplicant.conf >> ${DIST_NETWORK_FILE}  # append distributed conf to our own
+mv /boot/custompios-wpa-supplicant.txt ${NETWORK_CONFIG_FILE}
+cat /etc/wpa_supplicant/wpa_supplicant.conf >> ${NETWORK_CONFIG_FILE}  # append distributed conf to our own
 rm -f /etc/wpa_supplicant/wpa_supplicant.conf                        # remove distributed conf
-ln -s ${DIST_NETWORK_FILE} /etc/wpa_supplicant/wpa_supplicant.conf   # create symlink
+ln -s ${NETWORK_CONFIG_FILE} /etc/wpa_supplicant/wpa_supplicant.conf   # create symlink
 
 # copy /etc/wpa_supplicant/ifupdown.sh to /etc/ifplugd/action.d/ifupdown - for wlan auto reconnect
 [ -f /etc/ifplugd/action.d/ifupdown ] && mv /etc/ifplugd/action.d/ifupdown /etc/ifplugd/action.d/ifupdown.original

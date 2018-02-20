@@ -1,7 +1,6 @@
 ###############################################################################
-# All our config settings must start with OCTOPI_
+# All our config settings must start with NETWORK_
 
-[ -n "NETWORK_CONFIG_DEVICE" ] || NETWORK_CONFIG_DEVICE=${DIST_NAME}
-[ -n "NETWORK_CONFIG_FILE" ] || NETWORK_CONFIG_FILE=${DIST_NAME}-network.txt
+[ -n "NETWORK_CONFIG_FILE" ] || NETWORK_CONFIG_FILE=/boot/${DIST_NAME,,}-wpa-supplicant.txt
 
 
