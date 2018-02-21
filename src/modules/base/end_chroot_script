@@ -4,6 +4,8 @@
 # Written by Guy Sheffer <guysoft at gmail dot com>
 # GPL V3
 ########
+set -ex
+
 if [ -n "$BASE_APT_PROXY" ]
 then
   rm -r /etc/apt/apt.conf.d/02octopi_build_proxy

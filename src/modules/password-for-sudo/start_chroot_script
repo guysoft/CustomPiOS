@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # password-for-sudo
 #
 # Reverts Raspbian's default of allowing sudo to be always invoked without having to
@@ -8,6 +7,8 @@
 # Written by Gina Häußge <gina@octoprint.org>
 # GPL V3
 ########
+
+set -ex
 
 source /common.sh
 install_cleanup_trap
