@@ -185,14 +185,6 @@ function cleanup() {
     # make sure that all child processed die when we die
     local pids=$(jobs -pr)
     [ -n "$pids" ] && kill $pids && sleep 5 && kill -9 $pids
-    exit 0
-}
-
-function cleanup() {
-    # make sure that all child processed die when we die
-    local pids=$(jobs -pr)
-    [ -n "$pids" ] && kill $pids
-    exit 0
 }
 
 function install_fail_on_error_trap() {
