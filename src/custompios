@@ -32,7 +32,7 @@ mkdir -p $BASE_WORKSPACE
 mkdir -p $BASE_MOUNT_PATH
 
 install_cleanup_trap
-install_fail_on_error_trap $BASE_MOUNT_PATH
+install_fail_on_error_trap
 unmount_image $BASE_MOUNT_PATH force || true
 
 pushd $BASE_WORKSPACE
@@ -126,3 +126,4 @@ pushd $BASE_WORKSPACE
   fi
 popd
 
+echo_green -e "\nBUILD SUCCEEDED!\n"
