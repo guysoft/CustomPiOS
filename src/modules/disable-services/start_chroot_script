@@ -4,6 +4,7 @@
 # Written by Guy Sheffer <guysoft at gmail dot com> and Gina Häußge <osd@foosel.net>
 # GPL V3
 ########
+set -ex
 
 source /common.sh
 install_cleanup_trap

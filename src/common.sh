@@ -21,12 +21,16 @@ function pause() {
   read -p "$*"
 }
 
-function echo_red(){
-  echo -e "\e[91m$1\e[0m"
+function echo_red() {
+  echo -e -n "\e[91m"
+  echo $@
+  echo -e -n "\e[0m"
 }
 
-function echo_green(){
-  echo -e "\e[92m$1\e[0m"
+function echo_green() {
+  echo -e -n "\e[92m"
+  echo $@
+  echo -e -n "\e[0m"
 }
 
 function gitclone(){
@@ -181,31 +185,24 @@ function cleanup() {
     # make sure that all child processed die when we die
     local pids=$(jobs -pr)
     [ -n "$pids" ] && kill $pids && sleep 5 && kill -9 $pids
-    exit 0
-}
-
-function cleanup() {
-    # make sure that all child processed die when we die
-    local pids=$(jobs -pr)
-    [ -n "$pids" ] && kill $pids
-    exit 0
 }
 
 function install_fail_on_error_trap() {
+  # unmounts image, logs PRINT FAILED to log & console on error
   set -e
-  trap 'previous_command=$this_command; this_command=$BASH_COMMAND' DEBUG
-  trap 'if [ $? -ne 0 ]; then echo_red -e "\nexit $? due to $previous_command \nBUILD FAILED!" && echo_red "unmounting image..." && ( unmount_image $BASE_MOUNT_PATH force || true ); fi;' EXIT
+  trap 'echo "build failed, unmounting image..." && cd $DIST_PATH && ( unmount_image $BASE_MOUNT_PATH force || true ) && echo_red -e "\nBUILD FAILED!\n"' ERR
 }
 
 function install_chroot_fail_on_error_trap() {
+  # logs PRINT FAILED to log & console on error
   set -e
-  trap 'previous_command=$this_command; this_command=$BASH_COMMAND' DEBUG
-  trap 'if [ $? -ne 0 ]; then echo_red -e "\nexit $? due to $previous_command \nBUILD FAILED!"; fi;' EXIT
+  trap 'echo_red -e "\nBUILD FAILED!\n"' ERR
 }
 
 function install_cleanup_trap() {
+  # kills all child processes of the current process on SIGINT or SIGTERM
   set -e
-  trap "cleanup" SIGINT SIGTERM
+  trap 'cleanup' SIGINT SIGTERM
  }
 
 function enlarge_ext() {

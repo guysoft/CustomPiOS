@@ -3,13 +3,15 @@
 # This script takes a Raspbian image and adds to it octoprint and verions addons
 # Written by Guy Sheffer <guysoft at gmail dot com>
 # GPL V3
+set -e
+
 export LC_ALL=C
 
 source ${CUSTOM_PI_OS_PATH}/common.sh
 
 function execute_chroot_script() {
   #move OctoPi filesystem files
-  cp -vr --preserve=mode,timestamps $1/filesystem .
+  cp -vr --preserve=mode,timestamps $1/filesystem . || true
 
   #black magic of qemu-arm-static
   cp `which qemu-arm-static` usr/bin
@@ -23,14 +25,14 @@ function execute_chroot_script() {
   
   #cleanup
   rm chroot_script
-  rm -rfv filesystem
+  rm -rfv filesystem || true
 }
 
 mkdir -p $BASE_WORKSPACE
 mkdir -p $BASE_MOUNT_PATH
 
 install_cleanup_trap
-install_fail_on_error_trap $BASE_MOUNT_PATH
+install_fail_on_error_trap
 unmount_image $BASE_MOUNT_PATH force || true
 
 pushd $BASE_WORKSPACE
@@ -124,3 +126,4 @@ pushd $BASE_WORKSPACE
   fi
 popd
 
+echo_green -e "\nBUILD SUCCEEDED!\n"
