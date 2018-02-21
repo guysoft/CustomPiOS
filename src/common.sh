@@ -21,12 +21,16 @@ function pause() {
   read -p "$*"
 }
 
-function echo_red(){
-  echo -e "\e[91m$1\e[0m"
+function echo_red() {
+  echo -e -n "\e[91m"
+  echo $@
+  echo -e -n "\e[0m"
 }
 
-function echo_green(){
-  echo -e "\e[92m$1\e[0m"
+function echo_green() {
+  echo -e -n "\e[92m"
+  echo $@
+  echo -e -n "\e[0m"
 }
 
 function gitclone(){
