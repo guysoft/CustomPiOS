@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Network
 # Adds to /boot configuration files that let you set up wifi network before booting
-# Written by Guy Sheffer <guysoft at gmail dot com> and Gina Häußge <osd@foosel.net>
+# Written by Guy Sheffer <guysoft at gmail dot com> and Gina Häußge <gina@octoprint.org>
 # GPL V3
 ########
 set -x
@@ -13,45 +13,19 @@ source /common.sh
 install_cleanup_trap
 
 # Fix filesystem paths
-sed -i "s@DIST_NAME_PLACEHOLDER@${DIST_NAME,,}@g" /filesystem/boot/custompios-network.txt
 sed -i "s@DIST_NAME_PLACEHOLDER@${DIST_NAME,,}@g" /filesystem/home/root/bin/check_wpa_link
-sed -i "s@DIST_NAME_PLACEHOLDER@${DIST_NAME,,}@g" /filesystem/home/root/bin/map_iface
 
 unpack /filesystem/home/root /root root
 unpack /filesystem/boot /boot
 unpack /filesystem/root /
 
-export DIST_NETWORK_FILE=/boot/${DIST_NAME,,}-network.txt
+DIST_NETWORK_FILE=/boot/${DIST_NAME,,}-wpa-supplicant.txt
 
-
-mv /boot/custompios-network.txt ${DIST_NETWORK_FILE}
-sed -i "s@iface wlan0 @iface wlan0-raspbian @g" /etc/network/interfaces
-sed -i "s@iface wlan1 @iface wlan1-raspbian @g" /etc/network/interfaces
-echo "mapping wlan0" >> /etc/network/interfaces
-echo "  script /root/bin/map_iface" >> /etc/network/interfaces
-echo "mapping wlan1" >> /etc/network/interfaces
-echo "  script /root/bin/map_iface" >> /etc/network/interfaces
-echo "source ${DIST_NETWORK_FILE}" >> /etc/network/interfaces
-
-# allow configuring multiple wifi networks via /boot/${DIST_NAME,,}-wpa-supplicant.txt
-mv /etc/wpa_supplicant/wpa_supplicant.conf /boot/${DIST_NAME,,}-wpa-supplicant.txt
-ln -s /boot/${DIST_NAME,,}-wpa-supplicant.txt /etc/wpa_supplicant/wpa_supplicant.conf
-cat <<EOT >> /etc/wpa_supplicant/wpa_supplicant.conf
-
-# This is only used to configure multiple wifi networks or other advanced wifi features.
-# take a look into ${DIST_NAME,,}-network.txt instead if you only need basic wifi configuration
-# 'man -s 5 wpa_supplicant.conf' for advanced options
-#network={
-#  ssid="Your Wifi SSID"
-#  psk="supersecretwifipassword"
-#}
-
-## You can configure more than 1 wifi networks by adding more 'network' blocks
-#network={
-#  ssid="Another Wifi"
-#  psk="password"
-#}
-EOT
+# allow configuring multiple wifi networks via /boot/DIST_NAME-wpa-supplicant.txt
+mv /boot/custompios-wpa-supplicant.txt ${DIST_NETWORK_FILE}
+cat /etc/wpa_supplicant/wpa_supplicant.conf >> ${DIST_NETWORK_FILE}  # append distributed conf to our own
+rm -f /etc/wpa_supplicant/wpa_supplicant.conf                        # remove distributed conf
+ln -s ${DIST_NETWORK_FILE} /etc/wpa_supplicant/wpa_supplicant.conf   # create symlink
 
 # copy /etc/wpa_supplicant/ifupdown.sh to /etc/ifplugd/action.d/ifupdown - for wlan auto reconnect
 [ -f /etc/ifplugd/action.d/ifupdown ] && mv /etc/ifplugd/action.d/ifupdown /etc/ifplugd/action.d/ifupdown.original
