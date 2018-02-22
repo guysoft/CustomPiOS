@@ -8,3 +8,8 @@ error /404  Not Found/
 error /Failed to fetch/
 error /Traceback/
 error /error: Your local changes to the following files would be overwritten by merge/
+error /\/bin\/cp: cannot stat \'\/filesystem\/.*\/.\': No such file or directory/
+error /E: Package/
+error /ERROR 404: Not Found/
+error /] Error 2/
+error /] Error 1/
