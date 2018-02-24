@@ -6,4 +6,4 @@
 ########
 set -ex 
 
-rm -r /usr/sbin/policy-rc.d 
+rm -r /usr/sbin/policy-rc.d || true
