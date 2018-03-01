@@ -12,9 +12,7 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
-unpack /filesystem/home/root /root root
 unpack /filesystem/boot /boot
-unpack /filesystem/root /
 
 DIST_NETWORK_FILE=/boot/${DIST_NAME,,}-wpa-supplicant.txt
 
