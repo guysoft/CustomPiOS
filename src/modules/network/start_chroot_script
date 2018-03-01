@@ -12,9 +12,6 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
-# Fix filesystem paths
-sed -i "s@DIST_NAME_PLACEHOLDER@${DIST_NAME,,}@g" /filesystem/home/root/bin/check_wpa_link
-
 unpack /filesystem/home/root /root root
 unpack /filesystem/boot /boot
 unpack /filesystem/root /
