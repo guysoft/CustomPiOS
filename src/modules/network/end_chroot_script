@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-set -x
-set -e
-
-source /common.sh
-
-unpack /filesystem/root / 
