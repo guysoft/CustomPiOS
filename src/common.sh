@@ -190,7 +190,7 @@ function cleanup() {
 function install_fail_on_error_trap() {
   # unmounts image, logs PRINT FAILED to log & console on error
   set -e
-  trap 'echo "build failed, unmounting image..." && cd $DIST_PATH && ( unmount_image $BASE_MOUNT_PATH force || true ) && echo_red -e "\nBUILD FAILED!\n"' ERR
+  trap 'echo_red "build failed, unmounting image..." && cd $DIST_PATH && ( unmount_image $BASE_MOUNT_PATH force || true ) && echo_red -e "\nBUILD FAILED!\n"' ERR
 }
 
 function install_chroot_fail_on_error_trap() {
