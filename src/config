@@ -61,12 +61,8 @@ do
     echo "Using the following config:"
     module_up=${module^^} module_up=${module_up//-/_}_
     
-    vars=`compgen -A variable | grep "^${module_up}"` || true
-    for var in $vars
-        do
-                echo "$var = ${!var}"
-                eval export $var
-        done
+    # Export variables that satisfy the $module_up prefix
+    while IFS= read -r var; do export "$var"; done < <(compgen -A variable "$module_up")
 
     echo "================================================================"
 done
