@@ -59,7 +59,7 @@ do
 
     echo "================================================================"
     echo "Using the following config:"
-    module_up=$(echo $module | awk '{print toupper($0)}')_
+    module_up=${module^^} module_up=${module_up//-/_}_
     
     vars=`compgen -A variable | grep "^${module_up}"` || true
     for var in $vars
