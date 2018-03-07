@@ -41,7 +41,7 @@ then
   ### Fix SSH incoming
   echo "IPQoS 0x00" >> /etc/ssh/sshd_config
 
-  ### Fix SSH outcoing
+  ### Fix SSH outgoing
   echo "IPQoS 0x00" >> /etc/ssh/ssh_config
 fi
 
