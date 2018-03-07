@@ -38,6 +38,11 @@ fi
 if [ "$BASE_SSH_ENABLE" == "yes" ]
 then
   touch /boot/ssh
+  ### Fix SSH incoming
+  echo "IPQoS 0x00" >> /etc/ssh/sshd_config
+
+  ### Fix SSH outcoing
+  echo "IPQoS 0x00" >> /etc/ssh/ssh_config
 fi
 
 # Store version buildbase
