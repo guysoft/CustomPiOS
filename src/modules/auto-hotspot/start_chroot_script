@@ -41,8 +41,6 @@ sed -i "s@^DAEMON_OPTS=\"\"@^#DAEMON_OPTS=\"\"@g" /etc/default/hostapd
 
 echo "
 # Auto-hotspot Config
-# stop DNSmasq from using resolv.conf
-no-resolv
 # Interface to use
 interface=wlan0
 bind-interfaces
