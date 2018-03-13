@@ -24,6 +24,7 @@ if [ ! -f "${BASE_IMG_PATH}" ]; then
     pushd "${BASE_MOUNT_PATH}"
         sudo bash -c "$(declare -f fixLd); fixLd"
         sudo sed -e '/PARTUUID/ s/^#*/#/' -i etc/fstab
+	sudo bash -c 'echo "/dev/sda1 /boot vfat    defaults          0       2" >> etc/fstab'
     popd
     sudo bash -c "$(declare -f unmount_image); unmount_image $BASE_MOUNT_PATH force"
 fi
