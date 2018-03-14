@@ -18,46 +18,7 @@ pushd $CUSTOM_OS_PATH
   export OCTOPI_COMMIT=`git rev-parse HEAD`
 popd
 
-BUILD_VARIANT=default
-BUILD_FLAVOR=default
-WORKSPACE_POSTFIX=
-
-if [ "$#" -gt 0 ]; then
-  BUILD_VARIANT=$1
-fi
-if [ "$#" -gt 1 ]; then
-  BUILD_FLAVOR=$2
-fi
-
-if [ $BUILD_VARIANT != 'default' ]; then
-  WORKSPACE_POSTFIX=-$BUILD_VARIANT
-  
-  if [ -d "${DIST_PATH}/variants/$BUILD_VARIANT" ]; then
-    export VARIANT_BASE="${DIST_PATH}/variants/$BUILD_VARIANT"
-  elif [ -d "${CUSTOM_OS_PATH}/variants/$BUILD_VARIANT" ]; then
-    export VARIANT_BASE="$CUSTOM_OS_PATH/variants/$BUILD_VARIANT"
-  else
-    die "Could not find Variant $BUILD_VARIANT"
-  fi
-
-  if [ $BUILD_FLAVOR == '' ] || [ $BUILD_FLAVOR == 'default' ]
-  then
-    VARIANT_CONFIG=$VARIANT_BASE/config
-    FLAVOR_CONFIG=
-  else
-    VARIANT_CONFIG=$VARIANT_BASE/config
-    FLAVOR_CONFIG=$VARIANT_BASE/config.$BUILD_FLAVOR
-  fi
-
-  if [ -n "$FLAVOR_CONFIG" ] && [ ! -f $FLAVOR_CONFIG ]
-  then
-    die "Could not find config file $FLAVOR_CONFIG"
-  fi
-fi
-
-echo -e "--> Building VARIANT $BUILD_VARIANT, FLAVOR $BUILD_FLAVOR"
-
-source ${CUSTOM_PI_OS_PATH}/config
+source ${CUSTOM_PI_OS_PATH}/config ${@}
 ${CUSTOM_PI_OS_PATH}/config_sanity
 
 [ "$CONFIG_ONLY" == "yes" ] || source ${CUSTOM_OS_PATH}/custompios

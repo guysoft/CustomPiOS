@@ -5,10 +5,15 @@ else
     pushd workspace-$1
 fi
 
-source "${DIST_PATH}/config"
+# source "${DIST_PATH}/config"
+source "${CUSTOM_PI_OS_PATH}/config"
 
 FILENAME=$(basename `ls . |  grep -e .img$ -e .raw$ | tail -n 1`)
-OCTOPI_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/raspbian/${DIST_NAME,,}/").img
+if [ -z "$1" ];then
+    OCTOPI_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/raspbian/${DIST_NAME,,}/").img
+else
+    OCTOPI_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/raspbian/${DIST_NAME,,}-$1/").img
+fi
 mv ${FILENAME} $OCTOPI_FILENAME
 zip ${OCTOPI_FILENAME::-4}.zip $OCTOPI_FILENAME
 
