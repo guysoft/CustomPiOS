@@ -13,3 +13,6 @@ error /E: Package/
 error /ERROR 404: Not Found/
 error /] Error 2/
 error /] Error 1/
+error/VM must be running to open SSH connection/
+error /^BUILD FAILED!/
+
