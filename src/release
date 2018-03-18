@@ -5,6 +5,11 @@ else
     pushd workspace-$1
 fi
 
+if [ -z "${CUSTOM_PI_OS_PATH}" ];then
+    echo "Error: you must have \${CUSTOM_PI_OS_PATH} set"
+    exit 1
+fi
+
 # source "${DIST_PATH}/config"
 source "${CUSTOM_PI_OS_PATH}/config"
 
