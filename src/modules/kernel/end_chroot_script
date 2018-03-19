@@ -67,7 +67,7 @@ pushd /home/pi
     
     if [ "$KERNEL_SOURCE_CLEANUP" == "yes" ]; then
         rm -rf linux
-	rm "${KERNEL_COMMIT}.zip"
+	rm "${KERNEL_COMMIT}.tar.gz"
     fi
     
     echo "$KERNEL_COMMIT" > /etc/kernel_commit
