@@ -14,8 +14,6 @@ apt-get update
 apt-get -y purge dns-root-data
 apt-get -y install iw
 
-echo exit 101 > /usr/sbin/policy-rc.d
-chmod +x /usr/sbin/policy-rc.d
 apt-get purge dns-root-data
 apt-get install -y hostapd dnsmasq
 
