@@ -41,4 +41,5 @@
 # Enable ssh daemon
 [ -n "$BASE_SSH_ENABLE" ] || BASE_SSH_ENABLE=yes
 
-
+#Store the commit used for CustomPiOS
+[ -n "$BASE_COMMIT" ] || BASE_COMMIT=`pushd "${CUSTOM_PI_OS_PATH}" > /dev/null ; git rev-parse HEAD ; popd > /dev/null`
