@@ -2,7 +2,7 @@
 # All our config settings must start with BASE_
 
 # CustomPiOS version
-BASE_VERSION=1.0
+BASE_VERSION=1.0.0
 
 [ -n "$BASE_PRESCRIPT" ] || BASE_PRESCRIPT=
 [ -n "$BASE_POSTSCRIPT" ] || BASE_POSTSCRIPT=
