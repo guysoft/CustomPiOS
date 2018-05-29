@@ -10,6 +10,12 @@ export LC_ALL=C
 source ${CUSTOM_PI_OS_PATH}/common.sh
 
 function execute_chroot_script() {
+
+  # In docker, these extra commands are required to enable this black-magic
+  if [ -f /.dockerenv ]; then
+    update-binfmts --enable qemu-arm
+    mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc || true
+  fi
   #move OctoPi filesystem files
   cp -vr --preserve=mode,timestamps $1/filesystem . || true
 
