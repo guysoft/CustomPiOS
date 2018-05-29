@@ -1,0 +1,4 @@
+
+# Build the docker images that are used to build the CustomPiOS images
+
+docker build --no-cache=true --force-rm=true --tag=custom_pios -f docker/Dockerfile docker
