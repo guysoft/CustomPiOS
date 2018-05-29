@@ -1,14 +1,14 @@
-Custom Pi OS with Docker
+CustomPiOS with Docker
 ========================
 
-Building a custom pi os within a docker environement will mean fewer changes to your host OS.
+Building a CustomPiOS within a docker environement will mean fewer changes to your host OS.
 
 Creating the Docker image
 -------------------------
-Before building with Docker, you must build the custom_pios image.
+Before building with Docker, you must build the CustomPiOS image.
 
 ```
-cd <custom pios folder>/src
+cd <CustomPiOS folder>/src
 ./build_docker
 ```
 
@@ -18,4 +18,4 @@ is a good way to determine if it's configured for your use.
 
 Building
 --------
-After you have the custom_pios image, you can execute run_docker_build.sh to build a custom pi os.
+After you have the CustomPiOS image, you can execute run_docker_build.sh to build a CustomPiOS.
