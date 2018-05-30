@@ -4,6 +4,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 DIST_PATH=${DIR}
 CUSTOM_PI_OS_PATH=$(<${DIR}/custompios_path)
 
+# if there are no loop devices, then let's make sure we have loop modprobed
+if [ ! -f /dev/loop0 ]; then
+    echo "We need loop to mount the images. 'Running modprobe loop'"
+    sudo modprobe loop
+fi
+
 # make all the loop devices available in the container.
 DEVICE_FLAGS=$(for loop in /dev/loop*; do echo -n "--device $loop "; done)
 
