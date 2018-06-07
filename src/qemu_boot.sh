@@ -29,15 +29,23 @@ if [ ! -f "${BASE_IMG_PATH}" ]; then
     sudo bash -c "$(declare -f unmount_image); unmount_image $BASE_MOUNT_PATH force"
 fi
 
-KERNEL_VERSION=kernel-qemu-4.4.34-jessie
+KERNEL_VERSION=kernel-qemu-4.9.59-stretch
+DTB_VERSION=versatile-pb.dtb
 KERNEL_PATH=${DEST}/${KERNEL_VERSION}
 
+DTB_PATH=${DEST}/${DTB_VERSION}
+
 if [ ! -f "${KERNEL_PATH}" ] ; then
-    wget https://github.com/dhruvvyas90/qemu-rpi-kernel/raw/master/${KERNEL_VERSION} -O "${DEST}/${KERNEL_VERSION}"
+    wget https://github.com/dhruvvyas90/qemu-rpi-kernel/raw/master/${KERNEL_VERSION} -O "${KERNEL_PATH}"
+fi
+
+if [ ! -f "${DTB_PATH}" ] ; then
+    wget https://github.com/dhruvvyas90/qemu-rpi-kernel/raw/master/${DTB_VERSION} -O "${DTB_PATH}"
 fi
 
 
-/usr/bin/qemu-system-arm -kernel ${KERNEL_PATH} -cpu arm1176 -m 256 -M versatilepb -no-reboot -serial stdio -append 'root=/dev/sda2 panic=1 rootfstype=ext4 rw' -hda ${BASE_IMG_PATH} -net nic -net user,hostfwd=tcp::5022-:22
+
+/usr/bin/qemu-system-arm -kernel ${KERNEL_PATH} -cpu arm1176 -m 256 -M versatilepb -dtb ${DTB_PATH}  -no-reboot -serial stdio -append 'root=/dev/sda2 panic=1 rootfstype=ext4 rw' -hda ${BASE_IMG_PATH} -net nic -net user,hostfwd=tcp::5022-:22
 
 
 #sudo umount ${BASE_MOUNT_PATH}
