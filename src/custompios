@@ -16,8 +16,10 @@ function execute_chroot_script() {
     update-binfmts --enable qemu-arm
     mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc || true
   fi
-  #move OctoPi filesystem files
-  cp -vr --preserve=mode,timestamps $1/filesystem . || true
+  #move filesystem files
+  if [ -d "$1/filesystem" ]; then
+    cp -vr --preserve=mode,timestamps "$1/filesystem" .
+  fi
 
   #black magic of qemu-arm-static
   cp `which qemu-arm-static` usr/bin
@@ -29,13 +31,31 @@ function execute_chroot_script() {
   
   chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
   
+  # Handle exported items
+  if [ -d "custompios_export" ]; then
+    echo "Exporting files from chroot"
+    echo "List of archies to create:"
+    ls custompios_export
+    # Tar files listed in export
+    for export_list in custompios_export/* ; do
+      tar --absolute-names -czvf "${BASE_WORKSPACE}/$(basename ${export_list}).tar.gz" -T ${export_list}
+    done
+    
+    rm -rf custompios_export
+  fi
+  
   #cleanup
   rm chroot_script
-  rm -rfv filesystem || true
+  if [ -d "filesystem" ]; then
+    rm -rfv "filesystem"
+  fi
 }
 
 mkdir -p $BASE_WORKSPACE
 mkdir -p $BASE_MOUNT_PATH
+
+# Clean exported artifacts from other builds
+rm -rf "${BASE_WORKSPACE}"/*.tar.gz
 
 install_cleanup_trap
 install_fail_on_error_trap
