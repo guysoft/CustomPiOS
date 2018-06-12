@@ -137,6 +137,7 @@ List of Distributions using CustomPiOS
 * `AlarmPi <https://github.com/guysoft/AlarmPi>`_  - A Raspberry Pi distribution that turns a raspberrypi to an IOT telegram-controlled alarm clock
 * `RealtimePi <https://github.com/guysoft/RealtimePi>`_  - An out-of-the-box raspebrrypi/raspbian distro with a realtime kernel
 * `RMS Pi <https://github.com/toddejohnson/rmspi>`_  - Raspberry Pi Distro for Winlink RMS
+* `V1PI <https://github.com/jeffeb3/v1pi>`_  - Use your raspberry pi to control your V1Engineering machine
 
 
 Code contribution would be appreciated!
