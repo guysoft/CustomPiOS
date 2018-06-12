@@ -62,7 +62,8 @@ This is where the stuff you want to execute inside the distro is written.
 
 In ``start_chroot_script`` write the main code, you can use ``end_chroot_script`` to write cleanup functions, that are run at the end of the module namespace.
 
-*Useful commands from common.sh*
+Useful commands from common.sh
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CustomPiOS comes with a script ``common.sh`` that has useful functions you can use inside your chroot_script.
 To use it you can add to your script ``source /common.sh``.
@@ -79,7 +80,8 @@ In ``config``::
 
     [ -n "$OCTOPI_OCTOPRINT_REPO_SHIP" ] || OCTOPI_OCTOPRINT_REPO_SHIP=https://github.com/foosel/OctoPrint.git 
 
-*Export files from image*
+Export files from image
+~~~~~~~~~~~~~~~~~~~~~~~
 
 CustomPiOS has a feature to export files created in the chroot to archives you can ship as a tar.gz arcive.
 
