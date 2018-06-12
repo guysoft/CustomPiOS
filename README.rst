@@ -80,6 +80,7 @@ In ``config``::
     [ -n "$OCTOPI_OCTOPRINT_REPO_SHIP" ] || OCTOPI_OCTOPRINT_REPO_SHIP=https://github.com/foosel/OctoPrint.git 
 
 *Export files from image*
+
 CustomPiOS has a feature to export files created in the chroot to archives you can ship as a tar.gz arcive.
 
 To export run inside of a chroot_script:
