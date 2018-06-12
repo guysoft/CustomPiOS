@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 [ -n "$KERNEL_TYPE" ] || KERNEL_TYPE=both
 [ -n "$KERNEL_CONFIG_APPEND" ] || KERNEL_CONFIG_APPEND=""
-[ -n "$KERNEL_COMMIT" ] || KERNEL_COMMIT=rpi-4.9.y
+[ -n "$KERNEL_COMMIT" ] || KERNEL_COMMIT=rpi-4.14.y
 [ -n "$KERNEL_URL" ] || KERNEL_URL="https://github.com/raspberrypi/linux/archive"
 [ -n "$KERNEL_SOURCE_CLEANUP" ] || KERNEL_SOURCE_CLEANUP="no"
-
+[ -n "$KERNEL_EXPORT" ] || KERNEL_EXPORT="yes"
+[ -n "$KERNEL_EXPORT_NAME" ] || KERNEL_EXPORT_NAME="kernel-$KERNEL_COMMIT"

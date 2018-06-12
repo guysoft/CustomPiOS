@@ -382,7 +382,7 @@ function systemctl_if_exists() {
 function custompios_export(){
   # Export files in the image to an archive in the workspace folder
   # Usage: custompios_export [archive name] [files]
-  mkdir -p custompios_export
+  mkdir -p /custompios_export
   for i in "${@:2}"; do
         echo "${i#?}" >> /custompios_export/"${1}"
   done
@@ -394,7 +394,7 @@ function copy_and_export(){
   export -f custompios_export
   OUTPUT=$1
   shift
-  cp -v $@ | awk -F  "' -> '"  '{print substr($2, 1, length($2)-1)}' | xargs -d"\n" -t bash -c 'custompios_export '${OUTPUT}' "$@"' _
+  cp -v $@ | awk -F  "' -> '"  '{print substr($2, 1, length($2)-1)}' | xargs -d"\n" -t bash -x -c 'custompios_export '${OUTPUT}' "$@"' _
 }
 
 function copy_and_export_folder(){
@@ -403,6 +403,6 @@ function copy_and_export_folder(){
   export -f custompios_export
   OUTPUT=$1
   shift
-  cp -va $@ | awk -F  "' -> '"  '{print substr($2, 1, length($2)-1)}' | xargs -d"\n" -t bash -c 'custompios_export '${OUTPUT}' "$@"' _
+  cp -va $@ | awk -F  "' -> '"  '{print substr($2, 1, length($2)-1)}' | xargs -d"\n" -t bash -x -c 'custompios_export '${OUTPUT}' "$@"' _
 }
 

@@ -12,6 +12,22 @@ set -e
 source /common.sh
 install_cleanup_trap
 
+function copy_and_save(){
+    if [ "$KERNEL_EXPORT" == "yes" ]; then
+        copy_and_export "${KERNEL_EXPORT_NAME}" $@
+    else
+        cp -v $@
+    fi
+}
+
+function copy_and_save_folder(){
+    if [ "$KERNEL_EXPORT" == "yes" ]; then
+        copy_and_export_folder "${KERNEL_EXPORT_NAME}" $@
+    else
+        cp -va $@
+    fi
+}
+
 
 function build_kernel(){
     KERNEL_SELECT=$1
@@ -28,21 +44,21 @@ function build_kernel(){
             
             mkdir kernel-rt
             INSTALL_MOD_PATH=kernel-rt make modules_install
-            cp -v arch/arm/boot/Image /boot/${KERNEL_SELECT}.img
+            copy_and_save arch/arm/boot/Image /boot/${KERNEL_SELECT}.img
             
             # TODO: figure out which dtbo to move
-            cp -v arch/arm/boot/dts/overlays/*.dtb* /boot/overlays/
-            cp -v arch/arm/boot/dts/overlays/README /boot/overlays/
+            copy_and_save arch/arm/boot/dts/overlays/*.dtb* /boot/overlays/
+            copy_and_save arch/arm/boot/dts/overlays/README /boot/overlays/
             
             pushd arch/arm/boot/dts
                 if [ "$KERNEL" == "kernel7" ]; then
-                    cp bcm2709-rpi-2-b.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb /boot/
+                    copy_and_save bcm2709-rpi-2-b.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb /boot/
                 elif [ "$KERNEL" == "kernel" ]; then
-                    cp bcm2708-rpi-0-w.dtb bcm2708-rpi-b-plus.dtb bcm2708-rpi-b.dtb bcm2708-rpi-cm.dtb /boot/
+                    copy_and_save bcm2708-rpi-0-w.dtb bcm2708-rpi-b-plus.dtb bcm2708-rpi-b.dtb bcm2708-rpi-cm.dtb /boot/
                 fi
             popd
 
-            cp -va kernel-rt/lib /
+            copy_and_save_folder kernel-rt/lib /
             rm -rf kernel-rt
         popd
     popd
