@@ -131,13 +131,14 @@ Usage
 List of Distributions using CustomPiOS
 --------------------------------------
 
-* `OctoPi <https://octopi.octoprint.org/>`_  - The ready-to-go Raspberry Pi image with OctoPrint
-* `FullPageOS <https://github.com/guysoft/FullPageOS>`_  - A raspberrypi distro to display a full page browser on boot
-* `ElectricSheepPi <https://github.com/guysoft/ElectricSheepPi>`_  - A Raspberry Pi distribution to run Electric Sheep digital art
-* `AlarmPi <https://github.com/guysoft/AlarmPi>`_  - A Raspberry Pi distribution that turns a raspberrypi to an IOT telegram-controlled alarm clock
-* `RealtimePi <https://github.com/guysoft/RealtimePi>`_  - An out-of-the-box raspebrrypi/raspbian distro with a realtime kernel
-* `RMS Pi <https://github.com/toddejohnson/rmspi>`_  - Raspberry Pi Distro for Winlink RMS
-* `V1PI <https://github.com/jeffeb3/v1pi>`_  - Use your raspberry pi to control your V1Engineering machine
+* `OctoPi <https://octopi.octoprint.org/>`_ - The ready-to-go Raspberry Pi image with OctoPrint
+* `FullPageOS <https://github.com/guysoft/FullPageOS>`_ - A raspberrypi distro to display a full page browser on boot
+* `ElectricSheepPi <https://github.com/guysoft/ElectricSheepPi>`_ - A Raspberry Pi distribution to run Electric Sheep digital art
+* `AlarmPi <https://github.com/guysoft/AlarmPi>`_ - A Raspberry Pi distribution that turns a raspberrypi to an IOT telegram-controlled alarm clock
+* `RealtimePi <https://github.com/guysoft/RealtimePi>`_ - An out-of-the-box raspebrrypi/raspbian distro with a realtime kernel
+* `RMS Pi <https://github.com/toddejohnson/rmspi>`_ - Raspberry Pi Distro for Winlink RMS
+* `V1PI <https://github.com/jeffeb3/v1pi>`_ - Use your raspberry pi to control your V1Engineering machine
+* `HotSpotOS <https://github.com/guysoft/HostSpotOS>`_ - Makes a Raspberrypi start a hotspot, if no wifi was found to conenct to
 
 
 Code contribution would be appreciated!
