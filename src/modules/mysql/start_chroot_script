@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# mysql
+# Provides mysql database via mariadb
+# Written by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+########
+set -x
+set -e
+
+source /common.sh
+install_cleanup_trap
+
+apt-get update
+apt-get install -y mariadb-server expect
+
+mysqld_safe &
+
+echo "waiting for sql server to go online"
+sleep 10
+
+mysql --user=root -e "CREATE USER '"${MYSQL_USER}"'@'localhost' IDENTIFIED BY '${MYSQL_USER_PASSWORD}';"
+mysql --user=root -e "GRANT ALL PRIVILEGES ON  *.* to 'pi'@'localhost' WITH GRANT OPTION;"
+
+# Debug
+# mysql --user=root -e "select user, host, password, plugin, authentication_string from mysql.user;"
+# mysql --user=root -e "show grants for '"${MYSQL_USER}"'@'localhost';"
+
+mysqladmin shutdown
+
+# Example to create a new DB
+# mysqld_safe &
+# echo "waiting for sql server to go online"
+# sleep 10
+# su pi -c 'mysql --user=pi --password=raspberry -e "CREATE DATABASE dbname;"'
+# mysqladmin shutdown
+
+echo "Done installing mysql"
+
+

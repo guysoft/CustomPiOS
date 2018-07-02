@@ -1,0 +1,7 @@
+###############################################################################
+
+# Mysql user (not root, because root is only accessible from command-line)
+[ -n "$MYSQL_USER" ] || MYSQL_USER=pi
+
+# Mysql user password
+[ -n "$MYSQL_USER_PASSWORD" ] || MYSQL_USER_PASSWORD=raspberry
