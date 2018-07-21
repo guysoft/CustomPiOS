@@ -174,7 +174,7 @@ function unmount_image() {
   #
   # so we split on "on" first, then do a whitespace split to get the actual mounted directory.
   # Also we sort in reverse to get the deepest mounts first.
-  for m in $(sudo mount | grep $mount_path | awk -F "on" '{print $2}' | awk '{print $1}' | sort -r)
+  for m in $(sudo mount | grep $mount_path | awk -F " on " '{print $2}' | awk '{print $1}' | sort -r)
   do
     echo "Unmounting $m..."
     sudo umount $m
