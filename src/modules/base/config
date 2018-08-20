@@ -46,3 +46,15 @@ BASE_VERSION=1.1.0
 
 #Store the commit used for CustomPiOS
 [ -n "$BASE_COMMIT" ] || BASE_COMMIT=`pushd "${CUSTOM_PI_OS_PATH}" > /dev/null ; git rev-parse HEAD ; popd > /dev/null`
+
+#Memory split
+[ -n "$BASE_CONFIG_MEMSPLIT" ] || BASE_CONFIG_MEMSPLIT=default
+
+#Timezone
+[ -n "$BASE_CONFIG_TIMEZONE" ] || BASE_CONFIG_TIMEZONE=default
+
+#Locale
+[ -n "$BASE_CONFIG_LOCALE" ] || BASE_CONFIG_LOCALE=default
+
+#Keyboard
+[ -n "$BASE_CONFIG_KEYBOARD" ] || BASE_CONFIG_KEYBOARD=default

@@ -50,3 +50,35 @@ echo "$CUSTOM_PI_OS_BUILDBASE" > /etc/custompios_buildbase
 
 # Store dist version
 echo "$DIST_VERSION" > /etc/${DIST_NAME,,}_version
+
+##########################
+# Raspi-config stuff
+# https://github.com/RPi-Distro/raspi-config/blob/master/raspi-config
+
+# Memory split
+if [ $BASE_CONFIG_MEMSPLIT != 'default' ]
+then
+  echo "Configuring memory"
+  raspi-config nonint do_memory_split $BASE_CONFIG_MEMSPLIT
+fi
+
+# timezone
+if [ $BASE_CONFIG_TIMEZONE != 'default' ]
+then
+  echo "Configuring timezone"
+  raspi-config nonint do_change_timezone $BASE_CONFIG_TIMEZONE
+fi
+
+# locale
+if [ $BASE_CONFIG_LOCALE != 'default' ]
+then
+  echo "Configuring locales"
+  raspi-config nonint do_change_locale $BASE_CONFIG_LOCALE
+fi
+
+# keybaord
+if [ $BASE_CONFIG_KEYBOARD != 'default' ]
+then
+  echo "Configuring keyboard"
+  raspi-config nonint do_configure_keyboard $BASE_CONFIG_KEYBOARD
+fi
