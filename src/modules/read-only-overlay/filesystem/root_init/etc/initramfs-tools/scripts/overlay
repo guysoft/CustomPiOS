@@ -1,0 +1,60 @@
+# Overlay filesystem mounting			-*- shell-script -*-
+# 
+# HOW TO INSTALL
+#
+# 1. put this file at /etc/initramfs-tools/scripts/overlay
+# 2. run following to add overlay module to initramfs
+#     echo "overlay" >> /etc/initramfs-tools/modules
+# 3. create overlay directories
+#     mkdir /overlay /overlay/temp /overlay/base
+# 4. create initramfs
+#     update-initramfs -c -k `uname -r`
+# 5. modify /boot/config.txt
+#     echo "initramfs initrd.img-`uname -r`" >> /boot/config.txt
+# 6. add "boot=overlay" to /boot/cmdline.txt
+# 7. reboot
+
+mountroot()
+{
+	local_top
+	local_device_setup "${ROOT}" root
+
+	# Get the root filesystem type if not set
+	if [ -z "${ROOTFSTYPE}" ]; then
+		FSTYPE=$(get_fstype "${ROOT}")
+	else
+		FSTYPE=${ROOTFSTYPE}
+	fi
+
+	local_premount
+
+	ROOT=$(resolve_device "$ROOT")
+
+	# FIXME This has no error checking
+	modprobe ${FSTYPE}
+	modprobe overlay
+
+	checkfs ${ROOT} root
+
+	mkdir /upper /lower
+	mount -t tmpfs tmpfs /upper
+	mkdir /upper/data /upper/work
+
+	if [ "${FSTYPE}" != "unknown" ]; then
+		mount -r -t ${FSTYPE} ${ROOTFLAGS} ${ROOT} /lower
+	else
+		mount -r ${ROOTFLAGS} ${ROOT} /lower
+	fi
+
+	mount -t overlay -olowerdir=/lower,upperdir=/upper/data,workdir=/upper/work overlay ${rootmnt}
+}
+
+mount_bottom()
+{
+	if [ -d ${rootmnt}/overlay/temp ]; then
+		mount -n -o move /upper ${rootmnt}/overlay/temp
+	fi
+	if [ -d ${rootmnt}/overlay/base ]; then
+		mount -n -o move /lower ${rootmnt}/overlay/base
+	fi
+}

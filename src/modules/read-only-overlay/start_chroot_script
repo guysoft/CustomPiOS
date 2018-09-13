@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -x
+set -e
+# CustomPiOS read-only-overlay module
+# Script makes Raspberry PI read only filesystem with writable overlay
+# Based on https://gist.github.com/dzindra/a8e2083a7f037ca244cf70d100c96656
+# via https://github.com/guysoft/FullPageOS/issues/243#issuecomment-420789110
+# Written by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+########
+
+source /common.sh
+
+unpack /filesystem/root_init /
+
+echo "overlay" >> /etc/initramfs-tools/modules
+mkdir /overlay /overlay/temp /overlay/base
+update-initramfs -c -k `uname -r`
+echo "initramfs initrd.img-`uname -r`" >> /boot/config.txt
+echo "boot=overlay dwc_otg.fiq_enable=0 dwc_otg.fiq_fsm_enable=0 `cat /boot/cmdline.txt`" > /boot/cmdline.txt
+
