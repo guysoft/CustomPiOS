@@ -19,7 +19,7 @@ wifidev="wlan0" #device name to use. Default is wlan0.
 IFSdef=$IFS
 cnt=0
 #These four lines capture the wifi networks the RPi is setup to use
-wpassid=$(awk '/ssid="/{ print $0 }' /etc/wpa_supplicant/wpa_supplicant.conf | awk -F'ssid=' '{ print $2 }' ORS=',' | sed 's/\"/''/g' | sed 's/,$//')
+wpassid=$(awk '/ssid="/{ print $0 }' /etc/wpa_supplicant/wpa_supplicant.conf | awk -F'ssid=' '{ print $2 }' ORS=',' | sed 's/\"/''/g' | sed 's/,$//' | sed 's/\n//g' | sed 's/\r//g')
 IFS=","
 ssids=($wpassid)
 IFS=$IFSdef #reset back to defaults
