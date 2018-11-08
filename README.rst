@@ -8,7 +8,7 @@ This repository contains the source script to generate a distribution out of an 
 Where to get it?
 ----------------
 
-Clone this repo for now, we are still new. Then follow instructions.
+[Clone this repo](https://github.com/guysoft/CustomPiOS), we are still new. Then follow instructions either to build an existing distro or create your own.
 
 
 
