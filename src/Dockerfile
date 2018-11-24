@@ -1,7 +1,6 @@
-
 FROM debian:stretch
 
-MAINTAINER jeffeb3
+MAINTAINER Guy Sheffer <guysoft at gmail dot com>
 
 RUN set -x \
     && apt-get update && apt-get install -y \
@@ -16,6 +15,10 @@ RUN set -x \
         qemu \
         qemu-user-static \
         sudo \
+        zip \
+        lsof \
     && rm -rf /var/lib/apt/lists/*
+
+COPY . /CustomPiOS
 
 CMD ["/bin/bash"]
