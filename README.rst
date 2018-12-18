@@ -48,7 +48,7 @@ Requirements
 Known to work building configurations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1. Linux (Ubuntu / Debian etc)
-2. OS X -  `See this tread for information <https://github.com/guysoft/OctoPi/issues/388#issuecomment-316327106>`_
+2. OS X -  `See this thread for information <https://github.com/guysoft/OctoPi/issues/388#issuecomment-316327106>`_
 
 
 Modules 
