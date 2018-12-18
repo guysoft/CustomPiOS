@@ -19,12 +19,12 @@ How to use it?
 #. Run ``src/make_custom_pi_os -g <distro folder>`` in the repo, distro folder should not exist and contain no spaces. This will both create a folder to build a new distro from, and also download the latest raspbian lite image. The initial distro has a module that has the name of your distro, and you can find it under ``<distro folder>/src/modules/<distro name>`` (there should be only one module in the modules folder).
 #. cd to ``<distro folder>/src``
 #. Edit your ``<distro folder>/src/config``, you can also edit the starting module, which is named as your distro at ``modules/<dstro name>``. More on that in the Developing section.
-#. Run ``<distro folder>/src/build_dist`` to build an image. If this failes use the method discribed in the vagrant build the section (which makes sure sfdisk and other things work right).
+#. Run ``<distro folder>/src/build_dist`` to build an image. If this fails use the method described in the vagrant build section (which makes sure sfdisk and other things work right).
 
 Features
 --------
 
-* Modules - write one module and use if for multiple distros
+* Modules - write one module and use it for multiple distros
 * Write only the code you need for your distro - no need to maintain complicated stuff like building kernels unless its actually want to do it
 * Standard modules give extra functionality out of the box
 * Supports over 40 embedded devices using `Armbian <http://armbian.com/>`_ and Raspbian.
@@ -127,7 +127,7 @@ Building Using Vagrant
 Usage
 ~~~~~
 
-#. If needed, override existing config settings by creating a new file ``src/config.local``. You can override all settings found in ``src/config``. If you need to override the path to the Raspbian image to use for building yoru dstro, override the path to be used in ``BASE_ZIP_IMG``, which is part of the base module. By default the most recent file matching ``*-raspbian.zip`` found in ``src/image`` will be used.
+#. If needed, override existing config settings by creating a new file ``src/config.local``. You can override all settings found in ``src/config``. If you need to override the path to the Raspbian image to use for building your distro, override the path to be used in ``BASE_ZIP_IMG``, which is part of the base module. By default the most recent file matching ``*-raspbian.zip`` found in ``src/image`` will be used.
 #. Run ``src/build`` as root.
 #. The final image will be created at the ``src/workspace``
 
