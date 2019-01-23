@@ -22,7 +22,7 @@ pushd /usr/src
     
     git clone https://github.com/FFmpeg/FFmpeg.git
     pushd FFmpeg
-        ./configure --arch=armel --target-os=linux --enable-gpl --enable-libx264 --enable-nonfree
+        ./configure --arch=armel --target-os=linux --enable-gpl --enable-libx264 --enable-nonfree  --enable-mmal --enable-omx --enable-omx-rpi
         make -j 2
         checkinstall -y --fstrans=no
     popd
