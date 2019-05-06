@@ -51,6 +51,7 @@ function gitclone(){
   repo_ship_var=$1_SHIP
   repo_branch_var=$1_BRANCH
   repo_depth_var=$1_DEPTH
+  repo_recursive_var=$1_RECURSIVE
   
   repo_dir=$2
   if [ ! -n "$repo_dir" ]
@@ -79,6 +80,13 @@ function gitclone(){
   fi
 
   clone_params=
+  
+  repo_recursive=${!repo_depth_var}
+  if [ -n "$repo_recursive" ]
+  then
+    clone_params="--recursive"
+  fi
+  
   if [ -n "$branch" ]
   then
     clone_params="-b $branch"
