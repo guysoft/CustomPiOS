@@ -130,6 +130,14 @@ function unpack() {
   fi
 }
 
+function detach_all_loopback(){
+  # Cleans up mounted loopback devices from the image name
+  # NOTE: it might need a better way to grep for the image name, its might clash with other builds
+  for img in $(losetup  | grep $1 | awk '{ print $1 }' );  do
+    losetup -d $img
+  done
+}
+
 function mount_image() {
   image_path=$1
   root_partition=$2
@@ -145,6 +153,8 @@ function mount_image() {
   echo "Mounting image $image_path on $mount_path, offset for boot partition is $boot_offset, offset for root partition is $root_offset"
 
   # mount root and boot partition
+  
+  detach_all_loopback $image_path
   sudo mount -o loop,offset=$root_offset $image_path $mount_path/
   if [[ "$boot_partition" != "$root_partition" ]]; then
 	  sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) $image_path $mount_path/boot
@@ -237,7 +247,7 @@ $start
 p
 w
 FDISK
-
+  detach_all_loopback $image
   LODEV=$(losetup -f --show -o $offset $image)
   trap 'losetup -d $LODEV' EXIT
 
