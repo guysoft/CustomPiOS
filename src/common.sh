@@ -155,8 +155,10 @@ function mount_image() {
   # mount root and boot partition
   
   detach_all_loopback $image_path
+  sudo losetup -f
   sudo mount -o loop,offset=$root_offset $image_path $mount_path/
   if [[ "$boot_partition" != "$root_partition" ]]; then
+	  sudo losetup -f
 	  sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) $image_path $mount_path/boot
   fi
   sudo mkdir -p $mount_path/dev/pts
