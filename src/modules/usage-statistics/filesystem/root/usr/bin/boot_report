@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+until $(curl --output /dev/null --silent --head --fail USAGE_STATISTICS_URL/boot?id=`cat /proc/cpuinfo | grep -i '^Serial' | awk '{    print $3 }' | sha1sum | awk '{    print $1 }' `'&version='`cat USAGE_STATISTICS_VERSION_FILE | head -n 1` ); do
+    echo "$(date):  try to connect and report boot"
+    sleep 5
+done

@@ -1,0 +1,9 @@
+[Unit]
+Description=Send anonymous statistics of a distro
+After=multi-user.target
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/boot_report
+[Install]
+WantedBy=multi-user.target

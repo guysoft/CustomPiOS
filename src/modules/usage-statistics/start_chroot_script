@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -x
+set -e
+# CustomPiOS usage-statistics module
+# Send anonymous statistics of a distro
+# Written by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+########
+
+source /common.sh
+
+apt-get update
+apt-get -y install curl
+
+unpack /filesystem/root /
+
+# Set hotspot name and password
+sed -i s"@USAGE_STATISTICS_URL@$USAGE_STATISTICS_URL@g" /usr/bin/boot_report
+sed -i s"@USAGE_STATISTICS_VERSION_FILE@$USAGE_STATISTICS_VERSION_FILE@g" /usr/bin/boot_report
+
+systemctl enable usage-statistics.service
+
