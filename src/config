@@ -11,32 +11,6 @@ if [ "$#" -gt 1 ]; then
   BUILD_FLAVOR=$2
 fi
 
-if [ $BUILD_VARIANT != 'default' ]; then
-  WORKSPACE_POSTFIX=-$BUILD_VARIANT
-  
-  if [ -d "${DIST_PATH}/variants/$BUILD_VARIANT" ]; then
-    export VARIANT_BASE="${DIST_PATH}/variants/$BUILD_VARIANT"
-  elif [ -d "${CUSTOM_OS_PATH}/variants/$BUILD_VARIANT" ]; then
-    export VARIANT_BASE="$CUSTOM_OS_PATH/variants/$BUILD_VARIANT"
-  else
-    die "Could not find Variant $BUILD_VARIANT"
-  fi
-
-  if [ $BUILD_FLAVOR == '' ] || [ $BUILD_FLAVOR == 'default' ]
-  then
-    VARIANT_CONFIG=$VARIANT_BASE/config
-    FLAVOR_CONFIG=
-  else
-    VARIANT_CONFIG=$VARIANT_BASE/config
-    FLAVOR_CONFIG=$VARIANT_BASE/config.$BUILD_FLAVOR
-  fi
-
-  if [ -n "$FLAVOR_CONFIG" ] && [ ! -f $FLAVOR_CONFIG ]
-  then
-    die "Could not find config file $FLAVOR_CONFIG"
-  fi
-fi
-
 echo -e "--> Building VARIANT $BUILD_VARIANT, FLAVOR $BUILD_FLAVOR"
 
 # Import the variant config if we have one
@@ -66,6 +40,33 @@ then
 fi
 
 source ${DIST_PATH}/config
+
+if [ $BUILD_VARIANT != 'default' ]; then
+  WORKSPACE_POSTFIX=-$BUILD_VARIANT
+  
+  if [ -d "${DIST_PATH}/variants/$BUILD_VARIANT" ]; then
+    export VARIANT_BASE="${DIST_PATH}/variants/$BUILD_VARIANT"
+  elif [ -d "${CUSTOM_OS_PATH}/variants/$BUILD_VARIANT" ]; then
+    export VARIANT_BASE="$CUSTOM_OS_PATH/variants/$BUILD_VARIANT"
+  else
+    die "Could not find Variant $BUILD_VARIANT"
+  fi
+
+  if [ $BUILD_FLAVOR == '' ] || [ $BUILD_FLAVOR == 'default' ]
+  then
+    VARIANT_CONFIG=$VARIANT_BASE/config
+    FLAVOR_CONFIG=
+  else
+    VARIANT_CONFIG=$VARIANT_BASE/config
+    FLAVOR_CONFIG=$VARIANT_BASE/config.$BUILD_FLAVOR
+  fi
+
+  if [ -n "$FLAVOR_CONFIG" ] && [ ! -f $FLAVOR_CONFIG ]
+  then
+    die "Could not find config file $FLAVOR_CONFIG"
+  fi
+fi
+
 
 if [ -f ${DIST_PATH}/config.local ]
 then
