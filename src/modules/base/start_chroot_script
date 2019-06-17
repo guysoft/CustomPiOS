@@ -55,6 +55,9 @@ echo "$CUSTOM_PI_OS_BUILDBASE" > /etc/custompios_buildbase
 # Store dist version
 echo "$DIST_VERSION" > /etc/${DIST_NAME,,}_version
 
+# Store dist variant
+echo "$BUILD_VARIANT" > /etc/dist_variant
+
 ##########################
 # Raspi-config stuff
 # https://github.com/RPi-Distro/raspi-config/blob/master/raspi-config

@@ -10,3 +10,6 @@
 
 # The file name that holds teh distro version
 [ -n "$USAGE_STATISTICS_VERSION_FILE" ] || USAGE_STATISTICS_VERSION_FILE=/etc/${DIST_NAME,,}_version
+
+# The file name that holds teh distro version
+[ -n "$USAGE_STATISTICS_VARIANT_FILE" ] || USAGE_STATISTICS_VARIANT_FILE=/etc/dist_variant

@@ -1,11 +1,11 @@
 CONFIG_DIR=$(dirname $(realpath -s $BASH_SOURCE))
 
-BUILD_VARIANT=default
+export BUILD_VARIANT=default
 BUILD_FLAVOR=default
 WORKSPACE_POSTFIX=
 
 if [ "$#" -gt 0 ]; then
-  BUILD_VARIANT=$1
+  export BUILD_VARIANT=$1
 fi
 if [ "$#" -gt 1 ]; then
   BUILD_FLAVOR=$2
