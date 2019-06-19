@@ -15,7 +15,7 @@ install_cleanup_trap
 
 pushd /home/pi
     sudo apt-get update
-    sudo apt-get -y install make gcc git bc p7zip-full
+    sudo apt-get -y install make gcc git bc p7zip-full bison flex
     
     # git clone --depth=1 https://github.com/raspberrypi/linux
     # COMMIT=48564b51ac75d81f3f3b584fab8c3be44c7248a8 # fails on recipe for target 'bcm2709_defconfig' failed
