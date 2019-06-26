@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM debian:buster
 
 MAINTAINER Guy Sheffer <guysoft at gmail dot com>
 
@@ -8,7 +8,6 @@ RUN set -x \
         curl \
         git \
         wget \
-        realpath \
         p7zip-full \
         python3 \
         binfmt-support \
