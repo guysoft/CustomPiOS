@@ -278,7 +278,8 @@ function shrink_ext() {
   echo "Resizing file system to $size MB..."
   start=$(sfdisk -d $image | grep "$image$partition" | awk '{print $4-0}')
   offset=$(($start*512))
-  
+
+  detach_all_loopback $image
   LODEV=$(losetup -f --show -o $offset $image)
   trap 'losetup -d $LODEV' EXIT
 
@@ -314,6 +315,7 @@ FDISK
   fdisk -l $image
 
   echo "Resizing filesystem ..."
+  detach_all_loopback $image
   LODEV=$(losetup -f --show -o $offset $image)
   trap 'losetup -d $LODEV' EXIT
 
@@ -335,6 +337,7 @@ function minimize_ext() {
   e2fsize_blocks=$(echo $partitioninfo | awk '{print $6-0}')
   offset=$(($start*512))
 
+  detach_all_loopback $image
   LODEV=$(losetup -f --show -o $offset $image)
   trap 'losetup -d $LODEV' EXIT
 
