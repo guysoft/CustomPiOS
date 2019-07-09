@@ -13,24 +13,6 @@ fi
 
 echo -e "--> Building VARIANT $BUILD_VARIANT, FLAVOR $BUILD_FLAVOR"
 
-# Import the variant config if we have one
-
-if [ -n "$VARIANT_CONFIG" ] && [ -f $VARIANT_CONFIG ]
-then
-  echo "Sourcing variant config $VARIANT_CONFIG..."
-  set -a
-  source $VARIANT_CONFIG
-  set +a
-fi
-
-# Import the flavor config if we have one
-
-if [ -n "$FLAVOR_CONFIG" ] && [ -f $FLAVOR_CONFIG ]
-then
-  echo "Sourcing flavor config $FLAVOR_CONFIG..."
-  source $FLAVOR_CONFIG
-fi
-
 # Import the local config if we have one
 
 if [ -f $CONFIG_DIR/config.local ]
@@ -66,6 +48,24 @@ if [ $BUILD_VARIANT != 'default' ]; then
     die "Could not find config file $FLAVOR_CONFIG"
   fi
 fi
+
+echo Import the variant config if we have one
+if [ -n "$VARIANT_CONFIG" ] && [ -f $VARIANT_CONFIG ]
+then
+  echo "Sourcing variant config $VARIANT_CONFIG..."
+  set -a
+  source $VARIANT_CONFIG
+  set +a
+fi
+
+# Import the flavor config if we have one
+
+if [ -n "$FLAVOR_CONFIG" ] && [ -f $FLAVOR_CONFIG ]
+then
+  echo "Sourcing flavor config $FLAVOR_CONFIG..."
+  source $FLAVOR_CONFIG
+fi
+
 
 
 if [ -f ${DIST_PATH}/config.local ]
