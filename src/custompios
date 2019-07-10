@@ -85,7 +85,7 @@ pushd $BASE_WORKSPACE
 
   # mount root and boot partition
   mount_image $BASE_IMG_PATH $BASE_ROOT_PARTITION $BASE_MOUNT_PATH
-  if [ -n "$BASE_APT_CACHE" ]
+  if [ -n "$BASE_APT_CACHE" ] && [ "$BASE_APT_CACHE" != "no" ]
   then
     mkdir -p "$BASE_APT_CACHE"
     mount --bind "$BASE_APT_CACHE" $BASE_MOUNT_PATH/var/cache/apt
