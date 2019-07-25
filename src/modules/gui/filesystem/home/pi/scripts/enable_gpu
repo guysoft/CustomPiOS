@@ -4,9 +4,12 @@ if [ ! -f /etc/gpu_enabled ]; then
     sudo sed -i /boot/cmdline.txt -e "s/ quiet//"
     sudo sed -i /boot/cmdline.txt -e "s/ splash//"
     sudo sed -i /boot/cmdline.txt -e "s/ plymouth.ignore-serial-consoles//"
-    sudo sed -i /boot/config.txt -e "s/^\#dtoverlay=vc4-kms-v3d/dtoverlay=vc4-kms-v3d/"
+    check="$(sudo cat /proc/cpuinfo | grep 'Revision' | awk '{print $3}' | sed -e 's/[a-c]//')"
+    if [ "${check}" != "03111" ]; then
+        sudo sed -i /boot/config.txt -e "s/^\#dtoverlay=vc4-kms-v3d/dtoverlay=vc4-kms-v3d/"
+        printf "dtoverlay=vc4-kms-v3d\n" | sudo tee -a /boot/config.txt
+    fi
     sudo sed -i /boot/config.txt -e "s/^gpu_mem/\#gpu_mem/"
-    printf "dtoverlay=vc4-kms-v3d\n" | sudo tee -a /boot/config.txt
     touch /etc/gpu_enabled
     sudo shutdown -r now
 fi

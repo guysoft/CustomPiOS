@@ -70,7 +70,7 @@ pushd $BASE_WORKSPACE
     exit 1
   fi
   7za x -aoa "$BASE_ZIP_IMG"
-  BASE_IMG_PATH=`ls | grep '.img\|.raw' | head -n 1`
+  BASE_IMG_PATH=`ls | grep '.img$\|.raw$' | head -n 1`
   if [ ! -f "$BASE_IMG_PATH" ]; then
     echo "Error, can't find image path, did you place an image in the image folder?"
     exit 1
@@ -85,7 +85,7 @@ pushd $BASE_WORKSPACE
 
   # mount root and boot partition
   mount_image $BASE_IMG_PATH $BASE_ROOT_PARTITION $BASE_MOUNT_PATH
-  if [ -n "$BASE_APT_CACHE" ]
+  if [ -n "$BASE_APT_CACHE" ] && [ "$BASE_APT_CACHE" != "no" ]
   then
     mkdir -p "$BASE_APT_CACHE"
     mount --bind "$BASE_APT_CACHE" $BASE_MOUNT_PATH/var/cache/apt
