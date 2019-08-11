@@ -1,0 +1,11 @@
+[Unit]
+Description=Configures ufw. CustomPiOS service from the admin-toolkit module.
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+[Service]
+User=root
+ExecStart=/home/pi/scripts/ufw_config
+ExecStop=
+[Install]
+WantedBy=multi-user.target

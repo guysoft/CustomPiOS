@@ -1,0 +1,90 @@
+########################################################################################
+#
+#  admin-toolkit helps to harden your pi and install some programs out of the box.
+#  Some things require a user to be added and others don't.
+# 
+#  
+
+###########################################################
+######### User Required Section ###########################
+#
+#  Adding another user requires at least a username.
+#  A home folder will be created.
+#  The default profile will be set to bash.
+#  Default password is raspberry. PLEASE CHANGE THIS. 
+#  User will be added to the sudo and adm group. 
+#
+###########################################################
+
+#  add user name,  If left "default", no user will be added. 
+export ADMIN_NAME=default
+
+#  GECOS field of the new account. If Left "default" this is skipped.
+#  If you need to understand this visit https://en.wikipedia.org/wiki/Gecos_field
+export ADMIN_FULLNAME=default
+
+#  override password, otherwise use image default raspberry
+export ADMIN_PASSWORD=default
+
+#  Want to remove pi from the sudoers file? "yes" to configure
+export ADMIN_PI_NO_SUDO=no
+
+#  Hostname change script. Script will be added to the users home directory.
+#  Run this to change the hostname and it will auto-fix the FullPageOS chromium locked profile on reboot.
+#  "yes" to include
+export ADMIN_HOSTNAME_CHANGE_SCRIPT=no
+
+######### SSH Section #####################################
+#
+#  If you didn't set a user in the above section SSH Settings won't be applied.
+#  If you dont set a ssh key other ssh settings don't apply. This is on purpose.
+#
+
+#  Add your public ssh key that you wish to use for connections to the pi
+#  Format with quotations: "ssh-rsa SzYtCpyRUU1fvLXvWlezJw=="
+export ADMIN_SSH=default
+
+#  disable passwords for ssh logins(only if you set a key). "yes" to configure
+export ADMIN_SSH_NO_PASS=no
+
+#  this will allow only the newly created user to ssh. "yes" to configure
+export ADMIN_SSH_ALLOW_ONLY_CREATED_USER=no
+
+
+###########################################################
+######### User Not Required ###############################
+#
+#  Nothing below requires an admin user to be added.
+#
+##########################################################
+
+
+######### Raspbian Update #################################
+#  Updates all packages: apt-get update && apt-get upgrade
+#  "yes" to configure
+export ADMIN_UPDATE_PACKAGES=no
+
+######### Install Package(s) ##############################
+#  This might not work for you. Some packages cannot be installed in chroot.
+#  Keep in mind your image will be bigger and take longer to build.
+#  Use quotes if listing multiple packages. Not coma seperated.
+export ADMIN_INSTALL_LIST=no
+
+######### UFW #############################################
+#  Set to yes if you want the ufw firewall installed. Unless you
+#  specify other ports below only ssh port 22 will be open, all
+#  other ports will be closed by default. "yes" to configure
+export ADMIN_UFW_INSTALL=no
+
+#  To allow multiple open ports make a coma seperated list.
+export ADMIN_UFW_PORTS_TCP=no
+export ADMIN_UFW_PORTS_UDP=no
+
+#  Enable ufw logging. "yes" to configure
+export ADMIN_UFW_ENABLE_LOGGING=no
+
+######### Network Manager ##################
+#  On pi's connected over wifi Network Manager will
+#  cause you to have a different mac on every boot.
+#  You can remove it without any issues. "yes" to configure
+export ADMIN_REMOVE_NETWORK_MANAGER=no

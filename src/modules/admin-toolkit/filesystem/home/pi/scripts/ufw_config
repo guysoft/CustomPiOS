@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# This script is part of the CustomPiOS admin-toolkit module
+
+ADMIN_UFW_PORTS_UDP=no
+ADMIN_UFW_PORTS_TCP=no
+ADMIN_UFW_ENABLE_LOGGING=no
+
+if [ ! -f /etc/ufw_enabled ];
+then
+    ufw enable
+    ufw default deny incoming
+    ufw allow OpenSSH
+    
+    if [ "$ADMIN_UFW_PORTS_UDP" != 'no' ];
+    then
+        ufw allow "${ADMIN_UFW_PORTS_UDP}"/udp
+    fi
+    
+    if [ "$ADMIN_UFW_PORTS_TCP" != 'no' ];
+    then
+        ufw allow "${ADMIN_UFW_PORTS_TCP}"/tcp
+    fi
+
+    if ["$ADMIN_UFW_ENABLE_LOGGING" == 'yes']
+    then
+        sudo ufw logging on
+    fi
+
+    touch /etc/ufw_enabled
+fi
