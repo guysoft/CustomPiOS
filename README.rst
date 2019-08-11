@@ -7,7 +7,7 @@ This repository contains the source script to generate a distribution out of an 
 
 Donate
 ------
-CustomPiOS is 100% free and open source and mainated Guy Sheffer. If its helping your life, your organization or makes you happy, please consider making a donation. It means I can code more and worry less about my balance. Any amount counts.
+CustomPiOS is 100% free and open source and maintained by Guy Sheffer. If its helping your life, your organisation or makes you happy, please consider making a donation. It means I can code more and worry less about my balance. Any amount counts.
 Also many thanks to people contributing code.
 
 |paypal|
