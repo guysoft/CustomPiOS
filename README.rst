@@ -5,6 +5,16 @@ A `Raspberry Pi <http://www.raspberrypi.org/>`_ and other ARM devices distributi
 
 This repository contains the source script to generate a distribution out of an existing `Raspbian <http://www.raspbian.org/>`_ distro image, or Armbian devices.
 
+Donate
+------
+CustomnPiOS is 100% free and open source and mainated Guy Sheffer. If its helping your life, your organization or makes you happy, please consider making a donation. It means I can code more and worry less about my balance. Any amount counts.
+Also many thanks to people contributing code.
+
+|paypal|
+
+.. |paypal| image:: https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif
+   :target: guysoft@gmail.com
+
 Where to get it?
 ----------------
 
