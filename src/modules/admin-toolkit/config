@@ -1,6 +1,6 @@
 ########################################################################################
 #
-#  admin-toolkit helps to harden your pi and install some programs out of the box.
+#  admin-toolkit helps to harden your pi and\or install programs out of the box.
 #  Some things require a user to be added and others don't.
 # 
 #  
@@ -23,7 +23,7 @@ export ADMIN_NAME=default
 #  If you need to understand this visit https://en.wikipedia.org/wiki/Gecos_field
 export ADMIN_FULLNAME=default
 
-#  override password, otherwise use image default raspberry
+#  override password, otherwise use image default raspberry.
 export ADMIN_PASSWORD=default
 
 #  Want to remove pi from the sudoers file? "yes" to configure
@@ -37,11 +37,12 @@ export ADMIN_HOSTNAME_CHANGE_SCRIPT=no
 ######### SSH Section #####################################
 #
 #  If you didn't set a user in the above section SSH Settings won't be applied.
-#  If you dont set a ssh key other ssh settings don't apply. This is on purpose.
-#
+#  If you don't set a ssh key, disabling passwords for ssh wont apply.
+#  
 
-#  Add your public ssh key that you wish to use for connections to the pi
-#  Format with quotations: "ssh-rsa SzYtCpyRUU1fvLXvWlezJw=="
+#  Add the public ssh key that you wish to use for connections to the pi
+#  this will add the authorized_keys file in the users .ssh folder.
+#  Format with quotations: "ssh-rsa SzYtCpyRUU1fvLXvWlezJw...=="
 export ADMIN_SSH=default
 
 #  disable passwords for ssh logins(only if you set a key). "yes" to configure
@@ -61,13 +62,13 @@ export ADMIN_SSH_ALLOW_ONLY_CREATED_USER=no
 
 ######### Raspbian Update #################################
 #  Updates all packages: apt-get update && apt-get upgrade
-#  "yes" to configure
+#  this can take a while. "yes" to configure
 export ADMIN_UPDATE_PACKAGES=no
 
 ######### Install Package(s) ##############################
 #  This might not work for you. Some packages cannot be installed in chroot.
 #  Keep in mind your image will be bigger and take longer to build.
-#  Use quotes if listing multiple packages. Not coma seperated.
+#  Use quotes if listing multiple packages. ex. LIST="fortune cowsay"
 export ADMIN_INSTALL_LIST=no
 
 ######### UFW #############################################

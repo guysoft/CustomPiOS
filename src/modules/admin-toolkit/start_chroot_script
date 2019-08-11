@@ -18,7 +18,7 @@ if [ "$ADMIN_NAME" != "default" ]
 then
 
     # add user
-    if [ "$ADMIN_FULLNAME" != "no" ]
+    if [ "$ADMIN_FULLNAME" != "default" ]
     then
         echo "Adding user $ADMIN_NAME with GECOS fields"
         useradd -m -s $(which bash) -G sudo,adm "${ADMIN_NAME}" -c "${ADMIN_FULLNAME}"
@@ -103,18 +103,20 @@ then
     unpack /filesystem/home/pi /home/pi pi
     chmod +x /home/pi/scripts/ufw_config
     systemctl enable ufw_config.service
+
     if [ "$ADMIN_UFW_PORTS_UDP" != "no" ]
     then
-        sed -i /home/pi/ufw_config -e "s/^ADMIN_UFW_PORTS_UDP=no/ADMIN_UFW_PORTS_UDP=${ADMIN_UFW_PORTS_UDP}/"
+        sed -i /home/pi/scripts/ufw_config -e "s/^ADMIN_UFW_PORTS_UDP=no/ADMIN_UFW_PORTS_UDP=${ADMIN_UFW_PORTS_UDP}/"
     fi
+    
     if [ "$ADMIN_UFW_PORTS_TCP" != "no" ]
     then
-        sed -i /home/pi/ufw_config -e "s/^ADMIN_UFW_PORTS_TCP=no/ADMIN_UFW_PORTS_TCP=${ADMIN_UFW_PORTS_TCP}/"
+        sed -i /home/pi/scripts/ufw_config -e "s/^ADMIN_UFW_PORTS_TCP=no/ADMIN_UFW_PORTS_TCP=${ADMIN_UFW_PORTS_TCP}/"
     fi
 
     if [ "$ADMIN_UFW_ENABLE_LOGGING" == "yes" ]
     then
-        sed -i /home/pi/ufw_config -e "s/^ADMIN_UFW_ENABLE_LOGGING=no/ADMIN_UFW_ENABLE_LOGGING=yes/"
+        sed -i /home/pi/scripts/ufw_config -e "s/^ADMIN_UFW_ENABLE_LOGGING=no/ADMIN_UFW_ENABLE_LOGGING=yes/"
     fi
 fi
 
