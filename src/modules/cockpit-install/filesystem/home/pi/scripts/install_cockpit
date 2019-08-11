@@ -1,9 +1,15 @@
 #!/bin/bash
+#  This file installs cockpit when the service cockpit_installer
+#  is run on the first boot. It takes close to 10 min for everything
+#  to finish setting up. After that you can reach your pi at
+#  https://pi_ip_address:9090
+
+#DISABLE_COCKPIT_SOCKET=yes
 
 if [ ! -f /etc/cockpit_service ]; then
     apt-get install -y cockpit
     touch /etc/cockpit_service
-    if [ "$CUSTOMPIOS_DISABLE_COCKPIT_SOCKET" == "yes" ]; then
+    if [ "$DISABLE_COCKPIT_SOCKET" == "yes" ]; then
         systemctl disable cockpit.socket
     fi
 fi
