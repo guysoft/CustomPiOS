@@ -4,4 +4,4 @@
 
 # disable the cockpit web socket if you already have a cockpit server setup and dont want this
 # pi to have a web dashboard. "yes" to configure
-export CUSTOMPIOS_DISABLE_COCKPIT_SOCKET=no
+COCKPIT_INSTALL_DISABLE_COCKPIT_SOCKET=no 
