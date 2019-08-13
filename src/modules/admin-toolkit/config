@@ -17,22 +17,20 @@
 ###########################################################
 
 #  add user name,  If left "default", no user will be added. 
-export ADMIN_NAME=default
-
 #  GECOS field of the new account. If Left "default" this is skipped.
 #  If you need to understand this visit https://en.wikipedia.org/wiki/Gecos_field
-export ADMIN_FULLNAME=default
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_FULLNAME=default
 
 #  override password, otherwise use image default raspberry.
-export ADMIN_PASSWORD=default
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_PASSWORD=default
 
 #  Want to remove pi from the sudoers file? "yes" to configure
-export ADMIN_PI_NO_SUDO=no
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_PI_NO_SUDO=no
 
 #  Hostname change script. Script will be added to the users home directory.
 #  Run this to change the hostname and it will auto-fix the FullPageOS chromium locked profile on reboot.
 #  "yes" to include
-export ADMIN_HOSTNAME_CHANGE_SCRIPT=no
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_HOSTNAME_CHANGE_SCRIPT=no
 
 ######### SSH Section #####################################
 #
@@ -43,13 +41,13 @@ export ADMIN_HOSTNAME_CHANGE_SCRIPT=no
 #  Add the public ssh key that you wish to use for connections to the pi
 #  this will add the authorized_keys file in the users .ssh folder.
 #  Format with quotations: "ssh-rsa SzYtCpyRUU1fvLXvWlezJw...=="
-export ADMIN_SSH=default
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_SSH=default
 
 #  disable passwords for ssh logins(only if you set a key). "yes" to configure
-export ADMIN_SSH_NO_PASS=no
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_SSH_NO_PASS=no
 
 #  this will allow only the newly created user to ssh. "yes" to configure
-export ADMIN_SSH_ALLOW_ONLY_CREATED_USER=no
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_SSH_ALLOW_ONLY_CREATED_USER=no
 
 
 ###########################################################
@@ -63,29 +61,29 @@ export ADMIN_SSH_ALLOW_ONLY_CREATED_USER=no
 ######### Raspbian Update #################################
 #  Updates all packages: apt-get update && apt-get upgrade
 #  this can take a while. "yes" to configure
-export ADMIN_UPDATE_PACKAGES=no
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_UPDATE_PACKAGES=no
 
 ######### Install Package(s) ##############################
 #  This might not work for you. Some packages cannot be installed in chroot.
 #  Keep in mind your image will be bigger and take longer to build.
 #  Use quotes if listing multiple packages. ex. LIST="fortune cowsay"
-export ADMIN_INSTALL_LIST=no
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_INSTALL_LIST=no
 
 ######### UFW #############################################
 #  Set to yes if you want the ufw firewall installed. Unless you
 #  specify other ports below only ssh port 22 will be open, all
 #  other ports will be closed by default. "yes" to configure
-export ADMIN_UFW_INSTALL=no
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_UFW_INSTALL=no
 
 #  To allow multiple open ports make a coma seperated list.
-export ADMIN_UFW_PORTS_TCP=no
-export ADMIN_UFW_PORTS_UDP=no
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_UFW_PORTS_TCP=no
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_UFW_PORTS_UDP=no
 
 #  Enable ufw logging. "yes" to configure
-export ADMIN_UFW_ENABLE_LOGGING=no
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_UFW_ENABLE_LOGGING=no
 
 ######### Network Manager ##################
 #  On pi's connected over wifi Network Manager will
 #  cause you to have a different mac on every boot.
 #  You can remove it without any issues. "yes" to configure
-export ADMIN_REMOVE_NETWORK_MANAGER=no
+ADMIN_TOOLKIT_ ADMIN_TOOLKIT_REMOVE_NETWORK_MANAGER=no
