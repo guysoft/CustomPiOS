@@ -76,8 +76,8 @@ then
     # Add hostname change script
     if [ "$ADMIN_TOOLKIT_HOSTNAME_CHANGE_SCRIPT" == "yes" ]
     then
-        unpack /filesystem/tools/HostNameScript /home/"${ADMIN_TOOLKIT_NAME}" ${ADMIN_TOOLKIT_NAME}
-        chmod +x /home/"${ADMIN_TOOLKIT_NAME}"/hostname_change.sh
+        unpack /filesystem/tools/HostNameScript /home/"${ADMIN_TOOLKIT_NAME}"/scripts ${ADMIN_TOOLKIT_NAME}
+        chmod +x /home/"${ADMIN_TOOLKIT_NAME}"/scripts/hostname_change.sh
     fi
 
 fi 
@@ -152,7 +152,7 @@ fi
 fi
 
 #  User added scripts
-if [ "$ADMIN_TOOLKIT_USER_SCRIPTS" != "no" ]
+if [ "$ADMIN_TOOLKIT_USER_SCRIPTS" == "yes" ]
 then
     unpack /filesystem/tools/scripts /home/"${ADMIN_TOOLKIT_USER_SCRIPTS_NAME}"/scripts ${ADMIN_TOOLKIT_USER_SCRIPTS_NAME}
     chmod +x `find /home/"${ADMIN_TOOLKIT_USER_SCRIPTS_NAME}"/scripts -type f`

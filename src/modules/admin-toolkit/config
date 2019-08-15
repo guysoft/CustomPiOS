@@ -119,8 +119,9 @@ ADMIN_TOOLKIT_REMOVE_NETWORK_MANAGER=no
 
  ######## User Defined Scripts ############################
 #
-#  Add your own scripts here, dont forget the user information if you want
-#  to add this to the user you created. Default is pi.
+#  Add your own scripts to the /filesystem/tools/scripts folder
+#  and they will be added to your created users home directory in
+#  a scripts folder or to /home/pi/scripts. Default is pi.
 #  "yes" to configure
  ADMIN_TOOLKIT_USER_SCRIPTS=no
 
