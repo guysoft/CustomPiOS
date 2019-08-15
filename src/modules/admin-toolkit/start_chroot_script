@@ -125,3 +125,35 @@ if [ "$ADMIN_TOOLKIT_REMOVE_NETWORK_MANAGER" == "yes" ]
 then
     sudo apt-get remove network-manager -y
 fi
+
+# Cron Jobs if any
+if [ "$ADMIN_TOOLKIT_CRON_JOB" == "yes" ]
+then
+    if [ "$ADMIN_TOOLKIT_CRON_USER" != "no" ]
+    then
+        unpack /filesystem/tools/cronJobs/user /home/"${ADMIN_TOOLKIT_CRON_USER}" ${ADMIN_TOOLKIT_CRON_USER}
+        crontab -u "${ADMIN_TOOLKIT_CRON_USER}" /home/"${ADMIN_TOOLKIT_CRON_USER}"/"${ADMIN_TOOLKIT_CRON_USER}"
+    fi
+
+    if [ "$ADMIN_TOOLKIT_SYSTEM_CRON" == "yes" ]
+    then
+        unpack /filesystem/tools/cronJobs/system /etc/
+    fi
+fi
+
+# Hdmi scripts
+if [ "$ADMIN_TOOLKIT_HDMI_SCRIPTS" == "yes" ]
+then
+    unpack /filesystem/tools/FullPageHdmiScripts /home/pi/scripts pi
+    chmod +x /home/pi/scripts/tv_on.sh
+    chmod +x /home/pi/scripts/tv_off.sh
+fi
+
+fi
+
+#  User added scripts
+if [ "$ADMIN_TOOLKIT_USER_SCRIPTS" != "no" ]
+then
+    unpack /filesystem/tools/scripts /home/"${ADMIN_TOOLKIT_USER_SCRIPTS_NAME}"/scripts ${ADMIN_TOOLKIT_USER_SCRIPTS_NAME}
+    chmod +x `find /home/"${ADMIN_TOOLKIT_USER_SCRIPTS_NAME}"/scripts -type f`
+fi

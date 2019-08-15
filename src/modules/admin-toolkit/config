@@ -1,9 +1,13 @@
 ########################################################################################
 #
-#  admin-toolkit helps to harden your pi and\or install programs out of the box.
-#  Some things require a user to be added and others don't.
-# 
-#  
+#  admin-toolkit helps to harden your pi, install other packages easily, and add files out of the box.
+#  Some things require a user to be added and others dont. Some things are indended to be used with FullPageOS
+#  and the scripts that come with it, but there are uses outside of that, if you edit a bit of code.
+#  This has only been used with FullPageOS, and Raspbian Buster on a pi4
+#
+#  Written by asdfinit
+#  GPL V3
+#########
 
 ###########################################################
 ######### User Required Section ###########################
@@ -19,18 +23,18 @@
 #  add user name,  If left "default", no user will be added. 
 #  GECOS field of the new account. If Left "default" this is skipped.
 #  If you need to understand this visit https://en.wikipedia.org/wiki/Gecos_field
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_FULLNAME=default
+ADMIN_TOOLKIT_FULLNAME=default
 
 #  override password, otherwise use image default raspberry.
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_PASSWORD=default
+ADMIN_TOOLKIT_PASSWORD=default
 
 #  Want to remove pi from the sudoers file? "yes" to configure
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_PI_NO_SUDO=no
+ADMIN_TOOLKIT_PI_NO_SUDO=no
 
 #  Hostname change script. Script will be added to the users home directory.
 #  Run this to change the hostname and it will auto-fix the FullPageOS chromium locked profile on reboot.
 #  "yes" to include
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_HOSTNAME_CHANGE_SCRIPT=no
+ADMIN_TOOLKIT_HOSTNAME_CHANGE_SCRIPT=no
 
 ######### SSH Section #####################################
 #
@@ -41,49 +45,84 @@ ADMIN_TOOLKIT_ ADMIN_TOOLKIT_HOSTNAME_CHANGE_SCRIPT=no
 #  Add the public ssh key that you wish to use for connections to the pi
 #  this will add the authorized_keys file in the users .ssh folder.
 #  Format with quotations: "ssh-rsa SzYtCpyRUU1fvLXvWlezJw...=="
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_SSH=default
+ ADMIN_TOOLKIT_SSH=default
 
 #  disable passwords for ssh logins(only if you set a key). "yes" to configure
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_SSH_NO_PASS=no
+ADMIN_TOOLKIT_SSH_NO_PASS=no
 
 #  this will allow only the newly created user to ssh. "yes" to configure
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_SSH_ALLOW_ONLY_CREATED_USER=no
+ ADMIN_TOOLKIT_SSH_ALLOW_ONLY_CREATED_USER=no
 
 
 ###########################################################
 ######### User Not Required ###############################
 #
 #  Nothing below requires an admin user to be added.
-#
+#  But it might depend on FullPageOS
 ##########################################################
 
 
 ######### Raspbian Update #################################
 #  Updates all packages: apt-get update && apt-get upgrade
 #  this can take a while. "yes" to configure
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_UPDATE_PACKAGES=no
+ADMIN_TOOLKIT_UPDATE_PACKAGES=no
 
 ######### Install Package(s) ##############################
 #  This might not work for you. Some packages cannot be installed in chroot.
 #  Keep in mind your image will be bigger and take longer to build.
-#  Use quotes if listing multiple packages. ex. LIST="fortune cowsay"
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_INSTALL_LIST=no
+#  Use quotes if listing multiple packages (space Seperated list) ex. LIST="fortune cowsay..."
+ADMIN_TOOLKIT_INSTALL_LIST=no
+
 
 ######### UFW #############################################
 #  Set to yes if you want the ufw firewall installed. Unless you
 #  specify other ports below only ssh port 22 will be open, all
 #  other ports will be closed by default. "yes" to configure
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_UFW_INSTALL=no
+ADMIN_TOOLKIT_UFW_INSTALL=no
 
-#  To allow multiple open ports make a coma seperated list.
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_UFW_PORTS_TCP=no
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_UFW_PORTS_UDP=no
+#  To allow multiple open ports make a CSV(coma seperated list) to configure.
+ADMIN_TOOLKIT_UFW_PORTS_TCP=no
+ADMIN_TOOLKIT_UFW_PORTS_UDP=no
 
 #  Enable ufw logging. "yes" to configure
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_UFW_ENABLE_LOGGING=no
+ADMIN_TOOLKIT_UFW_ENABLE_LOGGING=no
+
 
 ######### Network Manager ##################
 #  On pi's connected over wifi Network Manager will
 #  cause you to have a different mac on every boot.
 #  You can remove it without any issues. "yes" to configure
-ADMIN_TOOLKIT_ ADMIN_TOOLKIT_REMOVE_NETWORK_MANAGER=no
+ADMIN_TOOLKIT_REMOVE_NETWORK_MANAGER=no
+
+######### FullPageOS Hdmi Scripts ########################
+#  These can be used to turn TV's on and off. Use with cron jobs
+#  for automation. Works on most devices but not all.
+#  Installs in the /home/pi/scripts dir and makes use of
+#  pre written scripts in FullPageOS. "yes" to configure
+ ADMIN_TOOLKIT_HDMI_SCRIPTS=no
+
+######### Install Cron Job #############################
+#  With great power.... well you know...
+#  Add a cron file to the /filesystem/tools/cron folder
+#  cron files will be placed in /var/spool/cron/crontabs/
+#  CRON_USER and file name must be the same. pi is the most common(default)
+#  Your cron file must have a new line at the bottom or import wont work.
+#  "yes" to configure
+ ADMIN_TOOLKIT_CRON_JOB=no
+
+#  Cron jobs user name. If you're not adding a user leave this at pi
+ ADMIN_TOOLKIT_CRON_USER=pi
+
+# if you want to install root user jobs... eg. auto reboot. "yes" to configure
+ ADMIN_TOOLKIT_SYSTEM_CRON=yes
+
+
+ ######## User Defined Scripts ############################
+#
+#  Add your own scripts here, dont forget the user information if you want
+#  to add this to the user you created. Default is pi.
+#  "yes" to configure
+ ADMIN_TOOLKIT_USER_SCRIPTS=no
+
+#  User Scripts User name. If you're not adding a user leave this at pi
+ ADMIN_TOOLKIT_USER_SCRIPTS_NAME=pi
