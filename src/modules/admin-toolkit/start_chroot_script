@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+# 
+#  Admin toolkit for securing your pi. 
+#  Make sure you have the config file setup.
+# 
+#  Written by asdfinit
+#  GPL V3
+########
+set -x
+set -e
+
+source /common.sh
+install_cleanup_trap
+
+#####################################################################
+### Add a user if in config
+if [ "$ADMIN_TOOLKIT_NAME" != "default" ]
+then
+
+    # add user
+    if [ "$ADMIN_TOOLKIT_FULLNAME" != "default" ]
+    then
+        echo "Adding user $ADMIN_TOOLKIT_NAME with GECOS fields"
+        useradd -m -s $(which bash) -G sudo,adm "${ADMIN_TOOLKIT_NAME}" -c "${ADMIN_TOOLKIT_FULLNAME}"
+    else
+        echo "Adding user $ADMIN_TOOLKIT_NAME"
+        useradd -m -s $(which bash) -G sudo,adm "${ADMIN_TOOLKIT_NAME}"
+    fi
+
+    # check for override password
+    if [ "$ADMIN_TOOLKIT_PASSWORD" != "default" ]
+    then
+        echo "${ADMIN_TOOLKIT_NAME}:${ADMIN_TOOLKIT_PASSWORD}" | chpasswd
+    else
+        echo "${ADMIN_TOOLKIT_NAME}:raspberry" | chpasswd
+    fi
+
+    # check for ssh key install and do other ssh things
+    if [ "$ADMIN_TOOLKIT_SSH" != "default" ]
+    then
+        echo "Installign ssh key"
+        mkdir -p /home/"${ADMIN_TOOLKIT_NAME}"/.ssh
+        echo "${ADMIN_TOOLKIT_SSH}" > /home/"${ADMIN_TOOLKIT_NAME}"/.ssh/authorized_keys
+        chown -R "${ADMIN_TOOLKIT_NAME}" /home/"${ADMIN_TOOLKIT_NAME}"/.ssh
+        chmod 775 /home/"${ADMIN_TOOLKIT_NAME}"/.ssh
+        chmod 600 /home/"${ADMIN_TOOLKIT_NAME}"/.ssh/authorized_keys
+
+        # disable ssh password
+        if [ "$ADMIN_TOOLKIT_SSH_NO_PASS" == "yes" ]
+        then
+            echo "disabling password ssh"
+            sed -i /etc/ssh/sshd_config -e "s/^ChallengeResponseAuthentication yes/ChallengeResponseAuthentication no/"
+            sed -i /etc/ssh/sshd_config -e "s/^#PasswordAuthentication yes/PasswordAuthentication no/"
+            sed -i /etc/ssh/sshd_config -e "s/^UsePAM yes/UsePAM no/"
+            sed -i /etc/ssh/sshd_config -e "s/^#PubkeyAuthentication yes/PubkeyAuthentication yes/"
+            sed -i /etc/ssh/sshd_config -e "s/^#PermitEmptyPasswords no/PermitEmptyPasswords no/"
+        fi
+    
+    fi
+
+    # only allow created user to ssh
+    if [ "$ADMIN_TOOLKIT_SSH_ALLOW_ONLY_CREATED_USER" == "yes" ]
+    then 
+        echo "Adding user to ssh allow list"
+        echo "AllowUsers ${ADMIN_TOOLKIT_NAME}" >> /etc/ssh/sshd_config
+    fi
+
+    # pi no sudo
+    if [ "$ADMIN_TOOLKIT_PI_NO_SUDO" == "yes" ]
+    then
+        echo "Removing pi from the sudoers group"
+        delgroup pi sudo
+        rm /etc/sudoers.d/010_pi-nopasswd
+    fi
+
+    # Add hostname change script
+    if [ "$ADMIN_TOOLKIT_HOSTNAME_CHANGE_SCRIPT" == "yes" ]
+    then
+        unpack /filesystem/tools/HostNameScript /home/"${ADMIN_TOOLKIT_NAME}"/scripts ${ADMIN_TOOLKIT_NAME}
+        chmod +x /home/"${ADMIN_TOOLKIT_NAME}"/scripts/hostname_change.sh
+    fi
+
+fi 
+# End User section
+
+# Begin general section
+if [ "$ADMIN_TOOLKIT_UPDATE_PACKAGES" == "yes" ]
+then
+    apt-get update && apt-get upgrade -y
+fi
+
+# Install packages if listed
+if [ "$ADMIN_TOOLKIT_INSTALL_LIST" != "no" ]
+then
+    apt-get install ${ADMIN_TOOLKIT_INSTALL_LIST} -y
+fi
+
+# Install UFW Firewall if wanted
+if [ "$ADMIN_TOOLKIT_UFW_INSTALL" == "yes" ]
+then
+    apt-get install ufw -y
+    unpack /filesystem/root_init /
+    unpack /filesystem/home/pi /home/pi pi
+    chmod +x /home/pi/scripts/ufw_config
+    systemctl enable ufw_config.service
+
+    if [ "$ADMIN_TOOLKIT_UFW_PORTS_UDP" != "no" ]
+    then
+        sed -i /home/pi/scripts/ufw_config -e "s/^UFW_PORTS_UDP=no/UFW_PORTS_UDP=${ADMIN_TOOLKIT_UFW_PORTS_UDP}/"
+    fi
+
+    if [ "$ADMIN_TOOLKIT_UFW_PORTS_TCP" != "no" ]
+    then
+        sed -i /home/pi/scripts/ufw_config -e "s/^UFW_PORTS_TCP=no/UFW_PORTS_TCP=${ADMIN_TOOLKIT_UFW_PORTS_TCP}/"
+    fi
+
+    if [ "$ADMIN_TOOLKIT_UFW_ENABLE_LOGGING" == "yes" ]
+    then
+        sed -i /home/pi/scripts/ufw_config -e "s/^UFW_ENABLE_LOGGING=no/UFW_ENABLE_LOGGING=yes/"
+    fi
+fi
+
+# Remove Network Manager(fix for wifi random mac address)
+if [ "$ADMIN_TOOLKIT_REMOVE_NETWORK_MANAGER" == "yes" ]
+then
+    sudo apt-get remove network-manager -y
+fi
+
+# Cron Jobs if any
+if [ "$ADMIN_TOOLKIT_CRON_JOB" == "yes" ]
+then
+    if [ "$ADMIN_TOOLKIT_CRON_USER" != "no" ]
+    then
+        unpack /filesystem/tools/cronJobs/user /home/"${ADMIN_TOOLKIT_CRON_USER}" ${ADMIN_TOOLKIT_CRON_USER}
+        crontab -u "${ADMIN_TOOLKIT_CRON_USER}" /home/"${ADMIN_TOOLKIT_CRON_USER}"/"${ADMIN_TOOLKIT_CRON_USER}"
+    fi
+
+    if [ "$ADMIN_TOOLKIT_SYSTEM_CRON" == "yes" ]
+    then
+        unpack /filesystem/tools/cronJobs/system /etc/
+    fi
+fi
+
+# Hdmi scripts
+if [ "$ADMIN_TOOLKIT_HDMI_SCRIPTS" == "yes" ]
+then
+    unpack /filesystem/tools/FullPageHdmiScripts /home/pi/scripts pi
+    chmod +x /home/pi/scripts/tv_on.sh
+    chmod +x /home/pi/scripts/tv_off.sh
+fi
+
+fi
+
+#  User added scripts
+if [ "$ADMIN_TOOLKIT_USER_SCRIPTS" == "yes" ]
+then
+    unpack /filesystem/tools/scripts /home/"${ADMIN_TOOLKIT_USER_SCRIPTS_NAME}"/scripts ${ADMIN_TOOLKIT_USER_SCRIPTS_NAME}
+    chmod +x `find /home/"${ADMIN_TOOLKIT_USER_SCRIPTS_NAME}"/scripts -type f`
+fi
