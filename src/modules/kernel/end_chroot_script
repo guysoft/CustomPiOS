@@ -37,6 +37,8 @@ function build_kernel(){
                 KERNEL="kernel7" make ARCH=arm bcm2709_defconfig
             elif [ "$KERNEL_SELECT" == "kernel" ]; then
                 KERNEL="kernel" make ARCH=arm bcmrpi_defconfig
+            elif [ "$KERNEL_SELECT" == "kernel7l" ]; then
+                KERNEL="kernel7l" make ARCH=arm bcmrpi_defconfig
             fi
             echo "${KERNEL_CONFIG_APPEND}" >> .config
             # CROSS_COMPILE=arm-linux-gnueabihf-
@@ -52,9 +54,11 @@ function build_kernel(){
             
             pushd arch/arm/boot/dts
                 if [ "$KERNEL" == "kernel7" ]; then
-                    copy_and_save bcm2709-rpi-2-b.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb /boot/
+                    copy_and_save bcm2709-rpi-2-b.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb bcm2710-rpi-3-b-plus.dtb /boot/
                 elif [ "$KERNEL" == "kernel" ]; then
-                    copy_and_save bcm2708-rpi-0-w.dtb bcm2708-rpi-b-plus.dtb bcm2708-rpi-b.dtb bcm2708-rpi-cm.dtb /boot/
+                    copy_and_save bcm2708-rpi-0-w.dtb bcm2708-rpi-b-plus.dtb bcm2708-rpi-b.dtb bcm2708-rpi-cm.dtb bcm2708-rpi-zero.dtb bcm2708-rpi-zero-w.dtb bcm2708-rpi-cm.dtb /boot/
+                elif [ "$KERNEL" == "kernel7l" ]; then
+                    copy_and_save bcm2711-rpi-4-b.dtb /boot/
                 fi
             popd
 
@@ -67,17 +71,19 @@ function build_kernel(){
 pushd /home/pi
     pushd linux
 
-        if [ "$KERNEL_TYPE" == "both" ] || [ "$KERNEL_TYPE"  == "v6" ]; then
+        if [ "$KERNEL_TYPE" == "both" ] || [ "$KERNEL_TYPE" == "all" ] || [ "$KERNEL_TYPE"  == "v6" ]; then
             build_kernel "kernel"
         fi
-            
-        make clean
         
-        if [ "$KERNEL_TYPE" == "both" ] || [ "$KERNEL_TYPE"  == "v7" ]; then
+        if [ "$KERNEL_TYPE" == "both" ] || [ "$KERNEL_TYPE" == "all" ] || [ "$KERNEL_TYPE"  == "v7" ]; then
             build_kernel "kernel7"
         fi
-    
-
+        
+        if [ "$KERNEL_TYPE" == "all" ]  || [ "$KERNEL_TYPE"  == "v8" ]; then
+            build_kernel "kernel7l"
+        fi
+        
+        make clean
         
     popd
     
