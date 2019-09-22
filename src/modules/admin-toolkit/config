@@ -20,7 +20,9 @@
 #
 ###########################################################
 
-#  add user name,  If left "default", no user will be added. 
+#  add user name,  If left "default", no user will be added.
+ADMIN_TOOLKIT_NAME=default
+
 #  GECOS field of the new account. If Left "default" this is skipped.
 #  If you need to understand this visit https://en.wikipedia.org/wiki/Gecos_field
 ADMIN_TOOLKIT_FULLNAME=default
