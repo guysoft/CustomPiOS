@@ -58,12 +58,6 @@ function gitclone(){
   repo_branch_var=$1_BRANCH
   repo_depth_var=$1_DEPTH
   repo_recursive_var=$1_RECURSIVE
-  
-  repo_dir=$2
-  if [ ! -n "$repo_dir" ]
-  then
-    repo_dir=$(echo ${REPO} | sed 's%^.*/\([^/]*\)\(\.git\)?$%\1%g')
-  fi
 
   repo_depth=${!repo_depth_var}
   if [ -n "$repo_depth" ]
@@ -101,6 +95,12 @@ function gitclone(){
   if [ -n "$depth" ]
   then
     clone_params="$clone_params --depth $depth"
+  fi
+  
+  repo_dir=$2
+  if [ ! -n "$repo_dir" ]
+  then
+    repo_dir=$(echo ${repo_dir} | sed 's%^.*/\([^/]*\)\(\.git\)?$%\1%g')
   fi
 
   sudo -u pi git clone $clone_params "$build_repo" "$repo_dir"
