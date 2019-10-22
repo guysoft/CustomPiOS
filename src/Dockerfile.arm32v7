@@ -1,0 +1,29 @@
+FROM alpine AS builder
+
+# Download QEMU, see https://github.com/docker/hub-feedback/issues/1261
+ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-arm.tar.gz
+RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
+
+FROM arm32v7/debian
+
+MAINTAINER Guy Sheffer <guysoft at gmail dot com>
+
+RUN set -x \
+    && apt-get update && apt-get install -y \
+        build-essential \
+        curl \
+        git \
+        wget \
+        p7zip-full \
+        python3 \
+        binfmt-support \
+        qemu \
+        qemu-user-static \
+        sudo \
+        zip \
+        lsof \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY . /CustomPiOS
+
+CMD ["/bin/bash"]

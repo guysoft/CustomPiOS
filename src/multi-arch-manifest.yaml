@@ -1,0 +1,11 @@
+image: guysoft/custompios:devel
+manifests:
+  - image: guysoft/custompios:amd64
+    platform:
+      architecture: amd64
+      os: linux
+  - image: guysoft/custompios:arm32v7
+    platform:
+      architecture: arm
+      os: linux
+      variant: v7
