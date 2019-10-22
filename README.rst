@@ -78,7 +78,7 @@ Useful commands from common.sh
 CustomPiOS comes with a script ``common.sh`` that has useful functions you can use inside your chroot_script.
 To use it you can add to your script ``source /common.sh``.
 
-``unpack [from_filesystem] [destination] [owner]`` - Lets you unpack files from the ``filesystem`` folder to a given destination. ``[owner]`` lets you set which user is going to be the owner. eg. ``unpack /filesystem/home/pi /home/pi pi``
+``unpack [from_filesystem] [destination] [owner]`` - Lets you unpack files from the ``filesystem`` folder to a given destination. ``[owner]`` lets you set which user is going to be the owner. e.g. ``unpack /filesystem/home/pi /home/pi pi``
 
 ``gitclone <MODULE_NAME>_<REPO_NAME>_REPO destination`` - Lets you clone a git repo, and have the settings preset in the ``config`` file. Example usage in OCTOPI module.
 
@@ -93,7 +93,7 @@ In ``config``::
 Export files from image
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-CustomPiOS has a feature to export files created in the chroot to archives you can ship as a tar.gz arcive.
+CustomPiOS has a feature to export files created in the chroot to archives you can ship as a tar.gz archive.
 
 To export run inside of a chroot_script:
 ``custompios_export [name of archive] [file path in chroot]``
@@ -146,14 +146,14 @@ List of Distributions using CustomPiOS
 --------------------------------------
 
 * `OctoPi <https://octopi.octoprint.org/>`_ - The ready-to-go Raspberry Pi image with OctoPrint
-* `FullPageOS <https://github.com/guysoft/FullPageOS>`_ - A raspberrypi distro to display a full page browser on boot
+* `FullPageOS <https://github.com/guysoft/FullPageOS>`_ - A Raspberry Pi distro to display a full page browser on boot
 * `Zynthian <http://zynthian.org/>`_ - Open Synth Platform
 * `ElectricSheepPi <https://github.com/guysoft/ElectricSheepPi>`_ - A Raspberry Pi distribution to run Electric Sheep digital art
-* `AlarmPi <https://github.com/guysoft/AlarmPi>`_ - A Raspberry Pi distribution that turns a raspberrypi to an IOT telegram-controlled alarm clock
-* `RealtimePi <https://github.com/guysoft/RealtimePi>`_ - An out-of-the-box raspebrrypi/raspbian distro with a realtime kernel
+* `AlarmPi <https://github.com/guysoft/AlarmPi>`_ - A Raspberry Pi distribution that turns a Raspberry Pi to an IOT telegram-controlled alarm clock
+* `RealtimePi <https://github.com/guysoft/RealtimePi>`_ - An out-of-the-box Raspebrry Pi/Raspbian distro with a realtime kernel
 * `RMS Pi <https://github.com/toddejohnson/rmspi>`_ - Raspberry Pi Distro for Winlink RMS
-* `V1PI <https://github.com/jeffeb3/v1pi>`_ - Use your raspberry pi to control your V1Engineering machine
-* `HotSpotOS <https://github.com/guysoft/HostSpotOS>`_ - Makes a Raspberrypi start a hotspot, if no wifi was found to conenct to
+* `V1PI <https://github.com/jeffeb3/v1pi>`_ - Use your Raspberry Pi to control your V1Engineering machine
+* `HotSpotOS <https://github.com/guysoft/HostSpotOS>`_ - Makes a Raspberry Pi start a hotspot, if no wifi was found to connect to
 
 
 Code contribution would be appreciated!
