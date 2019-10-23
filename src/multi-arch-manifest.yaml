@@ -1,10 +1,10 @@
-image: guysoft/custompios:devel
+image: guysoft/custompios-test:devel
 manifests:
-  - image: guysoft/custompios:amd64
+  - image: guysoft/custompios-test:amd64
     platform:
       architecture: amd64
       os: linux
-  - image: guysoft/custompios:arm32v7
+  - image: guysoft/custompios-test:arm32v7
     platform:
       architecture: arm
       os: linux
