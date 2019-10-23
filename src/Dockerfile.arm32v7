@@ -5,6 +5,7 @@ ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
+    apt-utils \
   && rm -rf /var/lib/apt/lists/* \
   && apt -qyy clean && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
 
