@@ -28,7 +28,6 @@ RUN set -x \
         python3 \
         binfmt-support \
         qemu \
-        qemu-user-static \
         sudo \
         zip \
         lsof \
