@@ -26,5 +26,6 @@ pushd /home/pi
     
     # unzip -q ${KERNEL_COMMIT}.zip
     tar xzvf ${KERNEL_COMMIT}.tar.gz
-    mv linux-${KERNEL_COMMIT} linux
+    FOLDER_NAME=$(tar -ztvf "${KERNEL_COMMIT}.tar.gz" | head -n 1 | awk '{ print $6 }')
+    mv "${FOLDER_NAME%?}" linux
 popd
