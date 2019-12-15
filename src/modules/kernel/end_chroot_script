@@ -40,32 +40,21 @@ function build_kernel(){
             elif [ "$KERNEL_SELECT" == "kernel7l" ]; then
                 KERNEL="kernel7l" make ARCH=arm bcmrpi_defconfig
             fi
-            echo "${KERNEL_CONFIG_APPEND}" >> .config
+
+            copy_and_save arch/arm/boot/Image /boot/${KERNEL_SELECT}.img
+        popd
+    popd
+}
+
+function build_modules(){
+    KERNEL_SELECT=$1
+            
             # CROSS_COMPILE=arm-linux-gnueabihf-
             make -j4 zImage modules dtbs
             
             mkdir kernel-rt
             INSTALL_MOD_PATH=kernel-rt make modules_install
-            copy_and_save arch/arm/boot/Image /boot/${KERNEL_SELECT}.img
-            
-            # TODO: figure out which dtbo to move
-            copy_and_save arch/arm/boot/dts/overlays/*.dtb* /boot/overlays/
-            copy_and_save arch/arm/boot/dts/overlays/README /boot/overlays/
-            
-            pushd arch/arm/boot/dts
-                if [ "$KERNEL" == "kernel7" ]; then
-                    copy_and_save bcm2709-rpi-2-b.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb bcm2710-rpi-3-b-plus.dtb /boot/
-                elif [ "$KERNEL" == "kernel" ]; then
-                    copy_and_save bcm2708-rpi-0-w.dtb bcm2708-rpi-b-plus.dtb bcm2708-rpi-b.dtb bcm2708-rpi-cm.dtb bcm2708-rpi-zero.dtb bcm2708-rpi-zero-w.dtb bcm2708-rpi-cm.dtb /boot/
-                elif [ "$KERNEL" == "kernel7l" ]; then
-                    copy_and_save bcm2711-rpi-4-b.dtb /boot/
-                fi
-            popd
 
-            copy_and_save_folder kernel-rt/lib /
-            rm -rf kernel-rt
-        popd
-    popd
 }
 
 pushd /home/pi
@@ -83,6 +72,8 @@ pushd /home/pi
             build_kernel "kernel7l"
         fi
         
+        build_modules
+        
         make clean
         
     popd
@@ -93,4 +84,16 @@ pushd /home/pi
     fi
     
     echo "$KERNEL_COMMIT" > /etc/kernel_commit
+    echo "${KERNEL_CONFIG_APPEND}" >> .config
+    
+    
+    # TODO: figure out which dtbo to move
+    copy_and_save arch/arm/boot/dts/overlays/*.dtb* /boot/overlays/
+    copy_and_save arch/arm/boot/dts/overlays/README /boot/overlays/
+    
+    copy_and_save bcm2709-rpi-2-b.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb bcm2710-rpi-3-b-plus.dtb bcm2708-rpi-0-w.dtb bcm2708-rpi-b-plus.dtb bcm2708-rpi-b.dtb bcm2708-rpi-cm.dtb bcm2708-rpi-zero.dtb bcm2708-rpi-zero-w.dtb bcm2708-rpi-cm.dtb bcm2711-rpi-4-b.dtb /boot/
+    popd
+
+    copy_and_save_folder kernel-rt/lib /
+    rm -rf kernel-rt
 popd
