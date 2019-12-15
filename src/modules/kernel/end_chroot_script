@@ -38,7 +38,7 @@ function build_kernel(){
             elif [ "$KERNEL_SELECT" == "kernel" ]; then
                 KERNEL="kernel" make ARCH=arm bcmrpi_defconfig
             elif [ "$KERNEL_SELECT" == "kernel7l" ]; then
-                KERNEL="kernel7l" make ARCH=arm bcmrpi_defconfig
+                KERNEL="kernel7l" make ARCH=arm bcm2711_defconfig
             fi
 
             copy_and_save arch/arm/boot/Image /boot/${KERNEL_SELECT}.img
