@@ -144,6 +144,12 @@ function detach_all_loopback(){
   done
 }
 
+function test_for_image(){
+  if [ ! -f "$1" ]; then
+    echo "Warning, can't see image file: $image"
+  fi
+}
+
 function mount_image() {
   image_path=$1
   root_partition=$2
@@ -256,6 +262,7 @@ p
 w
 FDISK
   detach_all_loopback $image
+  test_for_image $image
   LODEV=$(losetup -f --show -o $offset $image)
   trap 'losetup -d $LODEV' EXIT
 
@@ -280,6 +287,7 @@ function shrink_ext() {
   offset=$(($start*512))
 
   detach_all_loopback $image
+  test_for_image $image
   LODEV=$(losetup -f --show -o $offset $image)
   trap 'losetup -d $LODEV' EXIT
 
@@ -316,6 +324,7 @@ FDISK
 
   echo "Resizing filesystem ..."
   detach_all_loopback $image
+  test_for_image $image
   LODEV=$(losetup -f --show -o $offset $image)
   trap 'losetup -d $LODEV' EXIT
 
@@ -338,6 +347,7 @@ function minimize_ext() {
   offset=$(($start*512))
 
   detach_all_loopback $image
+  test_for_image $image
   LODEV=$(losetup -f --show -o $offset $image)
   trap 'losetup -d $LODEV' EXIT
 
