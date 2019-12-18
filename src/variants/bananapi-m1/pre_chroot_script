@@ -9,4 +9,4 @@ unpack /filesystem/root /
 
 #cleanup
 mkdir -p /var/cache/apt/archives
-apt-get clean
+apt-get autoclean
