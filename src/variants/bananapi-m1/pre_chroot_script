@@ -9,4 +9,8 @@ unpack /filesystem/root /
 
 #cleanup
 mkdir -p /var/cache/apt/archives
-apt-get autoclean
+if [ -n "$BASE_APT_CACHE" ] && [ "$BASE_APT_CACHE" != "no" ]; then
+  apt-get autoclean
+else
+  apt-get clean
+fi
