@@ -40,7 +40,11 @@ yes 1234 | passwd
 
 #cleanup
 mkdir -p /var/cache/apt/archives
-apt-get autoclean
+if [ -n "$BASE_APT_CACHE" ] && [ "$BASE_APT_CACHE" != "no" ]; then
+  apt-get autoclean
+else
+  apt-get clean
+fi
 apt-get update --allow-releaseinfo-change
 apt-get -y --force-yes install avahi-daemon || true
 apt-get -y --force-yes install python python-distutils-extra || true
