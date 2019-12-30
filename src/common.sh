@@ -125,15 +125,20 @@ function unpack() {
   then
     owner=$3
   fi
-
+  mkdir -p /tmp/unpack/
   # $from/. may look funny, but does exactly what we want, copy _contents_
   # from $from to $to, but not $from itself, without the need to glob -- see 
   # http://stackoverflow.com/a/4645159/2028598
-  cp -v -r --preserve=mode,timestamps $from/. $to
+  cp -v -r --preserve=mode,timestamps $from/. /tmp/unpack/
+  
   if [ -n "$owner" ]
   then
-    chown -hR $owner:$owner $to
+    chown -hR $owner:$owner /tmp/unpack/
   fi
+
+  cp -v -r --preserve=mode,ownership,timestamps /tmp/unpack/. $to
+  rm -r /tmp/unpack
+
 }
 
 function detach_all_loopback(){
