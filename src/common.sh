@@ -6,19 +6,23 @@ function die () {
 }
 
 function fixLd(){
-  sed -i 's@/usr/lib/arm-linux-gnueabihf/libcofi_rpi.so@\#/usr/lib/arm-linux-gnueabihf/libcofi_rpi.so@' etc/ld.so.preload
-  sed -i 's@/usr/lib/arm-linux-gnueabihf/libarmmem.so@\#/usr/lib/arm-linux-gnueabihf/libarmmem.so@' etc/ld.so.preload
+    if [ -f etc/ld.so.preload ]; then
+        sed -i 's@/usr/lib/arm-linux-gnueabihf/libcofi_rpi.so@\#/usr/lib/arm-linux-gnueabihf/libcofi_rpi.so@' etc/ld.so.preload
+        sed -i 's@/usr/lib/arm-linux-gnueabihf/libarmmem.so@\#/usr/lib/arm-linux-gnueabihf/libarmmem.so@' etc/ld.so.preload
   
-  # Debian Buster/ Raspbian 2019-06-20
-  sed -i 's@/usr/lib/arm-linux-gnueabihf/libarmmem-${PLATFORM}.so@#/usr/lib/arm-linux-gnueabihf/libarmmem-${PLATFORM}.so@' etc/ld.so.preload
+        # Debian Buster/ Raspbian 2019-06-20
+        sed -i 's@/usr/lib/arm-linux-gnueabihf/libarmmem-${PLATFORM}.so@#/usr/lib/arm-linux-gnueabihf/libarmmem-${PLATFORM}.so@' etc/ld.so.preload
+   fi
 }
 
 function restoreLd(){
-  sed -i 's@\#/usr/lib/arm-linux-gnueabihf/libcofi_rpi.so@/usr/lib/arm-linux-gnueabihf/libcofi_rpi.so@' etc/ld.so.preload
-  sed -i 's@\#/usr/lib/arm-linux-gnueabihf/libarmmem.so@/usr/lib/arm-linux-gnueabihf/libarmmem.so@' etc/ld.so.preload
+    if [ -f etc/ld.so.preload ]; then
+        sed -i 's@\#/usr/lib/arm-linux-gnueabihf/libcofi_rpi.so@/usr/lib/arm-linux-gnueabihf/libcofi_rpi.so@' etc/ld.so.preload
+        sed -i 's@\#/usr/lib/arm-linux-gnueabihf/libarmmem.so@/usr/lib/arm-linux-gnueabihf/libarmmem.so@' etc/ld.so.preload
   
-  # Debian Buster/ Raspbian 2019-06-20
-  sed -i 's@#/usr/lib/arm-linux-gnueabihf/libarmmem-${PLATFORM}.so@/usr/lib/arm-linux-gnueabihf/libarmmem-${PLATFORM}.so@' etc/ld.so.preload
+        # Debian Buster/ Raspbian 2019-06-20
+        sed -i 's@#/usr/lib/arm-linux-gnueabihf/libarmmem-${PLATFORM}.so@/usr/lib/arm-linux-gnueabihf/libarmmem-${PLATFORM}.so@' etc/ld.so.preload
+    fi
 }
 
 function pause() {
@@ -42,12 +46,12 @@ function echo_green() {
 function gitclone(){
   # call like this: gitclone OCTOPI_OCTOPRINT_REPO someDirectory -- this will do:
   #
-  #   sudo -u pi git clone -b $OCTOPI_OCTOPRINT_REPO_BRANCH --depth $OCTOPI_OCTOPRINT_REPO_DEPTH $OCTOPI_OCTOPRINT_REPO_BUILD someDirectory
+  #   sudo -u "${BASE_USER}" git clone -b $OCTOPI_OCTOPRINT_REPO_BRANCH --depth $OCTOPI_OCTOPRINT_REPO_DEPTH $OCTOPI_OCTOPRINT_REPO_BUILD someDirectory
   # 
   # and if $OCTOPI_OCTOPRINT_REPO_BUILD != $OCTOPI_OCTOPRINT_REPO_SHIP also:
   #
   #   pushd someDirectory
-  #     sudo -u pi git remote set-url origin $OCTOPI_OCTOPRINT_REPO_SHIP
+  #     sudo -u "${BASE_USER}" git remote set-url origin $OCTOPI_OCTOPRINT_REPO_SHIP
   #   popd
   # 
   # if second parameter is not provided last URL segment of the BUILD repo URL
@@ -103,12 +107,12 @@ function gitclone(){
     repo_dir=$(echo ${repo_dir} | sed 's%^.*/\([^/]*\)\(\.git\)?$%\1%g')
   fi
 
-  sudo -u pi git clone $clone_params "$build_repo" "$repo_dir"
+  sudo -u "${BASE_USER}" git clone $clone_params "$build_repo" "$repo_dir"
 
   if [ "$build_repo" != "$ship_repo" ]
   then
     pushd "$repo_dir"
-      sudo -u pi git remote set-url origin "$ship_repo"
+      sudo -u "${BASE_USER}" git remote set-url origin "$ship_repo"
     popd
   fi
 }

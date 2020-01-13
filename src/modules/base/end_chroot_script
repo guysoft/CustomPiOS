@@ -15,8 +15,8 @@ if [ -n "$BASE_PYPI_INDEX" ]
 then
   rm -r /root/.pip
   rm -r /root/.pydistutils.cfg
-  rm -r /home/pi/.pip/pip.conf
-  rm -r /home/pi/.pydistutils.cfg
+  rm -r /home/"${BASE_USER}"/.pip/pip.conf
+  rm -r /home/"${BASE_USER}"/.pydistutils.cfg
 fi
 
 #reach device by name
@@ -29,3 +29,7 @@ fi
 
 echo "$BASE_OVERRIDE_HOSTNAME" > /etc/hostname
 sed -i -e "s@${FILE_HOST_NAME}@$BASE_OVERRIDE_HOSTNAME@g" /etc/hosts
+
+#cleanup
+apt-get clean
+apt-get autoremove -y

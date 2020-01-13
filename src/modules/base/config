@@ -11,7 +11,20 @@ BASE_VERSION=1.4.0
 [ -n "$BASE_IMAGE_PATH" ] || BASE_IMAGE_PATH=${DIST_PATH}/image
 [ -n "$BASE_IMAGE_RASPBIAN" ] || BASE_IMAGE_RASPBIAN=yes
 
-[ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-raspbian*.zip | head -n 1`
+# Distro
+[ -n "$BASE_DISTRO" ] || BASE_DISTRO=raspbian
+
+if [ "${BASE_DISTRO}" == "ubuntu" ]; then
+  # Default image ubuntu
+  [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/ubuntu-*.xz | head -n 1`
+  # Default user ubuntu
+  [ -n "$BASE_USER" ] || BASE_USER=ubuntu
+else
+  # Default image raspbian
+  [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-raspbian*.zip | head -n 1`
+  # Default user raspbian
+  [ -n "$BASE_USER" ] || BASE_USER=pi
+fi
 
 [ -n "$BASE_WORKSPACE" ] || BASE_WORKSPACE=${DIST_PATH}/workspace$WORKSPACE_POSTFIX
 # [ -n "$BASE_CHROOT_SCRIPT_PATH" ] || BASE_CHROOT_SCRIPT_PATH=$BASE_SCRIPT_PATH/chroot_script
@@ -58,3 +71,7 @@ BASE_VERSION=1.4.0
 
 #Keyboard
 [ -n "$BASE_CONFIG_KEYBOARD" ] || BASE_CONFIG_KEYBOARD=default
+
+# Arch for now either armv7l, arm64 or aarch64
+[ -n "$BASE_ARCH" ] || BASE_ARCH=armv7l
+
