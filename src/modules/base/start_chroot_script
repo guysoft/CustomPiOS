@@ -13,7 +13,7 @@ source /common.sh
 install_cleanup_trap
 
 if [ "${BASE_DISTRO}" == "ubuntu" ]; then
-  unpack /filesystem/ubuntu /root root
+  unpack /filesystem/ubuntu / root
 
   mv /etc/resolv.conf /etc/resolv.conf.orig || true
   echo "nameserver 8.8.8.8" > /etc/resolv.conf
