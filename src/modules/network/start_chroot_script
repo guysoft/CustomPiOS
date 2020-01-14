@@ -29,8 +29,9 @@ rm -f /etc/wpa_supplicant/wpa_supplicant.conf                        # remove di
 
 # create symlink
 if [ "${BASE_DISTRO}" == "ubuntu" ]; then
+    mkdir -p /etc/wpa_supplicant
     # ubuntu /boot is mounted to /boot/firmware/
-    ln -s "${DIST_NETWORK_FILE//\/boot/\/boot\/firmware}" ${DIST_NETWORK_FILE} /etc/wpa_supplicant/wpa_supplicant.conf
+    ln -s "${DIST_NETWORK_FILE//\/boot/\/boot\/firmware}" /etc/wpa_supplicant/wpa_supplicant.conf
 else
     ln -s "${DIST_NETWORK_FILE}" /etc/wpa_supplicant/wpa_supplicant.conf
 fi
