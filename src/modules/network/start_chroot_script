@@ -18,10 +18,22 @@ DIST_NETWORK_FILE=/boot/${DIST_NAME,,}-wpa-supplicant.txt
 
 # allow configuring multiple wifi networks via /boot/DIST_NAME-wpa-supplicant.txt
 mv /boot/custompios-wpa-supplicant.txt ${DIST_NETWORK_FILE}
-touch /etc/wpa_supplicant/wpa_supplicant.conf
+
+if [ "${BASE_DISTRO}" == "ubuntu" ]; then
+    echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev" > /etc/wpa_supplicant/wpa_supplicant.conf
+    echo "update_config=1" >> /etc/wpa_supplicant/wpa_supplicant.conf
+fi
+
 cat /etc/wpa_supplicant/wpa_supplicant.conf >> ${DIST_NETWORK_FILE}  # append distributed conf to our own
 rm -f /etc/wpa_supplicant/wpa_supplicant.conf                        # remove distributed conf
-ln -s ${DIST_NETWORK_FILE} /etc/wpa_supplicant/wpa_supplicant.conf   # create symlink
+
+# create symlink
+if [ "${BASE_DISTRO}" == "ubuntu" ]; then
+    # ubuntu /boot is mounted to /boot/firmware/
+    ln -s "${DIST_NETWORK_FILE//\/boot/\/boot\/firmware}" ${DIST_NETWORK_FILE} /etc/wpa_supplicant/wpa_supplicant.conf
+else
+    ln -s "${DIST_NETWORK_FILE}" /etc/wpa_supplicant/wpa_supplicant.conf
+fi
 
 # copy /etc/wpa_supplicant/ifupdown.sh to /etc/ifplugd/action.d/ifupdown - for wlan auto reconnect
 [ -f /etc/ifplugd/action.d/ifupdown ] && mv /etc/ifplugd/action.d/ifupdown /etc/ifplugd/action.d/ifupdown.original
