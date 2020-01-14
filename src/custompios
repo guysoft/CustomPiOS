@@ -27,16 +27,27 @@ function execute_chroot_script() {
 
   #black magic of qemu-arm-static
   # cp `which qemu-arm-static` usr/bin
-  cp `which qemu-aarch64-static` usr/bin/qemu-arm-static
+  if [ "$BASE_ARCH" == "armv7l" ]; then
+    cp `which qemu-arm-static` usr/bin/qemu-arm-static
+  elif [ "$BASE_ARCH" == "aarch64" ] || [ "$BASE_ARCH" == "arm64" ]; then
+    cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static
+  fi
   
   cp $2 chroot_script
   chmod 755 chroot_script
   cp "${CUSTOM_PI_OS_PATH}"/common.sh common.sh
   chmod 755 common.sh
   
-  if [ -f /.dockerenv ] && [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] ; then
-    chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
+  if [ -f /.dockerenv ] && [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] && [ "$(arch)" != "arm64" ] ; then
+    if [ "$BASE_ARCH" == "armv7l" ]; then
+      echo "Building on non-ARM device a armv7l system, using qemu-arm-static"
+      chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
+    elif [ "$BASE_ARCH" == "aarch64" ] || [ "$BASE_ARCH" == "arm64" ]; then
+      echo "Building on non-ARM device a aarch64/arm64 system, using qemu-aarch64-static"
+      chroot . usr/bin/qemu-aarch64-static /bin/bash /chroot_script
+    fi
   else
+    echo "Building on ARM device a armv7l/aarch64/arm64 system, not using qemu"
     chroot . /bin/bash /chroot_script
   fi
   
