@@ -30,6 +30,10 @@ fi
 echo "$BASE_OVERRIDE_HOSTNAME" > /etc/hostname
 sed -i -e "s@${FILE_HOST_NAME}@$BASE_OVERRIDE_HOSTNAME@g" /etc/hosts
 
+if [ "${BASE_DISTRO}" == "ubuntu" ];then
+    echo "127.0.0.1 ${BASE_OVERRIDE_HOSTNAME}" > /etc/hosts
+fi
+
 #cleanup
 apt-get clean
 apt-get autoremove -y
