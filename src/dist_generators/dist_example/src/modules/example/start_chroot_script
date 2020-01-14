@@ -13,7 +13,7 @@ set -e
 source /common.sh
 install_cleanup_trap
 
-unpack /filesystem/home/pi /home/pi pi
+unpack /filesystem/home/pi /home/"${BASE_USER}" "${BASE_USER}"
 unpack /filesystem/home/root /root root
 unpack /filesystem/boot /boot
 
