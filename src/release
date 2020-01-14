@@ -14,12 +14,28 @@ fi
 source "${CUSTOM_PI_OS_PATH}/config"
 
 FILENAME=$(basename `ls . |  grep -e .img$ -e .raw$ | tail -n 1`)
-if [ -z "$1" ];then
-    OCTOPI_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/raspbian/${DIST_NAME,,}/").img
+
+if [ "${BASE_RELEASE_IMG_NAME}" == "default" ]; then
+    if [ "${BASE_RELEASE_DISTRO}" == "ubuntu" ]; then
+        CHANGE_STRING="ubuntu"
+    else
+        CHANGE_STRING="raspbian"
+    fi
+    if [ -z "$1" ];then
+        IMG_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/${CHANGE_STRING}/${DIST_NAME,,}/").img
+    else
+        IMG_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/${CHANGE_STRING}/${DIST_NAME,,}-$1/").img
+    fi
 else
-    OCTOPI_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/raspbian/${DIST_NAME,,}-$1/").img
+    IMG_FILENAME="${BASE_IMG_NAME}"
 fi
+
 mv ${FILENAME} $OCTOPI_FILENAME
-zip ${OCTOPI_FILENAME::-4}.zip $OCTOPI_FILENAME
+
+if [ "${BASE_RELEASE_IMG_NAME}" == "default" ]; then
+    zip "${IMG_FILENAME::-4}.zip" "${IMG_FILENAME}"
+else
+    zip "${BASE_IMG_NAME%.zip}".zip "${IMG_FILENAME}"
+fi
 
 popd
