@@ -26,6 +26,9 @@ else
   [ -n "$BASE_USER" ] || BASE_USER=pi
 fi
 
+# Release compression
+[ -n "$BASE_RELEASE_COMPRESS" ] || BASE_RELEASE_COMPRESS=yes
+
 [ -n "$BASE_RELEASE_IMG_NAME" ] || BASE_RELEASE_IMG_NAME=default
 [ -n "$BASE_RELEASE_ZIP_NAME" ] || BASE_RELEASE_ZIP_NAME=default
 

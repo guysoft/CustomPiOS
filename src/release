@@ -32,12 +32,17 @@ else
     IMG_FILENAME="${BASE_IMG_NAME}"
 fi
 
-mv ${FILENAME} "${IMG_FILENAME}"
+mv "${FILENAME}" "${IMG_FILENAME}"
 
-if [ "${BASE_RELEASE_IMG_NAME}" == "default" ]; then
-    zip "${IMG_FILENAME::-4}.zip" "${IMG_FILENAME}"
+if [ "${BASE_RELEASE_COMPRESS}" == "yes" ]; then
+    echo "Compressing image"
+    if [ "${BASE_RELEASE_IMG_NAME}" == "default" ]; then
+        zip "${IMG_FILENAME::-4}.zip" "${IMG_FILENAME}"
+    else
+        zip "${BASE_IMG_NAME%.zip}".zip "${IMG_FILENAME}"
+    fi
 else
-    zip "${BASE_IMG_NAME%.zip}".zip "${IMG_FILENAME}"
+    echo "Not compressing because setting is disabled"
 fi
 
 popd
