@@ -28,7 +28,14 @@ if_group_exists_run(){
     fi
 }
 
-
+# disable armbian based network config
+# https://github.com/armbian/build/blob/master/packages/bsp/common/usr/lib/armbian/armbian-firstrun-config
+systemctl disable armbian-firstrun-config
+rm /boot/armbian_first_run.txt.template
+# remove NetworkManager use /etc/network instead
+apt-get remove -y network-manager
+# disable first-login add user https://github.com/armbian/build/blob/master/packages/bsp/common/etc/profile.d/armbian-check-first-login.sh
+rm /etc/profile.d/armbian-check-first-login.sh
 
 password=$(perl -e 'printf("%s\n", crypt($ARGV[0], "password"))' "raspberry")
 useradd -m -p "${password}" -s /bin/bash pi
