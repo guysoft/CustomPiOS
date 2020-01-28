@@ -29,7 +29,7 @@ if [ ! -f "${BASE_IMG_PATH}" ]; then
     sudo bash -c "$(declare -f unmount_image); unmount_image $BASE_MOUNT_PATH force"
 fi
 
-KERNEL_VERSION=kernel-qemu-4.14.79-stretch
+KERNEL_VERSION=kernel-qemu-4.19.50-buster
 DTB_VERSION=versatile-pb.dtb
 KERNEL_PATH=${DEST}/${KERNEL_VERSION}
 
