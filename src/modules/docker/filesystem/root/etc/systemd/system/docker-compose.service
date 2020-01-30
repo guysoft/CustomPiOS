@@ -1,0 +1,15 @@
+[Unit]
+Description=docker-compose service
+Requires=docker.service network-online.target
+After=docker.service network-online.target
+
+[Service]
+WorkingDirectory=DOCKER_COMPOSE_BOOT_PATH_PLACEHOLDER
+#Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/start_docker_compose
+ExecStop=/usr/bin/stop_docker_compose
+ExecReload=/usr/bin/start_docker_compose
+
+[Install]
+WantedBy=multi-user.target

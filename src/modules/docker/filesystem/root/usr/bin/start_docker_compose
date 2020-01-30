@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Make sure we have internet
+until $(curl --output /dev/null --silent --head --fail https://hub.docker.com ); do
+    echo "$(date):  try to connect to docker hub"
+    sleep 5
+done
+
+for docker_compose_service in DOCKER_COMPOSE_BOOT_PATH_PLACEHOLDER/*/; do
+    pushd "${docker_compose_service}"
+        if [ -f docker-compose.yml ]; then
+            docker-compose pull --quiet --ignore-pull-failures
+            docker-compose build --pull
+            docker-compose up  --remove-orphans -d
+        fi
+    popd
+done
+echo "Done"

@@ -12,9 +12,9 @@ install_cleanup_trap
 if [ "${BASE_DISTRO}" == "raspbian" ]; then
         curl -sSL get.docker.com | sh
 elif [ "${BASE_DISTRO}" == "ubuntu" ]; then
-    if [ "${BASE_ARCH}" == "aarch64" ] || [ "${BASE_ARCHi}" == "arm64" ]; then
+    if [ "${BASE_ARCH}" == "aarch64" ] || [ "${BASE_ARCH}" == "arm64" ]; then
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    add-apt-repository "deb [arch=arm64] https://download.docker.com/linux/ubuntu disco stable"
+        add-apt-repository "deb [arch=arm64] https://download.docker.com/linux/ubuntu disco stable"
     else
         echo "Error, not implemented Ubuntu 32bit"
 	exit 1
@@ -33,6 +33,26 @@ if [ "${DOCKER_COMPOSE}" == "yes" ]; then
     wget https://bootstrap.pypa.io/get-pip.py -O - | python3
     pip3 install --ignore-installed PyYAML
     pip3 install docker-compose
+fi
+
+
+if [ "${DOCKER_COMPOSE_BOOT}" == "yes" ]; then
+    unpack /filesystem/root /
+    unpack /filesystem/boot /boot
+    
+    if [ "${DOCKER_COMPOSE_BOOT_PATH}" == "default" ]; then
+        if [ "${BASE_DISTRO}" == "ubuntu" ]; then
+            DOCKER_COMPOSE_BOOT_PATH_ACTUAL=/boot/firmware/docker-compose
+        else
+            DOCKER_COMPOSE_BOOT_PATH_ACTUAL=/boot/docker-compose
+        fi
+    else
+        DOCKER_COMPOSE_BOOT_PATH_ACTUAL="${DOCKER_COMPOSE_BOOT_PATH}"
+    fi
+    sed -i "s@DOCKER_COMPOSE_BOOT_PATH_PLACEHOLDER@${DOCKER_COMPOSE_BOOT_PATH_ACTUAL}@g" /etc/systemd/system/docker-compose.service
+    sed -i "s@DOCKER_COMPOSE_BOOT_PATH_PLACEHOLDER@${DOCKER_COMPOSE_BOOT_PATH_ACTUAL}@g" /usr/bin/start_docker_compose
+    sed -i "s@DOCKER_COMPOSE_BOOT_PATH_PLACEHOLDER@${DOCKER_COMPOSE_BOOT_PATH_ACTUAL}@g" /usr/bin/stop_docker_compose
+    systemctl enable docker-compose.service
 fi
 
 #cleanup
