@@ -10,6 +10,6 @@ set -e
 source /common.sh
 
 apt-get update
-apt-get -y usbmount
+apt-get install -y usbmount
 
 unpack /filesystem/root /
