@@ -14,8 +14,8 @@ else
 fi
 
 WORKSPACE_POSTFIX=
-if [ $BUILD_VARIANT != 'default' ]; then
-  WORKSPACE_POSTFIX=-$BUILD_VARIANT
+if [ "${BUILD_VARIANT}" != 'default' ]; then
+  WORKSPACE_POSTFIX=-"${BUILD_VARIANT}"
 fi
 
 #Update repos used
