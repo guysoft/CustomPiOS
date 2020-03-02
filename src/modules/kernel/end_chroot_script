@@ -42,7 +42,7 @@ function build_kernel(){
             fi
             echo "${KERNEL_CONFIG_APPEND}" >> .config
             # CROSS_COMPILE=arm-linux-gnueabihf-
-            make -j4 zImage modules dtbs
+            make -j4 zImage modules dtbs ARCH=arm
             
             mkdir kernel-rt
             INSTALL_MOD_PATH=kernel-rt make modules_install
