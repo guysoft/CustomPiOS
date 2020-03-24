@@ -42,7 +42,7 @@ then
         mkdir -p /home/"${ADMIN_TOOLKIT_NAME}"/.ssh
         echo "${ADMIN_TOOLKIT_SSH}" > /home/"${ADMIN_TOOLKIT_NAME}"/.ssh/authorized_keys
         chown -R "${ADMIN_TOOLKIT_NAME}" /home/"${ADMIN_TOOLKIT_NAME}"/.ssh
-        chmod 775 /home/"${ADMIN_TOOLKIT_NAME}"/.ssh
+        chmod 700 /home/"${ADMIN_TOOLKIT_NAME}"/.ssh
         chmod 600 /home/"${ADMIN_TOOLKIT_NAME}"/.ssh/authorized_keys
 
         # disable ssh password
@@ -78,6 +78,7 @@ then
     then
         unpack /filesystem/tools/HostNameScript /home/"${ADMIN_TOOLKIT_NAME}"/scripts ${ADMIN_TOOLKIT_NAME}
         chmod +x /home/"${ADMIN_TOOLKIT_NAME}"/scripts/hostname_change.sh
+        chown -R "${ADMIN_TOOLKIT_NAME}:${ADMIN_TOOLKIT_NAME}" /home/"${ADMIN_TOOLKIT_NAME}"/scripts
     fi
 
 fi 
