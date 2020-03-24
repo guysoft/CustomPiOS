@@ -116,7 +116,7 @@ ADMIN_TOOLKIT_REMOVE_NETWORK_MANAGER=no
  ADMIN_TOOLKIT_CRON_USER=pi
 
 # if you want to install root user jobs... eg. auto reboot. "yes" to configure
- ADMIN_TOOLKIT_SYSTEM_CRON=yes
+ ADMIN_TOOLKIT_SYSTEM_CRON=no
 
 
  ######## User Defined Scripts ############################
