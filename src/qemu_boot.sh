@@ -19,7 +19,7 @@ if [ ! -f "${BASE_IMG_PATH}" ]; then
     BASE_MOUNT_PATH=${DEST}/mount
     mkdir -p "${BASE_MOUNT_PATH}"
 
-    sudo bash -c "$(declare -f mount_image); mount_image $BASE_IMG_PATH $BASE_ROOT_PARTITION $BASE_MOUNT_PATH"
+    sudo bash -c "$(declare -f mount_image); $(declare -f detach_all_loopback); mount_image $BASE_IMG_PATH $BASE_ROOT_PARTITION $BASE_MOUNT_PATH"
 
     pushd "${BASE_MOUNT_PATH}"
         sudo bash -c "$(declare -f fixLd); fixLd"
