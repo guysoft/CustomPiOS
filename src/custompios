@@ -27,7 +27,7 @@ function execute_chroot_script() {
 
   #black magic of qemu-arm-static
   # cp `which qemu-arm-static` usr/bin
-  if [ -f /.dockerenv ] && [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] ; then
+  if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] ; then
     if [ "$BASE_ARCH" == "armv7l" ]; then
       cp `which qemu-arm-static` usr/bin/qemu-arm-static
     elif [ "$BASE_ARCH" == "aarch64" ] || [ "$BASE_ARCH" == "arm64" ]; then
