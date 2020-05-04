@@ -2,9 +2,9 @@
 #
 # This script is part of the CustomPiOS admin-toolkit module
 
-PORTS_UDP=no
-PORTS_TCP=no
-ENABLE_LOGGING=no
+UFW_PORTS_UDP=no
+UFW_PORTS_TCP=no
+UFW_ENABLE_LOGGING=no
 
 if [ ! -f /etc/ufw_enabled ];
 then
