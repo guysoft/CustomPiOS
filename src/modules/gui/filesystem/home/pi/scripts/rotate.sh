@@ -1,5 +1,8 @@
 #!/bin/bash
-
+#
+#  Taken from this gist https://gist.github.com/mildmojo/48e9025070a2ba40795c#gistcomment-2694429
+#  Adds the ability to rotate the screen with a single command or in a user created addition at build time
+#
 if [ -z "$1" ] ; then
   echo "Usage: $0 [normal|inverted|left|right]"
   echo " "
