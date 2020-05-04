@@ -132,7 +132,7 @@ if [ "$ADMIN_TOOLKIT_CRON_JOB" == "yes" ]
 then
     if [ "$ADMIN_TOOLKIT_CRON_USER" != "no" ]
     then
-        unpack /filesystem/tools/cronJobs/user /home/"${ADMIN_TOOLKIT_CRON_USER}" ${ADMIN_TOOLKIT_CRON_USER}
+        unpack /filesystem/tools/cronJobs/User /home/"${ADMIN_TOOLKIT_CRON_USER}" ${ADMIN_TOOLKIT_CRON_USER}
         crontab -u "${ADMIN_TOOLKIT_CRON_USER}" /home/"${ADMIN_TOOLKIT_CRON_USER}"/"${ADMIN_TOOLKIT_CRON_USER}"
     fi
 
