@@ -40,7 +40,7 @@ function execute_chroot_script() {
   cp "${CUSTOM_PI_OS_PATH}"/common.sh common.sh
   chmod 755 common.sh
   
-  if [ -f /.dockerenv ] && [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] && [ "$(arch)" != "arm64" ] ; then
+  if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] && [ "$(arch)" != "arm64" ] ; then
     if [ "$BASE_ARCH" == "armv7l" ]; then
       echo "Building on non-ARM device a armv7l system, using qemu-arm-static"
       chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
