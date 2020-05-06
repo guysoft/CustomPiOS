@@ -131,7 +131,7 @@ ADMIN_TOOLKIT_REMOVE_NETWORK_MANAGER=no
  ADMIN_TOOLKIT_USER_SCRIPTS_NAME=pi
 
 ######### Screen Rotation Script #######################
-#  **** REQUIRES THE GUI MODULE ****
+#  **** REQUIRES THE GUI MODULE AND pi 4 **** 
 #  Rotates the screen after start up. Since there's some issues
 #  with rotation on certian diaplays at boot this section lets you
 #  add screen rotation after boot up.
