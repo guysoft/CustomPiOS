@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+#  Due to the new display driver in the pi 4 the /boot/config.txt method for screen rotation doesn't work this is a work around for the time being. 
 #  Taken from this gist https://gist.github.com/mildmojo/48e9025070a2ba40795c#gistcomment-2694429
 #  Adds the ability to rotate the screen with a single command or in a user created addition at build time
 #
