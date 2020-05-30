@@ -17,17 +17,20 @@ FILENAME=$(basename `ls . |  grep -e .img$ -e .raw$ | tail -n 1`)
 
 if [ "${BASE_RELEASE_IMG_NAME}" == "default" ]; then
     if [ "${BASE_DISTRO}" == "ubuntu" ]; then
-        CHANGE_STRING="ubuntu"
+        CHANGE_STRING_LIST=( "ubuntu" )
     else
-        CHANGE_STRING="raspbian"
+        CHANGE_STRING_LIST=( "raspbian" "raspios")
     fi
 
     # Handle variant name
-    if [ -z "$1" ];then
+    for CHANGE_STRING in "${CHANGE_STRING_LIST[@]}"
+    do
+        if [ -z "$1" ];then
         IMG_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/${CHANGE_STRING}/${DIST_NAME,,}/").img
-    else
-        IMG_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/${CHANGE_STRING}/${DIST_NAME,,}-$1/").img
-    fi
+        else
+            IMG_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/${CHANGE_STRING}/${DIST_NAME,,}-$1/").img
+        fi
+    done
 else
     IMG_FILENAME="${BASE_IMG_NAME}"
 fi
