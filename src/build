@@ -14,9 +14,6 @@ source ${BUILD_SCRIPT_PATH}/common.sh
 install_cleanup_trap
 
 CUSTOM_OS_PATH=$(dirname $(realpath -s $0))
-pushd $CUSTOM_OS_PATH
-  export OCTOPI_COMMIT=`git rev-parse HEAD`
-popd
 
 source ${CUSTOM_PI_OS_PATH}/config ${@}
 ${CUSTOM_PI_OS_PATH}/config_sanity
