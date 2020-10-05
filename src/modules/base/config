@@ -19,6 +19,8 @@ if [ "${BASE_DISTRO}" == "ubuntu" ]; then
   [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/ubuntu-*.xz | head -n 1`
   # Default user ubuntu
   [ -n "$BASE_USER" ] || BASE_USER=ubuntu
+elif [ "${BASE_DISTRO}" == "raspios64" ]; then
+  [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}-*-arm64-*.zip | head -n 1`
 else
   # Default image raspbian
   [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}*.zip | head -n 1`
@@ -80,4 +82,7 @@ fi
 
 # Arch for now either armv7l, arm64 or aarch64
 [ -n "$BASE_ARCH" ] || BASE_ARCH=armv7l
+
+# If you want your variant not to have the name appending, enable this
+[ -n "$BASE_IGNORE_VARIANT_NAME" ] || BASE_IGNORE_VARIANT_NAME=no
 

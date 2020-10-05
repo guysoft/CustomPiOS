@@ -25,8 +25,8 @@ if [ "${BASE_RELEASE_IMG_NAME}" == "default" ]; then
     # Handle variant name
     for CHANGE_STRING in "${CHANGE_STRING_LIST[@]}"
     do
-        if [ -z "$1" ];then
-        IMG_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/${CHANGE_STRING}/${DIST_NAME,,}/").img
+        if [ -z "$1" ] || [ "$BASE_IGNORE_VARIANT_NAME" == "yes" ] ;then
+            IMG_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/${CHANGE_STRING}/${DIST_NAME,,}/").img
         else
             IMG_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/${CHANGE_STRING}/${DIST_NAME,,}-$1/").img
         fi
