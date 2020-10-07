@@ -1,0 +1,4 @@
+BASE_ARCH=arm64
+BASE_IMAGE_PATH=${DIST_PATH}/image-raspios_lite_arm64
+BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}-*-arm64-*.zip | head -n 1`
+BASE_IGNORE_VARIANT_NAME=yes
