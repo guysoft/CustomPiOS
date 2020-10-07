@@ -38,6 +38,7 @@ Features
 * Write only the code you need for your distro - no need to maintain complicated stuff like building kernels unless its actually want to do it
 * Standard modules give extra functionality out of the box
 * Supports over 40 embedded devices using `Armbian <http://armbian.com/>`_ and Raspbian.
+* Supports Raspberry Pi OS arm64 bit using the ``raspios_lite_arm64`` variant.
 
 Developing
 ----------
