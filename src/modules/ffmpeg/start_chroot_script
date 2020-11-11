@@ -13,7 +13,7 @@ apt-get update
 apt-get install -y checkinstall git
 
 pushd /usr/src
-    git clone git://git.videolan.org/x264
+    git clone https://code.videolan.org/videolan/x264.git
     pushd x264
         ./configure --host=arm-unknown-linux-gnueabi --enable-static --disable-opencl
         make -j 2
