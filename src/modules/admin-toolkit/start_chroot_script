@@ -150,8 +150,6 @@ then
     chmod +x /home/pi/scripts/tv_off.sh
 fi
 
-fi
-
 #  User added scripts
 if [ "$ADMIN_TOOLKIT_USER_SCRIPTS" == "yes" ]
 then
