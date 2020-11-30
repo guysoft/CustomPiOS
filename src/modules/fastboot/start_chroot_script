@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# <Script Name>
+# <Description what this module does>
+# Written by <Author>
+# GPL V3
+########
+
+
+# Source error handling, leave this in place
+set -x
+set -e
+
+source /common.sh
+install_cleanup_trap
+
+
+
+# Tools
+
+append2() {
+if grep $2 $1>/dev/null; then
+ echo "exists"
+else
+   # Not found; insert in file before EOF
+   sed -i "s/\'/ $3/g" $1 >/dev/null
+fi
+}
+
+
+echo "# Improve Boot time" >> /boot/config.txt
+echo "disable_splash=1" >> /boot/config.txt
+echo "boot_delay=0" >> /boot/config.txt
+echo "force_turbo=1" >> /boot/config.txt
+
+
+# make kerrnel out quiet and remove berries
+append2 /boot/cmdline.txt quiet quiet
+append2 /boot/cmdline.txt logo.nologo logo.nologo
+
+
+# disable and or wifi if not needed
+if [ -z "$FASTBOOT_NEEDS_BT" ]
+then
+  echo "dtoverlay=disable-bt" >> /boot/config.txt
+fi
+
+if [ -z "$FASTBOOT_NEEDS_WIFI" ]
+then
+  echo "dtoverlay=disable-wifi" >> /boot/config.txt
+fi
+
+# Notes: the readonly module already removes many things like plymouth and triggerhappy... these also improve boottime by a lot
+
+systemctl disable keyboard-setup.service
+systemctl disable apt-daily.service
+systemctl disable wifi-country.service
+systemctl disable raspi-config.service
+systemctl disable avahi-daemon.service
+systemctl disable sshswitch.service
+systemctl disable apt-daily-upgrade.service
+systemctl disable man-db.service
+
+# disable and or wifi if not needed
+if [ -z "$KEEP_EEPROM_UPDATE" ]
+then
+  systemctl disable rpi-eeprom-update.service
+fi
