@@ -1,0 +1,133 @@
+
+#!/usr/bin/env bash
+# <Script Name>
+# <Description what this module does>
+# Written by <Author>
+# GPL V3
+########
+
+
+# Source error handling, leave this in place
+set -x
+set -e
+
+source /common.sh
+install_cleanup_trap
+
+
+systemctl disable resize2fs_once 
+
+# Generate some host keys for the image
+ssh-keygen -A -v
+systemctl disable regenerate_ssh_host_keys 
+
+# Rest of this script is inspired by https://github.com/adafruit/Raspberry-Pi-Installer-Scripts/blob/master/read-only-fs.sh
+
+# Given a filename, a regex pattern to match and a replacement string:
+# Replace string if found, else no change.
+# (# $1 = filename, $2 = pattern to match, $3 = replacement)
+replace() {
+	if grep $2 $1 >/dev/null; then
+                # Pattern found; replace in file
+                sed -i "s/$2/$3/g" $1 >/dev/null
+	fi
+}
+
+# Given a filename, a regex pattern to match and a replacement string:
+# If found, perform replacement, else append file w/replacement on new line.
+replaceAppend() {
+	if grep $2 $1 > /dev/null; then
+		# Pattern found; replace in file
+		sed -i "s/$2/$3/g" $1 >/dev/null
+	else
+                # Not found; append on new line (silently)
+                echo $3 | sudo tee -a $1 >/dev/null
+	fi
+}
+
+# Given a filename, a regex pattern to match and a string:
+# If found, no change, else append file with string on new line.
+append1() {
+	if grep $2 $1 > /dev/null; then
+        	echo "exists"
+	else
+		# Not found; append on new line (silently)
+		echo $3 | sudo tee -a $1 >/dev/null
+	fi
+}
+
+# Given a filename, a regex pattern to match and a string:
+# If found, no change, else append space + string to last line --
+# this is used for the single-line /boot/cmdline.txt file.
+append2() {
+if grep $2 $1>/dev/null; then
+ echo "exists"
+else
+   # Not found; insert in file before EOF
+   sed -i "s/\'/ $3/g" $1 >/dev/null
+fi
+}
+
+
+echo "Removing unwanted packages..."
+apt-get remove -y --force-yes --purge triggerhappy logrotate dphys-swapfile fake-hwclock
+apt-get -y --force-yes autoremove --purge
+
+# Replace log management with busybox (use logread if needed)
+echo "Installing ntp and busybox-syslogd..."
+apt-get -y --force-yes install ntp ntpdate busybox-syslogd; dpkg --purge rsyslog
+
+cp /lib/systemd/system/ntp.service /etc/systemd/system/ntp.service
+
+replace /etc/systemd/system/ntp.service "PrivateTmp=true" "#PrivateTmp=true"
+
+echo "Configuring system..."
+
+# Install boot-time R/W jumper test if requested
+#GPIOTEST="gpio -g mode $RW_PIN up\n\
+#if [ \`gpio -g read $RW_PIN\` -eq 0 ] ; then\n\
+#\tmount -o remount,rw \/\n\
+#\tmount -o remount,rw \/boot\n\
+#fi\n"
+
+# Move /var/spool to /tmp
+rm -rf /var/spool
+ln -s /tmp /var/spool
+
+# Move /var/lib/lightdm and /var/cache/lightdm to /tmp
+rm -rf /var/lib/lightdm
+rm -rf /var/cache/lightdm
+ln -s /tmp /var/lib/lightdm
+ln -s /tmp /var/cache/lightdm
+
+# Make SSH work
+replaceAppend /etc/ssh/sshd_config "^.*UsePrivilegeSeparation.*$" "UsePrivilegeSeparation no"
+# bbro method (not working in Jessie?):
+#rmdir /var/run/sshd
+#ln -s /tmp /var/run/sshd
+
+# Change spool permissions in var.conf (rondie/Margaret fix)
+replace /usr/lib/tmpfiles.d/var.conf "spool\s*0755" "spool 1777"
+
+# Move dhcpd.resolv.conf to tmpfs
+touch /tmp/dhcpcd.resolv.conf
+rm /etc/resolv.conf
+ln -s /tmp/dhcpcd.resolv.conf /etc/resolv.conf
+
+# Make edits to fstab
+# make / ro
+# tmpfs /var/log tmpfs nodev,nosuid 0 0
+# tmpfs /var/tmp tmpfs nodev,nosuid 0 0
+# tmpfs /tmp     tmpfs nodev,nosuid 0 0
+replace /etc/fstab "vfat\s*defaults\s" "vfat    defaults,ro "
+replace /etc/fstab "ext4\s*defaults,noatime\s" "ext4    defaults,noatime,ro "
+append1 /etc/fstab "/var/log" "tmpfs /var/log tmpfs nodev,nosuid 0 0"
+append1 /etc/fstab "/var/tmp" "tmpfs /var/tmp tmpfs nodev,nosuid 0 0"
+append1 /etc/fstab "\s/tmp"   "tmpfs /tmp    tmpfs nodev,nosuid 0 0"
+append1 /etc/fstab "/var/lib/ntp"   "tmpfs /var/lib/ntp    tmpfs nodev,nosuid 0 0"
+
+unpack /filesystem/boot /boot
+# This would also work, but fails initially because it would also need to remove the init script doing the resize
+#append2 /boot/cmdline.txt fastboot fastboot
+#append2 /boot/cmdline.txt noswap noswap
+#append2 /boot/cmdline.txt ro
