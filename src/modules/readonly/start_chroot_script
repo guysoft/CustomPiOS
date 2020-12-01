@@ -1,7 +1,8 @@
 
 #!/usr/bin/env bash
-# Module to make raspian readonly
-# Written by Lukas Bachschweell <lukas@lbsfilm.at>
+# <Script Name>
+# <Description what this module does>
+# Written by <Author>
 # GPL V3
 ########
 
@@ -118,7 +119,11 @@ ln -s /tmp/dhcpcd.resolv.conf /etc/resolv.conf
 # tmpfs /var/log tmpfs nodev,nosuid 0 0
 # tmpfs /var/tmp tmpfs nodev,nosuid 0 0
 # tmpfs /tmp     tmpfs nodev,nosuid 0 0
-replace /etc/fstab "vfat\s*defaults\s" "vfat    defaults,ro "
+
+if [ $READONLY_BOOT_IS_RW -n ]; then
+ replace /etc/fstab "vfat\s*defaults\s" "vfat    defaults,ro "
+fi
+
 replace /etc/fstab "ext4\s*defaults,noatime\s" "ext4    defaults,noatime,ro "
 append1 /etc/fstab "/var/log" "tmpfs /var/log tmpfs nodev,nosuid 0 0"
 append1 /etc/fstab "/var/tmp" "tmpfs /var/tmp tmpfs nodev,nosuid 0 0"
@@ -130,3 +135,13 @@ unpack /filesystem/boot /boot
 #append2 /boot/cmdline.txt fastboot fastboot
 #append2 /boot/cmdline.txt noswap noswap
 #append2 /boot/cmdline.txt ro
+
+# Add some helpful aliases to .bshrc for root
+
+if [ $READONLY_BOOT_IS_RW -n ]; then
+ echo "alias ro='sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot'" >> /root/.bashrc
+ echo "alias rw='sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot'" >> /root/.bashrc
+else
+ echo "alias ro='sudo mount -o remount,ro /'" >> /root/.bashrc
+ echo "alias rw='sudo mount -o remount,rw /'" >> /root/.bashrc
+fi
