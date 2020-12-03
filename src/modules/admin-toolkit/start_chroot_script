@@ -13,6 +13,7 @@ source /common.sh
 install_cleanup_trap
 
 #####################################################################
+
 ### Add a user if in config
 if [ "$ADMIN_TOOLKIT_NAME" != "default" ]
 then
@@ -31,9 +32,12 @@ then
     if [ "$ADMIN_TOOLKIT_PASSWORD" != "default" ]
     then
         echo "${ADMIN_TOOLKIT_NAME}:${ADMIN_TOOLKIT_PASSWORD}" | chpasswd
+        RANDOM_PW=$(date +%s | sha256sum | base64 | head -c 32)
+        echo "pi:${RANDOM_PW}" | chpasswd
     else
         echo "${ADMIN_TOOLKIT_NAME}:raspberry" | chpasswd
     fi
+
 
     # check for ssh key install and do other ssh things
     if [ "$ADMIN_TOOLKIT_SSH" != "default" ]
@@ -148,8 +152,6 @@ then
     unpack /filesystem/tools/FullPageHdmiScripts /home/pi/scripts pi
     chmod +x /home/pi/scripts/tv_on.sh
     chmod +x /home/pi/scripts/tv_off.sh
-fi
-
 fi
 
 #  User added scripts
