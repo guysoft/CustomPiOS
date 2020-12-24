@@ -157,6 +157,8 @@ List of Distributions using CustomPiOS
 * `V1PI <https://github.com/jeffeb3/v1pi>`_ - Use your Raspberry Pi to control your V1Engineering machine
 * `HotSpotOS <https://github.com/guysoft/HostSpotOS>`_ - Makes a Raspberry Pi start a hotspot, if no wifi was found to connect to
 * `MtigOS <https://github.com/guysoft/MtigOS>`_ - Distro that lets you receive, store and graph sensor information from ESP8266 chips. It uses and MTIG stack: Mosquitto, Telegraf, InfluxDB and Grafana which are all pre-configured to work together. They automatically update using Docker.
+* `Tilti-Pi <https://github.com/myoung34/tilty-pi>`_ - Distro that lets you submit BLE data for the  `tilt hydrometer <https://tilthydrometer.com/>`_ via the `tilt hydrometer <https://github.com/myoung34/tilty>`_ package and a built in `dashboard <https://github.com/myoung34/tilty-dashboard>`_
+
 
 
 Code contribution would be appreciated!
