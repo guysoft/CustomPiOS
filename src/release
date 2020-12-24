@@ -32,17 +32,24 @@ if [ "${BASE_RELEASE_IMG_NAME}" == "default" ]; then
         fi
     done
 else
-    IMG_FILENAME="${BASE_IMG_NAME}"
+    # Added little cleanout, if someone is stupid like me and adds .img :)
+    IMG_FILENAME="${BASE_RELEASE_IMG_NAME%.img}.img"
 fi
 
 mv "${FILENAME}" "${IMG_FILENAME}"
 
 if [ "${BASE_RELEASE_COMPRESS}" == "yes" ]; then
     echo "Compressing image"
+    # Default behavior if no names set
     if [ "${BASE_RELEASE_IMG_NAME}" == "default" ]; then
         zip "${IMG_FILENAME::-4}.zip" "${IMG_FILENAME}"
     else
-        zip "${BASE_IMG_NAME%.zip}".zip "${IMG_FILENAME}"
+    # If Zip name not given, rename to given img name
+        if [ "${BASE_RELEASE_ZIP_NAME}" == "default" ]; then
+            zip "${BASE_RELEASE_IMG_NAME%.img}".zip "${IMG_FILENAME}"
+        else
+            zip "${BASE_RELEASE_ZIP_NAME%.zip}".zip "${IMG_FILENAME}"
+        fi
     fi
 else
     echo "Not compressing because setting is disabled"
