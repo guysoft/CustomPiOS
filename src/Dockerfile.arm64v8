@@ -16,7 +16,7 @@ FROM arm64v8/debian
 
 COPY --from=builder /qemu-aarch64-static /usr/bin/
 
-MAINTAINER Guy Sheffer <guysoft at gmail dot com>
+LABEL maintainer="Guy Sheffer <guysoft at gmail dot com>"
 
 RUN set -x \
     && apt-get update && apt-get install -y \
