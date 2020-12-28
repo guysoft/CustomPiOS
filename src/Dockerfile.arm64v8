@@ -14,7 +14,7 @@ RUN export QEMU_USER_STATIC_LATEST_TAG=$(curl -s https://api.github.com/repos/mu
 
 FROM arm64v8/debian
 
-COPY --from=builder /qemu-arm-static /usr/bin/
+COPY --from=builder /qemu-aarch64-static /usr/bin/
 
 MAINTAINER Guy Sheffer <guysoft at gmail dot com>
 
