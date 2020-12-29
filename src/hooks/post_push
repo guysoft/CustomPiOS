@@ -3,7 +3,7 @@
 # Use manifest-tool to create the manifest, given the experimental
 # "docker manifest" command isn't available yet on Docker Hub.
 
-curl -Lo manifest-tool https://github.com/estesp/manifest-tool/releases/download/v0.9.0/manifest-tool-linux-amd64
+curl -Lo manifest-tool https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-linux-amd64
 chmod +x manifest-tool
 
 # Generate the manifest file.
@@ -25,6 +25,10 @@ manifests:
       architecture: arm
       os: linux
       variant: v7
+  - image: ${NAME}:${RELEASE_TAG}-arm64v8
+    platform:
+      architecture: arm64
+      os: linux
 EOF
 
   echo "manifest: "
@@ -42,7 +46,7 @@ function docker_tag_exists() {
 
 
 # If we're building the "devel" branch, then also push it as "latest"
-if [[ "$DOCKER_TAG" == "amd64" ]] || [[ "$DOCKER_TAG" == "arm32v7" ]]
+if [[ "$DOCKER_TAG" == "amd64" ]] || [[ "$DOCKER_TAG" == "arm32v7" ]] || [[ "$DOCKER_TAG" == "arm64v8" ]]
 then
   echo "Pushing multi-arch manifest $DOCKER_REPO:latest"
   ./manifest-tool push from-spec multi-arch-manifest.yaml
@@ -66,11 +70,11 @@ else
   generate_manifest "${NAME}" "${RELEASE_TAG}"
   
   if docker_tag_exists ${NAME} ${RELEASE_TAG}-amd64 ;then
-    if docker_tag_exists ${NAME} ${RELEASE_TAG}-arm32v7;then
+    if docker_tag_exists ${NAME} ${RELEASE_TAG}-arm32v7 && docker_tag_exists ${NAME} ${RELEASE_TAG}-arm64v8;then
       echo "Pushing multi-arch manifest"
       ./manifest-tool push from-spec manifest-generated.yaml
     else
-      echo "arm32v7 image is missing, not pushing manifest"
+      echo "arm32v7 or arm64v8 image is missing, not pushing manifest"
     fi
     
   else

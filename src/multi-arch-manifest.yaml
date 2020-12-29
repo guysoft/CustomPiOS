@@ -9,3 +9,7 @@ manifests:
       architecture: arm
       os: linux
       variant: v7
+  - image: guysoft/custompios:arm64v8
+    platform:
+      architecture: arm64
+      os: linux
