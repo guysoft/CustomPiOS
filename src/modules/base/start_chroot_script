@@ -33,6 +33,17 @@ if [ "${BASE_DISTRO}" == "ubuntu" ]; then
   
   #Undo prevent any installed services from automatically starting
   rm -r /usr/sbin/policy-rc.d || true
+  
+fi
+
+if [ "${BASE_ADD_USER}" == "yes" ]; then
+  if id -u "${BASE_USER}" >/dev/null 2>&1; then
+      echo "Base user exists, not adding"
+  else
+      echo "Adding base user ${BASE_USER}"
+      password=$(perl -e 'printf("%s\n", crypt($ARGV[0], "password"))' "${BASE_USER_PASSWORD}")
+      useradd -m -p "${password}" -s /bin/bash "${BASE_USER}"
+  fi
 fi
 
 if [ -n "$BASE_APT_PROXY" ]
