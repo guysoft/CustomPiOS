@@ -14,4 +14,6 @@ source /common.sh
 install_cleanup_trap
 
 # do NOT allow passwordless sudo for all commands for the user pi (taken from raspberrypi-sys-mods postinst script)
-[ -f /etc/sudoers.d/010_pi-nopasswd ] && sed -e '/^pi/ s/^#*/#/' -i /etc/sudoers.d/010_pi-nopasswd
+if [ -f /etc/sudoers.d/010_pi-nopasswd ]; then
+    sed -e '/^pi/ s/^#*/#/' -i /etc/sudoers.d/010_pi-nopasswd
+fi
