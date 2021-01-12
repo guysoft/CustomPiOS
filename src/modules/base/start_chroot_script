@@ -43,6 +43,7 @@ if [ "${BASE_ADD_USER}" == "yes" ]; then
       echo "Adding base user ${BASE_USER}"
       password=$(perl -e 'printf("%s\n", crypt($ARGV[0], "password"))' "${BASE_USER_PASSWORD}")
       useradd -m -p "${password}" -s /bin/bash "${BASE_USER}"
+      usermod -a -G sudo "${BASE_USER}"
   fi
 fi
 
