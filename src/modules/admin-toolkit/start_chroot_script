@@ -42,7 +42,7 @@ then
     # check for ssh key install and do other ssh things
     if [ "$ADMIN_TOOLKIT_SSH" != "default" ]
     then
-        echo "Installign ssh key"
+        echo "Installing ssh key"
         mkdir -p /home/"${ADMIN_TOOLKIT_NAME}"/.ssh
         echo "${ADMIN_TOOLKIT_SSH}" > /home/"${ADMIN_TOOLKIT_NAME}"/.ssh/authorized_keys
         chown -R "${ADMIN_TOOLKIT_NAME}" /home/"${ADMIN_TOOLKIT_NAME}"/.ssh
