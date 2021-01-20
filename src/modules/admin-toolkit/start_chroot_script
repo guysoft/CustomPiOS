@@ -18,22 +18,26 @@ install_cleanup_trap
 if [ "$ADMIN_TOOLKIT_NAME" != "default" ]
 then
 
-    # add user
+    # add user if it doesn't already exist
     if [ "$ADMIN_TOOLKIT_FULLNAME" != "default" ]
     then
         echo "Adding user $ADMIN_TOOLKIT_NAME with GECOS fields"
-        useradd -m -s $(which bash) -G sudo,adm "${ADMIN_TOOLKIT_NAME}" -c "${ADMIN_TOOLKIT_FULLNAME}"
+        id "${ADMIN_TOOLKIT_NAME}" || useradd -m -s $(which bash) -G sudo,adm "${ADMIN_TOOLKIT_NAME}" -c "${ADMIN_TOOLKIT_FULLNAME}"
     else
         echo "Adding user $ADMIN_TOOLKIT_NAME"
-        useradd -m -s $(which bash) -G sudo,adm "${ADMIN_TOOLKIT_NAME}"
+        id "${ADMIN_TOOLKIT_NAME}" || useradd -m -s $(which bash) -G sudo,adm "${ADMIN_TOOLKIT_NAME}"
     fi
 
     # check for override password
     if [ "$ADMIN_TOOLKIT_PASSWORD" != "default" ]
     then
         echo "${ADMIN_TOOLKIT_NAME}:${ADMIN_TOOLKIT_PASSWORD}" | chpasswd
-        RANDOM_PW=$(date +%s | sha256sum | base64 | head -c 32)
-        echo "pi:${RANDOM_PW}" | chpasswd
+        # if creating a user other than 'pi', set pi's password to a random string
+        if [ "${ADMIN_TOOLKIT_NAME}" != "pi" ]
+        then
+            RANDOM_PW=$(date +%s | sha256sum | base64 | head -c 32)
+            echo "pi:${RANDOM_PW}" | chpasswd
+        fi
     else
         echo "${ADMIN_TOOLKIT_NAME}:raspberry" | chpasswd
     fi
