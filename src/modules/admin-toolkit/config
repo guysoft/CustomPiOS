@@ -13,10 +13,15 @@
 ######### User Required Section ###########################
 #
 #  Adding another user requires at least a username.
+#  If the user already exists, it will not be recreated,
+#  but the password and ssh keys will be changed.
 #  A home folder will be created.
 #  The default profile will be set to bash.
 #  Default password is raspberry. PLEASE CHANGE THIS. 
 #  User will be added to the sudo and adm group. 
+#
+#  If the user specified is not pi, pi's password will be
+#  set to a randomly generated string.
 #
 ###########################################################
 
