@@ -153,7 +153,9 @@ function detach_all_loopback(){
   # Cleans up mounted loopback devices from the image name
   # NOTE: it might need a better way to grep for the image name, its might clash with other builds
   for img in $(losetup  | grep $1 | awk '{ print $1 }' );  do
-    losetup -d $img
+    if [[ -f $img ]]; then
+    	losetup -d $img
+    fi
   done
 }
 
