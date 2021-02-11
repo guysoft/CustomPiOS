@@ -106,8 +106,12 @@ function gitclone(){
   then
     repo_dir=$(echo ${repo_dir} | sed 's%^.*/\([^/]*\)\(\.git\)?$%\1%g')
   fi
-
-  sudo -u "${BASE_USER}" git clone $clone_params "$build_repo" "$repo_dir"
+  
+  if [ "$repo_dir" == "" ]; then
+      sudo -u "${BASE_USER}" git clone $clone_params "$build_repo"
+  else
+      sudo -u "${BASE_USER}" git clone $clone_params "$build_repo" "$repo_dir"
+  fi
 
   if [ "$build_repo" != "$ship_repo" ]
   then
