@@ -15,6 +15,7 @@ BASE_VERSION=1.5.0
 # Distro
 [ -n "$BASE_DISTRO" ] || BASE_DISTRO=raspbian
 
+# Note: Set BASE_ZIP_IMG relative to the distro/src/workspace directory to pass a custom named file or an already extracted '.img'-file.
 if [ "${BASE_DISTRO}" == "ubuntu" ]; then
   # Default image ubuntu
   [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/ubuntu-*.xz | head -n 1`
