@@ -134,7 +134,11 @@ Building Using Docker
 Building Using Vagrant
 ~~~~~~~~~~~~~~~~~~~~~~
 `See Building with Vagrant entry in wiki <https://github.com/guysoft/CustomPiOS/wiki/Building-with-Vagrant>`_
-    
+
+Build using CI/CD
+~~~~~~~~~~~~~~~~~
+You can build CustomPiOS images from a continuous integration system in the cloud.
+For an example on how to do this on github take a look at `this github actions yaml <https://github.com/guysoft/OctoPi/blob/devel/.github/workflows/build.yml/>`_
 
 Usage
 ~~~~~
