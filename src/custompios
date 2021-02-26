@@ -170,9 +170,8 @@ pushd $BASE_WORKSPACE
     fi
   popd
 
-  ps all -A
   # unmount first boot, then root partition
-  unmount_image $BASE_MOUNT_PATH
+  unmount_image $BASE_MOUNT_PATH force
   chmod 777 $BASE_IMG_PATH
 
   if [ -n "$BASE_IMAGE_RESIZEROOT" ]
