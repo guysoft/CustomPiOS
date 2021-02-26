@@ -30,13 +30,13 @@ def parse(a, callback):
                 callback(token, "start")
             token = ""
         elif char == ")":
-            parrent = stack.pop()
+            parent = stack.pop()
             if token != "":
                 callback(token, "start")
                 callback(token, "end")
                 token = ""
-            if parrent != "":
-                callback(parrent, "end")
+            if parent != "":
+                callback(parent, "end")
         elif char == ",":
             if token != "":
                 callback(token, "start")
