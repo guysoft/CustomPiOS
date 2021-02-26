@@ -203,14 +203,12 @@ function unmount_image() {
 
   if [ -n "$force" ]
   then
-    for process in $(sudo lsof -t $mount_path)
+    for pid in $(sudo lsof -t $mount_path)
     do
-      echo "Killing process id $(ps -p $process -o comm=)..."
-      sudo kill -9 $process
+      echo "Killing process $(ps -p $pid -o comm=) with pid $pid..."
+      sudo kill -9 $pid
     done
   fi
-
-  sudo killall /usr/bin/qemu-arm-static
 
   # Unmount everything that is mounted
   # 
