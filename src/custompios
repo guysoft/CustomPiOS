@@ -29,9 +29,9 @@ function execute_chroot_script() {
   # cp `which qemu-arm-static` usr/bin
   if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] ; then
     if [ "$BASE_ARCH" == "armv7l" ]; then
-      cp `which qemu-arm-static` usr/bin/qemu-arm-static
+      cp `which qemu-arm-static` usr/bin/qemu-arm-static || echo "File exists and busy, ignoring..."
     elif [ "$BASE_ARCH" == "aarch64" ] || [ "$BASE_ARCH" == "arm64" ]; then
-      cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static
+      cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static || echo "File exists and busy, ignoring..."
     fi
   fi
   
