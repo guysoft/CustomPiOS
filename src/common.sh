@@ -210,6 +210,8 @@ function unmount_image() {
     done
   fi
 
+  sudo killall /usr/bin/qemu-arm-static
+
   # Unmount everything that is mounted
   # 
   # We might have "broken" mounts in the mix that point at a deleted image (in case of some odd
