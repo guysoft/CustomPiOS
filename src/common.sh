@@ -210,7 +210,6 @@ function unmount_image() {
     done
   fi
 
-  sync
   # Unmount everything that is mounted
   # 
   # We might have "broken" mounts in the mix that point at a deleted image (in case of some odd
@@ -225,6 +224,7 @@ function unmount_image() {
   for m in $(sudo mount | grep $mount_path | awk -F " on " '{print $2}' | awk '{print $1}' | sort -r)
   do
     echo "Unmounting $m..."
+    sync
     sudo umount $m
   done
 }
