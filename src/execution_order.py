@@ -3,7 +3,7 @@ import argparse
 import os
 
 def handle(module, state, out):
-    f.write("# " + state + "_" + module + "\n")
+    out.write("# " + state + "_" + module + "\n")
     
     module_folders = [os.path.join(os.environ['DIST_PATH'], "modules", module),
                       os.path.join(os.environ['CUSTOM_PI_OS_PATH'], "modules", module)
@@ -13,7 +13,7 @@ def handle(module, state, out):
         if os.path.isdir(module_folder):
             script = os.path.join(module_folder, state + "_chroot_script")
             if os.path.isfile(script):
-                f.write("execute_chroot_script '" + module_folder + "' '" + script + "'\n")
+                out.write("execute_chroot_script '" + module_folder + "' '" + script + "'\n")
             else:
                 print("WARNING: No file at - " + script)
             break
