@@ -169,7 +169,8 @@ pushd $BASE_WORKSPACE
       restoreLd
     fi
   popd
-  
+
+  ps -a
   # unmount first boot, then root partition
   unmount_image $BASE_MOUNT_PATH
   chmod 777 $BASE_IMG_PATH
