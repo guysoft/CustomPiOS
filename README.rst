@@ -164,6 +164,6 @@ List of Distributions using CustomPiOS
 * `Tilti-Pi <https://github.com/myoung34/tilty-pi>`_ - Distro that lets you submit BLE data for the  `tilt hydrometer <https://tilthydrometer.com/>`_ via the `tilty <https://github.com/myoung34/tilty>`_ package and a built in `dashboard <https://github.com/myoung34/tilty-dashboard>`_
 * `MainsailOS <https://github.com/raymondh2/MainsailOS>`_ - Distro that packages the `Mainsail <https://github.com/meteyou/mainsail>`_ web UI, the `Moonraker <https://github.com/Arksine/moonraker>`_ API, and the `Klipper <https://github.com/KevinOConnor/klipper>`_ 3D printer firmware in an easy to package.
 * `UbuntuDockerPi <https://github.com/guysoft/UbuntuDockerPi>`_ - Distro ships with Ubuntu ARM 64bit Docker and docker-compose ready to build stuff for arm64v8/aarch64 or host whatever you like.
-* `FluiddPi <https://github.com/cadriel/fluiddpi>`_ - Distro that packages `Fluidd <https://github.com/cadriel/fluidd`, `Moonraker <https://github.com/Arksine/moonraker>`_, and `Klipper <https://github.com/KevinOConnor/klipper>`_ into the ultimate 3d printer firmware packge.
+* `FluiddPi <https://github.com/cadriel/fluiddpi>`_ - Distro that packages `Fluidd <https://github.com/cadriel/fluidd>`_, `Moonraker <https://github.com/Arksine/moonraker>`_, and `Klipper <https://github.com/KevinOConnor/klipper>`_ into the ultimate 3D printer firmware package.
 
 Code contribution would be appreciated!
