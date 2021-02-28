@@ -201,12 +201,13 @@ function unmount_image() {
     force=$2
   fi
 
+  sync
   if [ -n "$force" ]
   then
-    for process in $(sudo lsof $mount_path | awk '{print $2}')
+    for pid in $(sudo lsof -t $mount_path)
     do
-      echo "Killing process id $process..."
-      sudo kill -9 $process
+      echo "Killing process $(ps -p $pid -o comm=) with pid $pid..."
+      sudo kill -9 $pid
     done
   fi
 
