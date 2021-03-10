@@ -461,3 +461,8 @@ function copy_and_export_folder(){
   cp -va $@ | awk -F  "' -> '"  '{print substr($2, 1, length($2)-1)}' | xargs -d"\n" -t bash -x -c 'custompios_export '${OUTPUT}' "$@"' _
 }
 
+function set_config_var() {
+  # Set a value for a specific variable in /boot/config.txt
+  # See https://github.com/RPi-Distro/raspi-config/blob/master/raspi-config#L231
+  raspi-config nonint set_config_var $1 $2 /boot/config.txt
+}
