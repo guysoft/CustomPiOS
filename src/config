@@ -1,3 +1,4 @@
+#!/bin/bash
 CONFIG_DIR=$(dirname $(realpath -s $BASH_SOURCE))
 
 export BUILD_VARIANT=default
@@ -8,10 +9,11 @@ if [ "$#" -gt 0 ]; then
   export BUILD_VARIANT=$1
 fi
 if [ "$#" -gt 1 ]; then
-  BUILD_FLAVOR=$2
+  shift
+  BUILD_FLAVORS="$@"
 fi
 
-echo -e "--> Building VARIANT $BUILD_VARIANT, FLAVOR $BUILD_FLAVOR"
+echo -e "--> Building VARIANT $BUILD_VARIANT, FLAVORS $BUILD_FLAVORS"
 
 # Import the local config if we have one
 
@@ -34,38 +36,31 @@ if [ $BUILD_VARIANT != 'default' ]; then
     die "Could not find Variant $BUILD_VARIANT"
   fi
 
-  if [ $BUILD_FLAVOR == '' ] || [ $BUILD_FLAVOR == 'default' ]
+  VARIANT_CONFIG=$VARIANT_BASE/config
+  echo Import the variant config if we have one
+  if [ -f $VARIANT_CONFIG ]
   then
-    VARIANT_CONFIG=$VARIANT_BASE/config
-    FLAVOR_CONFIG=
-  else
-    VARIANT_CONFIG=$VARIANT_BASE/config
-    FLAVOR_CONFIG=$VARIANT_BASE/config.$BUILD_FLAVOR
+    echo "Sourcing variant config $VARIANT_CONFIG..."
+    set -a
+    source $VARIANT_CONFIG
+    set +a
   fi
 
-  if [ -n "$FLAVOR_CONFIG" ] && [ ! -f $FLAVOR_CONFIG ]
-  then
-    die "Could not find config file $FLAVOR_CONFIG"
-  fi
+  # Import the flavor configs if they were given
+  for flavor in $BUILD_FLAVORS; do
+    if [ "$flavor" == '' ] || [ "$flavor" == 'default' ]; then
+      continue
+    fi
+    FLAVOR_CONFIG="$VARIANT_BASE/config.$flavor"
+    if [ -f $FLAVOR_CONFIG ]
+    then
+      echo "Sourcing flavor config $FLAVOR_CONFIG..."
+      source $FLAVOR_CONFIG
+    else
+      die "Could not find config file $FLAVOR_CONFIG"
+    fi
+  done
 fi
-
-echo Import the variant config if we have one
-if [ -n "$VARIANT_CONFIG" ] && [ -f $VARIANT_CONFIG ]
-then
-  echo "Sourcing variant config $VARIANT_CONFIG..."
-  set -a
-  source $VARIANT_CONFIG
-  set +a
-fi
-
-# Import the flavor config if we have one
-
-if [ -n "$FLAVOR_CONFIG" ] && [ -f $FLAVOR_CONFIG ]
-then
-  echo "Sourcing flavor config $FLAVOR_CONFIG..."
-  source $FLAVOR_CONFIG
-fi
-
 
 
 if [ -f ${DIST_PATH}/config.local ]
