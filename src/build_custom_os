@@ -5,4 +5,4 @@ echo "Distro path: ${DIST_PATH}"
 echo "CustomPiOS path: ${CUSTOM_PI_OS_PATH}"
 echo "================================================================"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-${DIR}/build $1
+${DIR}/build $@
