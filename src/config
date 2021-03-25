@@ -44,16 +44,16 @@ if [ $BUILD_VARIANT != 'default' ]; then
     set -a
     source $VARIANT_CONFIG
     set +a
+  else
+    die "Could not find variant config file $VARIANT_CONFIG"
   fi
 
   # Import the flavor configs if they were given
   for flavor in $BUILD_FLAVORS; do
+    FLAVOR_CONFIG="$VARIANT_BASE/config.$flavor"
     if [ "$flavor" == '' ] || [ "$flavor" == 'default' ]; then
       continue
-    fi
-    FLAVOR_CONFIG="$VARIANT_BASE/config.$flavor"
-    if [ -f $FLAVOR_CONFIG ]
-    then
+    elif [ -f $FLAVOR_CONFIG ]; then
       echo "Sourcing flavor config $FLAVOR_CONFIG..."
       source $FLAVOR_CONFIG
     else
