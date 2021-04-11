@@ -191,6 +191,7 @@ function mount_image() {
   sudo mkdir -p $mount_path/dev/pts
   sudo mount -o bind /dev $mount_path/dev
   sudo mount -o bind /dev/pts $mount_path/dev/pts
+  sudo mount -o bind /proc $mount_path/proc
 }
 
 function unmount_image() {
