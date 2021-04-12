@@ -28,8 +28,8 @@ if [ $BUILD_VARIANT != 'default' ]; then
   
   if [ -d "${DIST_PATH}/variants/$BUILD_VARIANT" ]; then
     export VARIANT_BASE="${DIST_PATH}/variants/$BUILD_VARIANT"
-  elif [ -d "${CUSTOM_OS_PATH}/variants/$BUILD_VARIANT" ]; then
-    export VARIANT_BASE="$CUSTOM_OS_PATH/variants/$BUILD_VARIANT"
+  elif [ -d "${CUSTOM_PI_OS_PATH}/variants/$BUILD_VARIANT" ]; then
+    export VARIANT_BASE="${CUSTOM_PI_OS_PATH}/variants/$BUILD_VARIANT"
   else
     die "Could not find Variant $BUILD_VARIANT"
   fi
