@@ -212,6 +212,11 @@ function unmount_image() {
     done
   fi
 
+  # Release docker retained /dev
+  if  [ -f /.dockerenv ]; then
+      fuser -cuk /dev
+  fi
+  
   # Unmount everything that is mounted
   # 
   # We might have "broken" mounts in the mix that point at a deleted image (in case of some odd
