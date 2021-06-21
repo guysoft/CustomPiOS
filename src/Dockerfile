@@ -16,7 +16,6 @@ RUN set -x \
         sudo \
         zip \
         lsof \
-        psmisc \
     && rm -rf /var/lib/apt/lists/*
 
 RUN ln -s /CustomPiOS/nightly_build_scripts/custompios_nightly_build /usr/bin/build
