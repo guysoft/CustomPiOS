@@ -12,6 +12,16 @@
 # https://github.com/nhoffman/argparse-bash
 # MIT License - Copyright (c) 2015 Noah Hoffman
 
+# Get python executable
+if which python; then
+    PYTHON=$(which python)
+elif which python3; then
+    PYTHON=$(which python3)
+else
+    echo "No python 3 executable found"
+    exit 1
+fi
+
 argparse(){
     argparser=$(mktemp 2>/dev/null || mktemp -t argparser)
     cat > "$argparser" <<EOF
@@ -50,11 +60,11 @@ EOF
     # Define variables corresponding to the options if the args can be
     # parsed without errors; otherwise, print the text of the error
     # message.
-    if python "$argparser" "$@" &> /dev/null; then
-        eval $(python "$argparser" "$@")
+    if $PYTHON "$argparser" "$@" &> /dev/null; then
+        eval $($PYTHON "$argparser" "$@")
         retval=0
     else
-        python "$argparser" "$@"
+        $PYTHON "$argparser" "$@"
         retval=1
     fi
 
