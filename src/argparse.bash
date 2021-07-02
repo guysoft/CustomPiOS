@@ -13,9 +13,9 @@
 # MIT License - Copyright (c) 2015 Noah Hoffman
 
 # Get python executable
-if which python; then
+if which python > /dev/null; then
     PYTHON=$(which python)
-elif which python3; then
+elif which python3 > /dev/null; then
     PYTHON=$(which python3)
 else
     echo "No python 3 executable found"
