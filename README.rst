@@ -152,6 +152,7 @@ List of Distributions using CustomPiOS
 --------------------------------------
 
 * `OctoPi <https://octopi.octoprint.org/>`_ - The ready-to-go Raspberry Pi image with OctoPrint
+* `FarmPi <https://farmpi.kevenaar.name/>`_ - An Ubuntu ARM 64bit Raspbery Pi image running `OctoFarm <https://octofarm.net/>`_
 * `FullPageOS <https://github.com/guysoft/FullPageOS>`_ - A Raspberry Pi distro to display a full page browser on boot
 * `Zynthian <http://zynthian.org/>`_ - Open Synth Platform
 * `ElectricSheepPi <https://github.com/guysoft/ElectricSheepPi>`_ - A Raspberry Pi distribution to run Electric Sheep digital art
