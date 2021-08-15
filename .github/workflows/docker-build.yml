@@ -31,7 +31,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: src
-          file: Dockerfile
+          file: src/Dockerfile
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: guysoft/custompios:latest
