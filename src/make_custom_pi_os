@@ -38,7 +38,7 @@ ${DIR}/dist_generators/dist_example_script "${DEST}"
 if [ $GET_IMAGE ]; then
     echo "Downloading latest Raspbian image"
     
-    CURRENT_RASPBIAN=$(curl https://downloads.raspberrypi.org/raspios_lite_armhf/images/ | grep raspbian | tail -n 1 | awk -F "href=\"" '{print $2}' | awk -F "/" '{print $1}')
+    CURRENT_RASPBIAN=$(curl https://downloads.raspberrypi.org/raspios_lite_armhf/images/ | grep raspios | tail -n 1 | awk -F "href=\"" '{print $2}' | awk -F "/" '{print $1}')
     if [ $? -ne 0 ]; then
         echo "error getting date"
         exit 1
