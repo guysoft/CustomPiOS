@@ -436,7 +436,7 @@ function check_install_pkgs() {
   for dep in "$@"; do
     # if in apt cache and not installed add to array
     if [ $(is_in_apt ${dep}) -eq 1 ] && [ $(is_installed ${dep}) -ne 1 ]; then
-      missing_pkgs+="${dep}"
+      missing_pkgs+=("${dep}")
     else
     # if not in apt cache
       echo_red "Missing Package ${dep} not found in Apt Repository. [SKIPPED]"
