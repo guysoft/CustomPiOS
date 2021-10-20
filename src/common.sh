@@ -398,6 +398,20 @@ function minimize_ext() {
   fi
 }
 
+# Skip apt update if Cache not older than 1 Hour.
+function apt_update_skip() {
+    if [ -f "/var/cache/apt/pkgcache.bin" ] && \
+    [ "$(($(date +%s)-$(stat -c %Y /var/cache/apt/pkgcache.bin)))" -lt "3600" ];
+    then
+        echo_green "APT Cache needs no update! [SKIPPED]"
+    else
+        # force update
+        echo_red "APT Cache needs to be updated!"
+        echo_green "Running 'apt update' ..."
+        apt update
+    fi
+}
+
 function is_installed(){
   # checks if a package is installed, returns 1 if installed and 0 if not.
   # usage: is_installed <package_name>
@@ -411,6 +425,30 @@ function is_in_apt(){
     echo 1
   else
     echo 0
+  fi
+}
+
+### Only install Packages if not installed.
+##  check_install_pkgs $MODULNAME_PKGS_VAR (Replace with your Variable set in config file)
+function check_install_pkgs() {
+  ## Build Array from Var
+  local missing_pkgs
+  for dep in "$@"; do
+    # if in apt cache and not installed add to array
+    if [ $(is_in_apt ${dep}) -eq 1 ] && [ $(is_installed ${dep}) -ne 1 ]; then
+      missing_pkgs+=("${dep}")
+    else
+    # if not in apt cache
+      echo_red "Missing Package ${dep} not found in Apt Repository. [SKIPPED]"
+    fi 
+  done
+  # if missing pkgs install missing else skip that.
+  if [ "${#missing_pkgs[@]}" -ne 0 ]; then
+      echo_red "${#missing_pkgs[@]} missing Packages..."
+      echo_green "Installing ${missing_pkgs[@]}"
+      apt install --yes "${missing_pkgs[@]}"
+  else
+      echo_green "No Dependencies missing... [SKIPPED]"
   fi
 }
 
