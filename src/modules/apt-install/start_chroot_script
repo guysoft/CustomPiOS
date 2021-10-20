@@ -21,18 +21,18 @@ fi
 apt update
 
 ### Pre Update Section
-if [ "${PREINSTALL_DISTUPGRADE}" = "y" ]; then
-  echo_green "Performing 'apt ${PREINSTALL_DISTUPGRADE_METHOD}' ... "
-  apt "${PREINSTALL_DISTUPGRADE_METHOD}" -y
+if [ "${APT-INSTALL_DISTUPGRADE}" = "y" ]; then
+  echo_green "Performing 'apt ${APT-INSTALL_DISTUPGRADE_METHOD}' ... "
+  apt "${APT-INSTALL_DISTUPGRADE_METHOD}" -y
 else
-  echo_green "Skipping Dist Upgrade ['apt ${PREINSTALL_DISTUPGRADE_METHOD}']."
+  echo_green "Skipping Dist Upgrade ['apt ${APT-INSTALL_DISTUPGRADE_METHOD}']."
 fi
 
 ### Pre Installer Section
 # Make sure Cache is fresh
 apt_update_skip
-if [ "${PREINSTALL_USE_PREINSTALLER}" = "y" ]; then
-  apt install --yes --no-install-recommends "${PREUPDATER_PRE_INSTALL_PKGS}"
+if [ "${APT-INSTALL_USE_PREINSTALLER}" = "y" ]; then
+  apt install --yes --no-install-recommends "${APT-INSTALL_PRE_INSTALL_PKGS}"
 else
   echo_red "PreInstall Mechanism not configured. [SKIPPED]"
 fi
