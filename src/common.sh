@@ -400,16 +400,16 @@ function minimize_ext() {
 
 # Skip apt update if Cache not older than 1 Hour.
 function apt_update_skip() {
-    if [ -f "/var/cache/apt/pkgcache.bin" ] && \
-    [ "$(($(date +%s)-$(stat -c %Y /var/cache/apt/pkgcache.bin)))" -lt "3600" ];
-    then
-        echo_green "APT Cache needs no update! [SKIPPED]"
-    else
-        # force update
-        echo_red "APT Cache needs to be updated!"
-        echo_green "Running 'apt update' ..."
-        apt update
-    fi
+  if [ -f "/var/cache/apt/pkgcache.bin" ] && \
+  [ "$(($(date +%s)-$(stat -c %Y /var/cache/apt/pkgcache.bin)))" -lt "3600" ];
+  then
+      echo_green "APT Cache needs no update! [SKIPPED]"
+  else
+      # force update
+      echo_red "APT Cache needs to be updated!"
+      echo_green "Running 'apt update' ..."
+      apt update
+  fi
 }
 
 function is_installed(){
@@ -437,8 +437,11 @@ function check_install_pkgs() {
     # if in apt cache and not installed add to array
     if [ $(is_in_apt ${dep}) -eq 1 ] && [ $(is_installed ${dep}) -ne 1 ]; then
       missing_pkgs+=("${dep}")
+    #if in apt cache and installed
+    elif [ $(is_in_apt ${dep}) -eq 1 ] && [ $(is_installed ${dep}) -eq 1 ]; then
+      echo_green "Package ${dep} already installed. [SKIPPED]"
+    # if not in apt cache and not installed
     else
-    # if not in apt cache
       echo_red "Missing Package ${dep} not found in Apt Repository. [SKIPPED]"
     fi 
   done
