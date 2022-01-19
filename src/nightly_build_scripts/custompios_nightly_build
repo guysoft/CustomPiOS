@@ -2,10 +2,16 @@
 set -x
 set -e
 
-whoami
-
 export DIST_PATH=/distro
 export CUSTOM_PI_OS_PATH=/CustomPiOS
+
+source "$CUSTOM_PI_OS_PATH/argparse.bash" || exit 1
+argparse "$@" <<EOF || exit 1
+
+parser.add_argument('WORKSPACE_SUFFIX', nargs='?', default="default", help="The workspace folder suffix used folder")
+parser.add_argument('-r', '--rpi_imager', action='store_true', help='Create a rpi-imager snipplet to be published')
+parser.add_argument('-u', '--rpi_imager_url', type=str, default="MISSING_URL", help='url to the uploaded image url')
+EOF
 
 if [ "$#" -gt 0 ]; then
   BUILD_VARIANT="$1"
@@ -20,6 +26,10 @@ fi
 
 #Update repos used
 #sudo -u guy /home/guy/stuff/scripts/gitmirror/update_git_mirrors
+if [ "${SHA256}" == "yes" ]; then
+    echo "Saving image hash type sha256"
+    sha256sum "${IMG_FILENAME}" > "${IMG_FILENAME}".sha256
+fi
 
 for i in `lsof "${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/mount" | awk '{print $2}'`; do kill -9 $i; done || true
 
@@ -42,6 +52,22 @@ pushd "${DIST_PATH}"
         echo "build script failed"
         exit $exit_code
     fi
-    bash -x ${CUSTOM_PI_OS_PATH}/release --sha256 $1
+    EXTRA_FLAGS=""
+    if [ "${RPI_IMAGER}" == "yes" ]; then
+        echo "Creating a rpi-imager json snipplet"
+        EXTRA_FLAGS="--sha256"
+    fi
+    
+    bash -x ${CUSTOM_PI_OS_PATH}/release ${EXTRA_FLAGS} $1
+    
+    if [ "${RPI_IMAGER}" == "yes" ]; then
+        if [ -z "${CUSTOM_PI_OS_PATH}" ];then
+            echo "Error: you must have \${CUSTOM_PI_OS_PATH} to generate a rpi-imager snipplet"
+            exit 1
+        fi
+        source "${CUSTOM_PI_OS_PATH}/config"
+        "${CUSTOM_PI_OS_PATH}/make_rpi-imager-snipplet.py" --rpi_imager_url "${RPI_IMAGER_URL}" -- $1
+    fi
+    
     chmod 777 ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/*
 popd
