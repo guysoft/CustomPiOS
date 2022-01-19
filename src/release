@@ -1,8 +1,18 @@
 #!/usr/bin/env bash
-if [ -z "$1" ] || [ "$1" == "default" ] ;then
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source "$DIR/argparse.bash" || exit 1
+argparse "$@" <<EOF || exit 1
+
+parser.add_argument('WORKSPACE_SUFFIX', nargs='?', default="default", help="The workspace folder suffix used folder")
+parser.add_argument('-s', '--sha256', action='store_true', help='Create a sha256 hash for the .img file in .sha256')
+EOF
+
+
+if [ -z "$WORKSPACE_SUFFIX" ] || [ "$WORKSPACE_SUFFIX" == "default" ] ;then
     pushd workspace
 else
-    pushd workspace-$1
+    pushd workspace-$WORKSPACE_SUFFIX
 fi
 
 if [ -z "${CUSTOM_PI_OS_PATH}" ];then
@@ -25,10 +35,10 @@ if [ "${BASE_RELEASE_IMG_NAME}" == "default" ]; then
     # Handle variant name
     for CHANGE_STRING in "${CHANGE_STRING_LIST[@]}"
     do
-        if [ -z "$1" ] || [ "$BASE_IGNORE_VARIANT_NAME" == "yes" ] ;then
+        if [ -z "$WORKSPACE_SUFFIX" ] || [ "$BASE_IGNORE_VARIANT_NAME" == "yes" ] ;then
             IMG_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/${CHANGE_STRING}/${DIST_NAME,,}/").img
         else
-            IMG_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/${CHANGE_STRING}/${DIST_NAME,,}-$1/").img
+            IMG_FILENAME=$(echo "${FILENAME::-4}"-"${DIST_VERSION}" | sed "s/${CHANGE_STRING}/${DIST_NAME,,}-$WORKSPACE_SUFFIX/").img
         fi
     done
 else
@@ -53,6 +63,12 @@ if [ "${BASE_RELEASE_COMPRESS}" == "yes" ]; then
     fi
 else
     echo "Not compressing because setting is disabled"
+fi
+
+# store_true in argparse variables are either "yes" or ""
+if [ "${SHA256}" == "yes" ]; then
+    echo "Saving image hash type sha256"
+    sha256sum "${IMG_FILENAME}" > "${IMG_FILENAME}".sha256
 fi
 
 popd

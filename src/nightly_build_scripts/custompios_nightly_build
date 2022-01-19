@@ -42,6 +42,6 @@ pushd "${DIST_PATH}"
         echo "build script failed"
         exit $exit_code
     fi
-    bash -x ${CUSTOM_PI_OS_PATH}/release $1
+    bash -x ${CUSTOM_PI_OS_PATH}/release --sha256 $1
     chmod 777 ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/*
 popd
