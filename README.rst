@@ -1,6 +1,10 @@
 CustomPiOS
 ==========
 
+.. image:: https://raw.githubusercontent.com/guysoft/CustomPiOS/devel/media/CustomPiOS.png
+.. :scale: 50 %
+.. :alt: CustomPiOS logo
+
 A `Raspberry Pi <http://www.raspberrypi.org/>`_ and other ARM devices distribution builder. CustomPiOS opens an already existing image, modifies it and repackages the image ready to ship.
 
 This repository contains the source script to generate a distribution out of an existing `Raspbian <http://www.raspbian.org/>`_ distro image, or Armbian devices.
