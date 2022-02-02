@@ -7,9 +7,11 @@ WORKSPACE_POSTFIX=
 if [ "$#" -gt 0 ]; then
   export BUILD_VARIANT=$1
 fi
-if [ "$#" -gt 1 ]; then
-  BUILD_FLAVOR=$2
-fi
+
+# Disable flavor system
+# if [ "$#" -gt 1 ]; then
+#   BUILD_FLAVOR=$2
+# fi
 
 echo -e "--> Building VARIANT $BUILD_VARIANT, FLAVOR $BUILD_FLAVOR"
 
