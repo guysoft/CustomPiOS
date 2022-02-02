@@ -59,7 +59,7 @@ pushd "${DIST_PATH}"
             echo "Error: you must have \${CUSTOM_PI_OS_PATH} to generate a rpi-imager snipplet"
             exit 1
         fi
-        source "${CUSTOM_PI_OS_PATH}/config"
+        source "${CUSTOM_PI_OS_PATH}/config" "${WORKSPACE_SUFFIX}"
         "${CUSTOM_PI_OS_PATH}/make_rpi-imager-snipplet.py" --rpi_imager_url "${RPI_IMAGER_URL}" -- "${WORKSPACE_SUFFIX}"
     fi
     

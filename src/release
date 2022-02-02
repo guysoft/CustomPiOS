@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set +x
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source "$DIR/argparse.bash" || exit 1
@@ -21,7 +22,7 @@ if [ -z "${CUSTOM_PI_OS_PATH}" ];then
 fi
 
 # source "${DIST_PATH}/config"
-source "${CUSTOM_PI_OS_PATH}/config"
+source "${CUSTOM_PI_OS_PATH}/config" "${WORKSPACE_SUFFIX}"
 
 FILENAME=$(basename `ls . |  grep -e .img$ -e .raw$ | tail -n 1`)
 
