@@ -13,15 +13,9 @@ parser.add_argument('-r', '--rpi_imager', action='store_true', help='Create a rp
 parser.add_argument('-u', '--rpi_imager_url', type=str, default="MISSING_URL", help='url to the uploaded image url')
 EOF
 
-if [ "$#" -gt 0 ]; then
-  BUILD_VARIANT="$1"
-else
-  BUILD_VARIANT=default
-fi
-
 WORKSPACE_POSTFIX=
-if [ "${BUILD_VARIANT}" != 'default' ]; then
-  WORKSPACE_POSTFIX=-"${BUILD_VARIANT}"
+if [ "${WORKSPACE_SUFFIX}" != 'default' ]; then
+  WORKSPACE_POSTFIX=-"${WORKSPACE_SUFFIX}"
 fi
 
 #Update repos used
@@ -46,7 +40,7 @@ pushd "${DIST_PATH}"
     #export OCTOPI_OCTOPRINT_REPO_BUILD='http://localhost/git/OctoPrint.git/'
     #export OCTOPI_MJPGSTREAMER_REPO_BUILD='http://localhost/git/mjpg-streamer.git/'
     #export OCTOPI_WIRINGPI_REPO_BUILD='http://localhost/git/wiringPi.git/'
-    ${CUSTOM_PI_OS_PATH}/build_custom_os $1
+    ${CUSTOM_PI_OS_PATH}/build_custom_os "${WORKSPACE_SUFFIX}"
     exit_code=$?
     if [ $exit_code -ne 0 ]; then
         echo "build script failed"
@@ -58,7 +52,7 @@ pushd "${DIST_PATH}"
         EXTRA_FLAGS="--sha256"
     fi
     
-    bash -x ${CUSTOM_PI_OS_PATH}/release ${EXTRA_FLAGS} $1
+    bash -x ${CUSTOM_PI_OS_PATH}/release ${EXTRA_FLAGS} "${WORKSPACE_SUFFIX}"
     
     if [ "${RPI_IMAGER}" == "yes" ]; then
         if [ -z "${CUSTOM_PI_OS_PATH}" ];then
@@ -66,7 +60,7 @@ pushd "${DIST_PATH}"
             exit 1
         fi
         source "${CUSTOM_PI_OS_PATH}/config"
-        "${CUSTOM_PI_OS_PATH}/make_rpi-imager-snipplet.py" --rpi_imager_url "${RPI_IMAGER_URL}" -- $1
+        "${CUSTOM_PI_OS_PATH}/make_rpi-imager-snipplet.py" --rpi_imager_url "${RPI_IMAGER_URL}" -- "${WORKSPACE_SUFFIX}"
     fi
     
     chmod 777 ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/*
