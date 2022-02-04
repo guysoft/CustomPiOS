@@ -169,6 +169,13 @@ function mount_image() {
   image_path=$1
   root_partition=$2
   mount_path=$3
+  
+  boot_mount_path=/boot
+  if [ "$#" -gt 3 ]
+  then
+    boot_mount_path=$4
+  fi
+  
   echo $2
 
   # dump the partition table, locate boot partition and root partition
@@ -182,11 +189,13 @@ function mount_image() {
   # mount root and boot partition
   
   detach_all_loopback $image_path
+  echo "Mounting root parition"
   sudo losetup -f
   sudo mount -o loop,offset=$root_offset $image_path $mount_path/
   if [[ "$boot_partition" != "$root_partition" ]]; then
+	  echo "Mounting boot partition"
 	  sudo losetup -f
-	  sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) $image_path $mount_path/boot
+	  sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) "${image_path}" "${mount_pathi}"/"${boot_mount_path}"
   fi
   sudo mkdir -p $mount_path/dev/pts
   sudo mount -o bind /dev $mount_path/dev

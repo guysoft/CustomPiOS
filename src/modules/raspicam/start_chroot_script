@@ -2,6 +2,6 @@
 set -x
 set -e
 # This module enables the raspicam
-echo "# enable raspicam" >> /boot/config.txt
-echo "start_x=1" >> /boot/config.txt
-echo "gpu_mem=128" >> /boot/config.txt
+echo "# enable raspicam" >> /"${BASE_BOOT_MOUNT_PATH}"/config.txt
+echo "start_x=1" >> /"${BASE_BOOT_MOUNT_PATH}"/config.txt
+echo "gpu_mem=128" >> /"${BASE_BOOT_MOUNT_PATH}"/config.txt

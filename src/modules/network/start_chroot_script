@@ -12,12 +12,12 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
-unpack /filesystem/boot /boot
+unpack /filesystem/boot /"${BASE_BOOT_MOUNT_PATH}"
 
-DIST_NETWORK_FILE=/boot/${DIST_NAME,,}-wpa-supplicant.txt
+DIST_NETWORK_FILE=/"${BASE_BOOT_MOUNT_PATH}"/${DIST_NAME,,}-wpa-supplicant.txt
 
 # allow configuring multiple wifi networks via /boot/DIST_NAME-wpa-supplicant.txt
-mv /boot/custompios-wpa-supplicant.txt ${DIST_NETWORK_FILE}
+mv /"${BASE_BOOT_MOUNT_PATH}"/custompios-wpa-supplicant.txt ${DIST_NETWORK_FILE}
 
 if [ "${BASE_DISTRO}" == "ubuntu" ]; then
     echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev" > /etc/wpa_supplicant/wpa_supplicant.conf
@@ -33,13 +33,7 @@ if [ "${BASE_DISTRO}" == "raspbian" ]; then
 fi
 
 # create symlink
-if [ "${BASE_DISTRO}" == "ubuntu" ]; then
-    mkdir -p /etc/wpa_supplicant
-    # ubuntu /boot is mounted to /boot/firmware/
-    ln -s "${DIST_NETWORK_FILE//\/boot/\/boot\/firmware}" /etc/wpa_supplicant/wpa_supplicant.conf
-else
-    ln -s "${DIST_NETWORK_FILE}" /etc/wpa_supplicant/wpa_supplicant.conf
-fi
+ln -s "${DIST_NETWORK_FILE}" /etc/wpa_supplicant/wpa_supplicant.conf
 
 # copy /etc/wpa_supplicant/ifupdown.sh to /etc/ifplugd/action.d/ifupdown - for wlan auto reconnect
 [ -f /etc/ifplugd/action.d/ifupdown ] && mv /etc/ifplugd/action.d/ifupdown /etc/ifplugd/action.d/ifupdown.original

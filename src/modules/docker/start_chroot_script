@@ -38,14 +38,10 @@ fi
 
 if [ "${DOCKER_COMPOSE_BOOT}" == "yes" ]; then
     unpack /filesystem/root /
-    unpack /filesystem/boot /boot
+    unpack /filesystem/boot /"${BASE_BOOT_MOUNT_PATH}"
     
     if [ "${DOCKER_COMPOSE_BOOT_PATH}" == "default" ]; then
-        if [ "${BASE_DISTRO}" == "ubuntu" ]; then
-            DOCKER_COMPOSE_BOOT_PATH_ACTUAL=/boot/firmware/docker-compose
-        else
-            DOCKER_COMPOSE_BOOT_PATH_ACTUAL=/boot/docker-compose
-        fi
+        DOCKER_COMPOSE_BOOT_PATH_ACTUAL="${BASE_BOOT_MOUNT_PATH}"/docker-compose
     else
         DOCKER_COMPOSE_BOOT_PATH_ACTUAL="${DOCKER_COMPOSE_BOOT_PATH}"
     fi

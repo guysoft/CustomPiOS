@@ -24,7 +24,7 @@ systemctl enable serial-getty@ttyGS0
 # as these will hand when no device did connect to them and cause all kinds of funkey behaviour
 # like not being able to reboot the device without force
 
-echo "dtoverlay=dwc2" >> /boot/config.txt
+echo "dtoverlay=dwc2" >> /"${BASE_BOOT_MOUNT_PATH}"/config.txt
 echo "dwc2" >> /etc/modules
 echo "g_serial" >> /etc/modules
  

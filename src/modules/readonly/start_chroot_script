@@ -130,7 +130,7 @@ append1 /etc/fstab "/var/tmp" "tmpfs /var/tmp tmpfs nodev,nosuid 0 0"
 append1 /etc/fstab "\s/tmp"   "tmpfs /tmp    tmpfs nodev,nosuid 0 0"
 append1 /etc/fstab "/var/lib/ntp"   "tmpfs /var/lib/ntp    tmpfs nodev,nosuid 0 0"
 
-unpack /filesystem/boot /boot
+unpack /filesystem/boot /"${BASE_BOOT_MOUNT_PATH}"
 # This would also work, but fails initially because it would also need to remove the init script doing the resize
 #append2 /boot/cmdline.txt fastboot fastboot
 #append2 /boot/cmdline.txt noswap noswap
@@ -139,8 +139,8 @@ unpack /filesystem/boot /boot
 # Add some helpful aliases to .bshrc for root
 
 if [ $READONLY_BOOT_IS_RW -n ]; then
- echo "alias ro='sudo mount -o remount,ro / ; sudo mount -o remount,ro /boot'" >> /root/.bashrc
- echo "alias rw='sudo mount -o remount,rw / ; sudo mount -o remount,rw /boot'" >> /root/.bashrc
+ echo "alias ro='sudo mount -o remount,ro / ; sudo mount -o remount,ro /"${BASE_BOOT_MOUNT_PATH}"'" >> /root/.bashrc
+ echo "alias rw='sudo mount -o remount,rw / ; sudo mount -o remount,rw /"${BASE_BOOT_MOUNT_PATH}"'" >> /root/.bashrc
 else
  echo "alias ro='sudo mount -o remount,ro /'" >> /root/.bashrc
  echo "alias rw='sudo mount -o remount,rw /'" >> /root/.bashrc
