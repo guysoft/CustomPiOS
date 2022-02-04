@@ -170,7 +170,7 @@ function mount_image() {
   root_partition=$2
   mount_path=$3
   
-  boot_mount_path=/boot
+  boot_mount_path=boot
   if [ "$#" -gt 3 ]
   then
     boot_mount_path=$4
@@ -195,7 +195,7 @@ function mount_image() {
   if [[ "$boot_partition" != "$root_partition" ]]; then
 	  echo "Mounting boot partition"
 	  sudo losetup -f
-	  sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) "${image_path}" "${mount_pathi}"/"${boot_mount_path}"
+	  sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) "${image_path}" "${mount_path}"/"${boot_mount_path}"
   fi
   sudo mkdir -p $mount_path/dev/pts
   sudo mount -o bind /dev $mount_path/dev
