@@ -32,6 +32,7 @@ if __name__ == "__main__":
     description = handle_arg("RPI_IMAGER_DESCRIPTION")
     url = args.rpi_imager_url
     icon = handle_arg("RPI_IMAGER_ICON")
+    website = handle_arg("RPI_IMAGER_WEBSITE")
     release_date = date.today().strftime("%Y-%m-%d")
     zip_local = glob.glob(os.path.join(workspace_path,"*.zip"))[0]
     
@@ -44,6 +45,7 @@ if __name__ == "__main__":
     json_out = {"name": name,
                 "description": description,
                 "url": url,
+                "website": website,
                 "icon": icon,
                 "release_date": release_date,
                 }
