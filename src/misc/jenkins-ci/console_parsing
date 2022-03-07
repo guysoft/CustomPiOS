@@ -16,3 +16,4 @@ error /] Error 1/
 error/VM must be running to open SSH connection/
 error /^BUILD FAILED!/
 error /^exit 1/
+error /failed to setup loop device for /
