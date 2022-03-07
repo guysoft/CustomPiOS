@@ -9,7 +9,9 @@ import glob
 
 
 
-def handle_arg(key):
+def handle_arg(key, optional):
+    if optional and key not in os.environ.keys():
+        return
     if key in os.environ.keys():
         return os.environ[key]
     else:
@@ -32,7 +34,7 @@ if __name__ == "__main__":
     description = handle_arg("RPI_IMAGER_DESCRIPTION")
     url = args.rpi_imager_url
     icon = handle_arg("RPI_IMAGER_ICON")
-    website = handle_arg("RPI_IMAGER_WEBSITE")
+    website = handle_arg("RPI_IMAGER_WEBSITE", True)
     release_date = date.today().strftime("%Y-%m-%d")
     zip_local = glob.glob(os.path.join(workspace_path,"*.zip"))[0]
     
@@ -45,10 +47,12 @@ if __name__ == "__main__":
     json_out = {"name": name,
                 "description": description,
                 "url": url,
-                "website": website,
                 "icon": icon,
                 "release_date": release_date,
                 }
+    
+    if website is not None:
+        json_out["website"] = website
 
     img_sha256_path = glob.glob(os.path.join(workspace_path,"*.img.sha256"))[0]
     json_out["extract_sha256"] = None
