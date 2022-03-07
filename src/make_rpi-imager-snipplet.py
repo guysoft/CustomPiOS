@@ -9,7 +9,7 @@ import glob
 
 
 
-def handle_arg(key, optional):
+def handle_arg(key, optional=False):
     if optional and key not in os.environ.keys():
         return
     if key in os.environ.keys():
