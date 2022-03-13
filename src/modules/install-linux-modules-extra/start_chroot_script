@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# PleromaPi module
+# installs linux-modules-extra with a hack
+# Written by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+########
+
+
+# Source error handling, leave this in place
+set -x
+set -e
+
+source /common.sh
+install_cleanup_trap
+
+# unpack /filesystem/root /
+
+apt-get update
+# workwround to intall linux-modules-extra-raspi
+sudo umount /boot
+
+apt-get install -y flash-kernel
+# patch -p1 < fix-flash-kernel-rpi4.patch
+mv /usr/sbin/flash-kernel /usr/sbin/flash-kernel.bak
+apt-get install -y linux-modules-extra-raspi
+mv /usr/sbin/flash-kernel.bak /usr/sbin/flash-kernel

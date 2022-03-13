@@ -1,0 +1,12 @@
+--- /usr/share/flash-kernel/db/all.db.orig      2021-12-15 10:15:05.073570411 +0000
++++ /usr/share/flash-kernel/db/all.db   2021-12-15 10:15:23.585319254 +0000
+@@ -1666,7 +1666,7 @@
+ DTB-Id: bcm2709-rpi-2-b.dtb
+ U-Boot-Script-Name: bootscr.rpi
+ Required-Packages: u-boot-tools
+-
++Machine: Raspberry Pi 4 Model B Rev 1.2
+ Machine: Raspberry Pi 3 Model A+
+ Machine: Raspberry Pi 3 Model A Plus
+ Machine: Raspberry Pi 3 Model A Plus Rev 1.0
+
