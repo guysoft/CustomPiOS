@@ -47,6 +47,7 @@ createAdHocNetwork()
     systemctl start dnsmasq
     systemctl start hostapd
     echo 1 > /proc/sys/net/ipv4/ip_forward
+    echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
 }
 
 KillHotspot()
@@ -58,6 +59,7 @@ KillHotspot()
     iptables -D FORWARD -i eth0 -o "$wifidev" -m state --state RELATED,ESTABLISHED -j ACCEPT
     iptables -D FORWARD -i "$wifidev" -o eth0 -j ACCEPT
     echo 0 > /proc/sys/net/ipv4/ip_forward
+    echo 0 > /proc/sys/net/ipv6/conf/all/forwarding
     ip addr flush dev "$wifidev"
     ip link set dev "$wifidev" up
 }
@@ -125,6 +127,7 @@ FindSSID
 if [ "$ssidChk" != "NoSSid" ] 
 then
        echo 0 > /proc/sys/net/ipv4/ip_forward #deactivate ip forwarding
+       echo 0 > /proc/sys/net/ipv6/conf/all/forwarding
        if systemctl status hostapd | grep "(running)" >/dev/null 2>&1
        then #hotspot running and ssid in range
               KillHotspot
