@@ -15,7 +15,7 @@ apt-get -y purge dns-root-data
 apt-get -y install iw
 
 apt-get purge dns-root-data
-apt-get install -y hostapd dnsmasq
+apt-get install -y hostapd dnsmasq iptables
 
 systemctl disable hostapd
 systemctl disable dnsmasq
