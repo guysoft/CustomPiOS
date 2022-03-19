@@ -59,6 +59,8 @@ createAdHocNetwork()
     fi
     systemctl start dnsmasq
     systemctl start hostapd
+    # We need dhcpcd in host mode for ipv6
+    systemctl restart dhcpcd
     echo 1 > /proc/sys/net/ipv4/ip_forward
     echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
 }
@@ -209,6 +211,9 @@ else #ssid or MAC address not in range
        if systemctl status hostapd | grep "(running)" >/dev/null 2>&1
        then
               echo "Hostspot already active"
+              # Extra tools to handle hotspot not working
+              add_masquerade "${ethdev}"
+              make_sure_master "${wifidev}"
        elif { wpa_cli status | grep "$wifidev"; } >/dev/null 2>&1
        then
               echo "Cleaning wifi files and Activating Hotspot"

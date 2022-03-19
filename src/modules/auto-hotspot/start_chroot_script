@@ -46,6 +46,8 @@ interface eth0
         ia_pd 2 wlan0/1/64 # request prefixes for VLANs
 " >> /etc/dhcpcd.conf
 
+sed -i 's/clientid/# clientid/g' /etc/dhcpcd.conf
+
 echo "
 # Auto-hotspot Config
 # Interface to use
