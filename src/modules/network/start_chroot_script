@@ -19,7 +19,7 @@ DIST_NETWORK_FILE=/"${BASE_BOOT_MOUNT_PATH}"/${DIST_NAME,,}-wpa-supplicant.txt
 # allow configuring multiple wifi networks via /boot/DIST_NAME-wpa-supplicant.txt
 mv /"${BASE_BOOT_MOUNT_PATH}"/custompios-wpa-supplicant.txt ${DIST_NETWORK_FILE}
 
-if [ "${BASE_DISTRO}" == "ubuntu" ]; then
+if [ "${BASE_DISTRO}" == "ubuntu" ] || [ "${BASE_DISTRO}" == "armbian" ]; then
     echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev" > /etc/wpa_supplicant/wpa_supplicant.conf
     echo "update_config=1" >> /etc/wpa_supplicant/wpa_supplicant.conf
 fi
