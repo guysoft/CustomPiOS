@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# Default user toolkit adds a default user after the removal of the pi user
+# https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/
+# Make sure you have the config file setup correctly
+#
+# Written by Paolo Tagliani<pablosproject>
+# GPL V3
+########
+
+set -x
+set -e
+
+source /common.sh
+install_cleanup_trap
+
+enc_password=$(echo '${DEFAULT_USER_PASSWORD}' | openssl passwd -6 -stdin)
+echo "$DEFAULT_USER_NAME:$enc_password" >> /boot/userconf

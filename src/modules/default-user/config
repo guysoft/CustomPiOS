@@ -1,0 +1,3 @@
+[ -n "$DEFAULT_USER_NAME" ] || DEFAULT_USER_NAME=username
+[ -n "$DEFAULT_USER_PASSWORD" ] || DEFAULT_USER_PASSWORD=emanresu
+
