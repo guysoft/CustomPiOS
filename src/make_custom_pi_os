@@ -43,7 +43,7 @@ if [ $GET_IMAGE ]; then
         echo "error getting date"
         exit 1
     fi
-    CURRENT_RASPBIAN_FILE=$(curl http://downloads.raspberrypi.org/raspios_lite_armhf/images/${CURRENT_RASPBIAN}/ | grep .zip | head -n 1 | awk -F "href=\"" '{print $2}' | awk -F "\">" '{print $1}')
+    CURRENT_RASPBIAN_FILE=$(curl http://downloads.raspberrypi.org/raspios_lite_armhf/images/${CURRENT_RASPBIAN}/ | grep .xz | head -n 1 | awk -F "href=\"" '{print $2}' | awk -F "\">" '{print $1}')
     curl -L -o "${DEST}/src/image/${CURRENT_RASPBIAN_FILE}" https://downloads.raspberrypi.org/raspios_lite_armhf/images/${CURRENT_RASPBIAN}/${CURRENT_RASPBIAN_FILE}
 fi
 
