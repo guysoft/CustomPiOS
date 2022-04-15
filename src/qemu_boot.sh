@@ -8,7 +8,13 @@ ZIP_IMG=$1
 DEST=/tmp
 source ${DIR}/common.sh
 
-IMG_NAME=$(unzip -Z "${ZIP_IMG}" | head -n 3 | tail -n 1 | awk '{ print $9 }')
+if [[ $ZIP_IMG == *.txt ]]; then
+    IMG_NAME=$(unzip -Z "${ZIP_IMG}" | head -n 3 | tail -n 1 | awk '{ print $9 }')
+else
+    unxz --keep "${ZIP_IMG}"
+    IMG_NAME=$(echo $(basename $ZIP_IMG) | sed "s/.xz//")
+fi
+
 BASE_IMG_PATH=${DEST}/"${IMG_NAME}"
 
 
@@ -18,13 +24,13 @@ if [ ! -f "${BASE_IMG_PATH}" ]; then
     BASE_ROOT_PARTITION=2
     BASE_MOUNT_PATH=${DEST}/mount
     mkdir -p "${BASE_MOUNT_PATH}"
-
+    
     sudo bash -c "$(declare -f mount_image); $(declare -f detach_all_loopback); mount_image $BASE_IMG_PATH $BASE_ROOT_PARTITION $BASE_MOUNT_PATH"
-
+    
     pushd "${BASE_MOUNT_PATH}"
-        sudo bash -c "$(declare -f fixLd); fixLd"
-        sudo sed -e '/PARTUUID/ s/^#*/#/' -i etc/fstab
-	sudo bash -c 'echo "/dev/sda1 /boot vfat    defaults          0       2" >> etc/fstab'
+    sudo bash -c "$(declare -f fixLd); fixLd"
+    sudo sed -e '/PARTUUID/ s/^#*/#/' -i etc/fstab
+    sudo bash -c 'echo "/dev/sda1 /boot vfat    defaults          0       2" >> etc/fstab'
     popd
     sudo bash -c "$(declare -f unmount_image); unmount_image $BASE_MOUNT_PATH force"
 fi
