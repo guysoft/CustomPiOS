@@ -15,6 +15,7 @@ RUN set -x \
         qemu-user-static \
         sudo \
         zip \
+        xz-utils \
         lsof \
     && rm -rf /var/lib/apt/lists/*
 
