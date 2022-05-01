@@ -37,14 +37,31 @@ if [ "${BASE_DISTRO}" == "ubuntu" ]; then
 fi
 
 if [ "${BASE_ADD_USER}" == "yes" ]; then
-  if id -u "${BASE_USER}" >/dev/null 2>&1; then
-      echo "Base user exists, not adding"
-  else
-      echo "Adding base user ${BASE_USER}"
-      password=$(perl -e 'printf("%s\n", crypt($ARGV[0], "password"))' "${BASE_USER_PASSWORD}")
-      useradd -m -p "${password}" -s /bin/bash "${BASE_USER}"
-      usermod -a -G sudo "${BASE_USER}"
-  fi
+    if [ "${BASE_DISTRO}" == "raspbian" ]; then
+        # Setup first user, reference:
+        # https://www.raspberrypi.com/documentation/computers/configuration.html#configuring-a-user
+        echo_green "Setup default user and password ..."
+        function create_userconf {
+            local pw_encrypt
+            if [ -n "${BASE_USER}" ] || [ -n "${BASE_USER_PASSWORD}" ]; then
+                pw_encrypt="$(echo "${BASE_USER_PASSWORD}" | openssl passwd -6 -stdin)"
+                echo "${BASE_USER}:${pw_encrypt}" > /boot/userconf.txt
+            else
+                echo_red "First user name and password not set! [FAILED]"
+                exit 1
+            fi
+        }
+        create_userconf
+    else
+        if id -u "${BASE_USER}" >/dev/null 2>&1; then
+            echo "Base user exists, not adding"
+        else
+            echo "Adding base user ${BASE_USER}"
+            password=$(perl -e 'printf("%s\n", crypt($ARGV[0], "password"))' "${BASE_USER_PASSWORD}")
+            useradd -m -p "${password}" -s /bin/bash "${BASE_USER}"
+            usermod -a -G sudo "${BASE_USER}"
+        fi
+    fi
 fi
 
 if [ -n "$BASE_APT_PROXY" ]
