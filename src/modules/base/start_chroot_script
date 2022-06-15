@@ -46,6 +46,14 @@ if [ "${BASE_ADD_USER}" == "yes" ]; then
             if [ -n "${BASE_USER}" ] || [ -n "${BASE_USER_PASSWORD}" ]; then
                 pw_encrypt="$(echo "${BASE_USER_PASSWORD}" | openssl passwd -6 -stdin)"
                 echo "${BASE_USER}:${pw_encrypt}" > /boot/userconf.txt
+                
+                # Patch cancel-rename due to https://github.com/RPi-Distro/userconf-pi/issues/2
+                # And https://github.com/guysoft/CustomPiOS/issues/163
+                unpack /filesystem/patches /patches root
+                pushd /usr/bin
+                    patch -p1 < /patches/fix-163-autologin-console.patch
+                popd
+                rm -rf /patches
             else
                 echo_red "First user name and password not set! [FAILED]"
                 exit 1
