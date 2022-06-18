@@ -36,6 +36,12 @@ if [ "${BASE_DISTRO}" == "ubuntu" ]; then
   
 fi
 
+#Helper Function for create_userconf
+function get_os_version {
+  local os_version
+  grep -c "buster" /etc/os-release
+}
+
 if [ "${BASE_ADD_USER}" == "yes" ]; then
     if [ "${BASE_DISTRO}" == "raspbian" ]; then
         # Setup first user, reference:
@@ -46,7 +52,10 @@ if [ "${BASE_ADD_USER}" == "yes" ]; then
             if [ -n "${BASE_USER}" ] || [ -n "${BASE_USER_PASSWORD}" ]; then
                 pw_encrypt="$(echo "${BASE_USER_PASSWORD}" | openssl passwd -6 -stdin)"
                 echo "${BASE_USER}:${pw_encrypt}" > /boot/userconf.txt
-                
+
+                # Upgrade pkg first, make sure latest version will be patched
+                apt install --yes --only-upgrade userconf-pi
+
                 # Patch cancel-rename due to https://github.com/RPi-Distro/userconf-pi/issues/2
                 # And https://github.com/guysoft/CustomPiOS/issues/163
                 unpack /filesystem/patches /patches root
@@ -59,7 +68,12 @@ if [ "${BASE_ADD_USER}" == "yes" ]; then
                 exit 1
             fi
         }
-        create_userconf
+        # Do not patch if raspian="buster"
+        if [ "$(get_os_version)" == "0" ]; then
+          create_userconf
+        else
+          echo "Base Image use Version 'buster' no patching of userconf-pi needed"
+        fi
     else
         if id -u "${BASE_USER}" >/dev/null 2>&1; then
             echo "Base user exists, not adding"
