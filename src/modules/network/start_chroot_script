@@ -70,4 +70,15 @@ if [ "$BASE_NETWORK_DISABLE_PWRSAVE" == "yes" ]; then
     unpack filesystem/etc/systemd/system /etc/systemd/system root
     systemctl_if_exists enable disable-wifi-pwr-mgmt.service
   fi
+  # Use udev rule
+  if [ "$BASE_NETWORK_PWRSAVE_TYPE" == "udev" ]; then
+    echo_green "Installing WiFi Power Management udev rule ..."
+    unpack filesystem/etc/udev/rules.d /etc/udev/rules.d root
+  fi
+  # strip out unneeded script, depending on choose
+  if [ "$BASE_NETWORK_PWRSAVE_TYPE" != "udev" ]; then
+    rm -f /usr/local/bin/pwrsave-udev
+  else
+    rm -f /usr/local/bin/pwrsave
+  fi
 fi
