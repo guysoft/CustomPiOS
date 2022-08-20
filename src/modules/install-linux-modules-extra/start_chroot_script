@@ -15,7 +15,7 @@ install_cleanup_trap
 
 # unpack /filesystem/root /
 
-apt-get update
+apt-get update --allow-relreaseinfo-change
 # workwround to intall linux-modules-extra-raspi
 sudo umount /boot
 
