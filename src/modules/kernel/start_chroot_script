@@ -14,7 +14,7 @@ install_cleanup_trap
 
 
 pushd /home/pi
-    sudo apt-get update --allow-relreaseinfo-change
+    sudo apt-get update --allow-releaseinfo-change
     sudo apt-get -y install make gcc git bc p7zip-full bison flex libssl-dev
     
     # git clone --depth=1 https://github.com/raspberrypi/linux
