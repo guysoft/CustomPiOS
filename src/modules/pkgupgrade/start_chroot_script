@@ -18,7 +18,7 @@ if [ -z "${DEBIAN_FRONTEND}" ]; then
 fi
 
 ## Force Update
-apt update
+apt update --allow-releaseinfo-change
 
 ### Pre Update Section
 if [ "${PKGUPGRADE_DISTUPGRADE}" = "y" ]; then

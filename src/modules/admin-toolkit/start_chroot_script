@@ -95,7 +95,7 @@ fi
 # Begin general section
 if [ "$ADMIN_TOOLKIT_UPDATE_PACKAGES" == "yes" ]
 then
-    apt-get update && apt-get upgrade -y
+    apt-get update --allow-releaseinfo-change && apt-get upgrade -y
 fi
 
 # Install packages if listed
