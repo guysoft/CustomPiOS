@@ -12,6 +12,8 @@ install_cleanup_trap
 if [ "${BASE_DISTRO}" == "raspbian" ]; then
         curl -sSL get.docker.com | sh
 elif [ "${BASE_DISTRO}" == "ubuntu" ]; then
+    apt-get update
+    apt-get install -y curl
     if [ "${BASE_ARCH}" == "aarch64" ] || [ "${BASE_ARCH}" == "arm64" ]; then
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
         add-apt-repository "deb [arch=arm64] https://download.docker.com/linux/ubuntu disco stable"
