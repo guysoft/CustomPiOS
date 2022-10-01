@@ -20,7 +20,7 @@
 #
 # If you use Textedit to edit this file make sure to use "plain text format"
 # and "disable smart quotes" in "Textedit > Preferences", otherwise Textedit
-# will use none-compatible characters and your network configuration won't
+# will use non-compatible characters and your network configuration won't
 # work!
 
 ## WPA/WPA2 secured
