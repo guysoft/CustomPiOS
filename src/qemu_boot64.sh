@@ -8,7 +8,7 @@ ZIP_IMG=$1
 DEST=/tmp
 source ${DIR}/common.sh
 
-if [[ $ZIP_IMG == *.txt ]]; then
+if [[ $ZIP_IMG == *.zip ]]; then
     IMG_NAME=$(unzip -Z "${ZIP_IMG}" | head -n 3 | tail -n 1 | awk '{ print $9 }')
 else
     unxz --keep "${ZIP_IMG}"
