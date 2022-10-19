@@ -16,13 +16,25 @@ elif [ "${BASE_DISTRO}" == "ubuntu" ]; then
     apt-get install -y curl
     if [ "${BASE_ARCH}" == "aarch64" ] || [ "${BASE_ARCH}" == "arm64" ]; then
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-        add-apt-repository "deb [arch=arm64] https://download.docker.com/linux/ubuntu disco stable"
+        add-apt-repository --yes "deb [arch=arm64] https://download.docker.com/linux/ubuntu disco stable"
     else
         echo "Error, not implemented Ubuntu 32bit"
 	exit 1
     fi
     apt-get update --allow-releaseinfo-change
     apt-get install -y docker-ce
+    if [ "${BASE_DISTRO}" == "ubuntu" ]; then
+        # enable proposed https://bugs.launchpad.net/ubuntu/+source/linux-raspi/+bug/1955353/comments/9
+        cat <<EOF >/etc/apt/sources.list.d/ubuntu-jammy-proposed.list
+# Enable Ubuntu proposed archive
+deb http://ports.ubuntu.com/ubuntu-ports $(lsb_release -cs)-proposed restricted main multiverse universe
+EOF
+        apt-get update
+        apt-get install -y flash-kernel
+	rm /etc/apt/sources.list.d/ubuntu-jammy-proposed.list
+	apt-get update
+        apt-get install -y linux-modules-extra-raspi
+    fi
 fi
 
 if [ "${DOCKER_ADD_USER_TO_GROUP}" == "yes" ]; then
