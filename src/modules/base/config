@@ -102,3 +102,5 @@ fi
 # If you want your variant not to have the name appending, enable this
 [ -n "$BASE_IGNORE_VARIANT_NAME" ] || BASE_IGNORE_VARIANT_NAME=no
 
+# Enable uart console on boot
+[ -n "$BASE_ENABLE_UART" ] || BASE_ENABLE_UART=no

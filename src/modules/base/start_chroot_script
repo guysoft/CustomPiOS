@@ -167,3 +167,11 @@ then
   echo "Configuring keyboard"
   raspi-config nonint do_configure_keyboard $BASE_CONFIG_KEYBOARD
 fi
+
+# Enable uart on boot
+if [ ${BASE_ENABLE_UART} == "yes" ]
+then
+    if ! grep -q "^enable_uart=1" /boot/config.txt ; then
+      echo "enable_uart=1" >> /boot/config.txt
+    fi
+fi
