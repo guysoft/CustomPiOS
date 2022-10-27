@@ -43,7 +43,7 @@ function get_os_version {
 }
 
 if [ "${BASE_ADD_USER}" == "yes" ]; then
-    if [ "${BASE_DISTRO}" == "raspbian" ]; then
+    if [ "${BASE_DISTRO}" == "raspbian" ] || [ "${BASE_DISTRO}" == "raspios64" ] || [ "${BASE_DISTRO}" == "raspios" ]; then
         # Setup first user, reference:
         # https://www.raspberrypi.com/documentation/computers/configuration.html#configuring-a-user
         echo_green "Setup default user and password ..."

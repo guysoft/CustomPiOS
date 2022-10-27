@@ -26,11 +26,13 @@ if [ "${BASE_DISTRO}" == "ubuntu" ]; then
     [ -n "$BASE_ADD_USER" ] || BASE_ADD_USER=yes
     # When adding a base user which password to use
     [ -n "$BASE_USER_PASSWORD" ] || BASE_USER_PASSWORD=ubuntu
-elif [ "${BASE_DISTRO}" == "raspios64" ]; then
-    [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}-*-arm64-*.{zip,7z,xz} | head -n 1`
 else
     # Default image raspbian
-    [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}*.{zip,7z,xz} | head -n 1`
+    if [ "${BASE_DISTRO}" == "raspios64" ]; then
+        [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}-*-arm64-*.{zip,7z,xz} | head -n 1`
+    else
+        [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}*.{zip,7z,xz} | head -n 1`
+    fi
     # Default user raspbian
     [ -n "$BASE_USER" ] || BASE_USER=pi
     [ -n "$BASE_ADD_USER" ] || BASE_ADD_USER=yes
