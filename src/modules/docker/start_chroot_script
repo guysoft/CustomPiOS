@@ -34,6 +34,10 @@ EOF
 	rm /etc/apt/sources.list.d/ubuntu-jammy-proposed.list
 	apt-get update
         apt-get install -y linux-modules-extra-raspi
+
+        # Fix cgroup bug https://github.com/docker/for-linux/issues/219
+        # Solution from https://sleeplessbeastie.eu/2021/11/19/how-to-downgrade-cgroup-version-on-dietpi/
+        sed -i -e "1 s/$/ systemd.unified_cgroup_hierarchy=0/" /boot/firmware/cmdline.txt
     fi
 fi
 
