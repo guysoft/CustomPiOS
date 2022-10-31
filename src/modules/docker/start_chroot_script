@@ -16,7 +16,7 @@ elif [ "${BASE_DISTRO}" == "ubuntu" ]; then
     apt-get install -y curl
     if [ "${BASE_ARCH}" == "aarch64" ] || [ "${BASE_ARCH}" == "arm64" ]; then
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-        add-apt-repository --yes "deb [arch=arm64] https://download.docker.com/linux/ubuntu disco stable"
+        add-apt-repository --yes "deb [arch=arm64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
     else
         echo "Error, not implemented Ubuntu 32bit"
 	exit 1
