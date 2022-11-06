@@ -54,7 +54,7 @@ if [ "${BASE_ADD_USER}" == "yes" ]; then
                 echo "${BASE_USER}:${pw_encrypt}" > /boot/userconf.txt
 
                 # Upgrade pkg first, make sure latest version will be patched
-                apt install --yes --only-upgrade userconf-pi
+                apt-get install --yes --only-upgrade userconf-pi
 
                 # Patch cancel-rename due to https://github.com/RPi-Distro/userconf-pi/issues/2
                 # And https://github.com/guysoft/CustomPiOS/issues/163
