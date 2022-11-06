@@ -9,7 +9,7 @@ set -ex
 source /common.sh
 install_cleanup_trap
 
-if [ "${BASE_DISTRO}" == "raspbian" ]; then
+if [ "${BASE_DISTRO}" == "raspbian" ] || [ "${BASE_DISTRO}" == "raspios64" ]; then
         curl -sSL get.docker.com | sh
 elif [ "${BASE_DISTRO}" == "ubuntu" ]; then
     apt-get update
