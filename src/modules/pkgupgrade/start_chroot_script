@@ -32,7 +32,7 @@ fi
 # Make sure Cache is fresh
 apt_update_skip
 if [ "${PKGUPGRADE_USE_PREINSTALLER}" = "y" ]; then
-  apt install --yes --no-install-recommends "${PKGUPGRADE_PRE_INSTALL_PKGS}"
+  apt-get install --yes --no-install-recommends "${PKGUPGRADE_PRE_INSTALL_PKGS}"
 else
   echo_red "PreInstall Mechanism not configured. [SKIPPED]"
 fi

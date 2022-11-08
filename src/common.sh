@@ -458,7 +458,7 @@ function check_install_pkgs() {
   if [ "${#missing_pkgs[@]}" -ne 0 ]; then
       echo_red "${#missing_pkgs[@]} missing Packages..."
       echo_green "Installing ${missing_pkgs[@]}"
-      apt install --yes "${missing_pkgs[@]}"
+      apt-get install --yes "${missing_pkgs[@]}"
   else
       echo_green "No Dependencies missing... [SKIPPED]"
   fi
