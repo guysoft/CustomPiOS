@@ -29,9 +29,17 @@ function execute_chroot_script() {
   # cp `which qemu-arm-static` usr/bin
   if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] ; then
     if [ "$BASE_ARCH" == "armv7l" ]; then
-      cp `which qemu-arm-static` usr/bin/qemu-arm-static
+      if (grep -q gentoo /etc/os-release);then
+        ROOT="`realpath .`" emerge --usepkgonly --oneshot --nodeps qemu
+      else
+        cp `which qemu-arm-static` usr/bin/qemu-arm-static
+      fi
     elif [ "$BASE_ARCH" == "aarch64" ] || [ "$BASE_ARCH" == "arm64" ]; then
-      cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static
+      if (grep -q gentoo /etc/os-release);then
+        ROOT="`realpath .`" emerge --usepkgonly --oneshot --nodeps qemu
+      else
+        cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static
+      fi
     fi
   fi
   
@@ -43,10 +51,18 @@ function execute_chroot_script() {
   if [ "$(arch)" != "armv7l" ] && [ "$(arch)" != "aarch64" ] && [ "$(arch)" != "arm64" ] ; then
     if [ "$BASE_ARCH" == "armv7l" ]; then
       echo "Building on non-ARM device a armv7l system, using qemu-arm-static"
-      chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
+      if (grep -q gentoo /etc/os-release);then
+        chroot . usr/bin/qemu-arm /bin/bash /chroot_script
+      else
+        chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
+      fi
     elif [ "$BASE_ARCH" == "aarch64" ] || [ "$BASE_ARCH" == "arm64" ]; then
       echo "Building on non-ARM device a aarch64/arm64 system, using qemu-aarch64-static"
-      chroot . usr/bin/qemu-aarch64-static /bin/bash /chroot_script
+      if (grep -q gentoo /etc/os-release);then
+        chroot . usr/bin/qemu-aarch64 /bin/bash /chroot_script
+      else
+        chroot . usr/bin/qemu-aarch64-static /bin/bash /chroot_script
+      fi
     fi
   else
     echo "Building on ARM device a armv7l/aarch64/arm64 system, not using qemu"
