@@ -50,7 +50,7 @@ Developing
 Requirements
 ~~~~~~~~~~~~
 
-#. `qemu-arm-static <http://packages.debian.org/sid/qemu-user-static>`_
+#. `qemu-arm-static <http://packages.debian.org/sid/qemu-user-static>`_ or gentoo qemu with static USE
 #. Downloaded `Raspbian <http://www.raspbian.org/>`_ image.
 #. root privileges for chroot
 #. Bash
@@ -63,7 +63,7 @@ Requirements
 Known to work building configurations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1. Using the `CustomPiOS docker image <https://hub.docker.com/r/guysoft/custompios>`_
-2. Linux (Ubuntu / Debian etc)
+2. Linux (Ubuntu / Debian / Gentoo etc)
 3. OS X -  `See this thread for information <https://github.com/guysoft/OctoPi/issues/388#issuecomment-316327106>`_
 
 
