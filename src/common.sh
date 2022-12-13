@@ -171,15 +171,22 @@ function mount_image() {
   mount_path=$3
   
   boot_mount_path=boot
+
   if [ "$#" -gt 3 ]
   then
     boot_mount_path=$4
+  fi
+
+  if [ "$#" -gt 4 ]
+  then
+    boot_partition=$5
+  else
+    boot_partition=1
   fi
   
   echo $2
 
   # dump the partition table, locate boot partition and root partition
-  boot_partition=1
   fdisk_output=$(sfdisk -d $image_path)
   boot_offset=$(($(echo "$fdisk_output" | grep "$image_path$boot_partition" | awk '{print $4-0}') * 512))
   root_offset=$(($(echo "$fdisk_output" | grep "$image_path$root_partition" | awk '{print $4-0}') * 512))
