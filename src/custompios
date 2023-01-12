@@ -113,7 +113,7 @@ pushd $BASE_WORKSPACE
   fi
 
   # mount root and boot partition
-  mount_image "${BASE_IMG_PATH}" "${BASE_ROOT_PARTITION}" "${BASE_MOUNT_PATH}" "${BASE_BOOT_MOUNT_PATH}"
+  mount_image "${BASE_IMG_PATH}" "${BASE_ROOT_PARTITION}" "${BASE_MOUNT_PATH}" "${BASE_BOOT_MOUNT_PATH}" "${BASE_BOOT_PARTITION}"
   if [ -n "$BASE_APT_CACHE" ] && [ "$BASE_APT_CACHE" != "no" ]
   then
     mkdir -p "$BASE_APT_CACHE"
