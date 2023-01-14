@@ -54,6 +54,7 @@ Requirements
 #. Downloaded `Raspbian <http://www.raspbian.org/>`_ image.
 #. root privileges for chroot
 #. Bash
+#. jq
 #. git
 #. realpath
 #. sudo (the script itself calls it, running as root without sudo won't work)

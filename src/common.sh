@@ -177,19 +177,17 @@ function mount_image() {
     boot_mount_path=$4
   fi
 
-  if [ "$#" -gt 4 ]
+  if [ "$#" -gt 4 ] && [ "$5" != "" ]
   then
     boot_partition=$5
   else
     boot_partition=1
   fi
-  
-  echo $2
 
   # dump the partition table, locate boot partition and root partition
-  fdisk_output=$(sfdisk -d $image_path)
-  boot_offset=$(($(echo "$fdisk_output" | grep "$image_path$boot_partition" | awk '{print $4-0}') * 512))
-  root_offset=$(($(echo "$fdisk_output" | grep "$image_path$root_partition" | awk '{print $4-0}') * 512))
+  fdisk_output=$(sfdisk --json "${image_path}" )
+  boot_offset=$(($(jq ".partitiontable.partitions[] | select(.node == \"$image_path$boot_partition\").start" <<< ${fdisk_output}) * 512))
+  root_offset=$(($(jq ".partitiontable.partitions[] | select(.node == \"$image_path$root_partition\").start" <<< ${fdisk_output}) * 512))
 
   echo "Mounting image $image_path on $mount_path, offset for boot partition is $boot_offset, offset for root partition is $root_offset"
 
@@ -279,7 +277,7 @@ function enlarge_ext() {
   size=$3
 
   echo "Adding $size MB to partition $partition of $image"
-  start=$(sfdisk -d $image | grep "$image$partition" | awk '{print $4-0}')
+  start=$(sfdisk --json "${image}" | jq ".partitiontable.partitions[] | select(.node ==  \"$image$partition\").start")
   offset=$(($start*512))
   dd if=/dev/zero bs=1M count=$size >> $image
   fdisk $image <<FDISK
@@ -316,7 +314,7 @@ function shrink_ext() {
   size=$3
   
   echo "Resizing file system to $size MB..."
-  start=$(sfdisk -d $image | grep "$image$partition" | awk '{print $4-0}')
+  start=$(sfdisk --json "${image}" | jq ".partitiontable.partitions[] | select(.node ==  \"$image$partition\").start")
   offset=$(($start*512))
 
   detach_all_loopback $image
@@ -373,10 +371,10 @@ function minimize_ext() {
   buffer=$3
 
   echo "Resizing partition $partition on $image to minimal size + $buffer MB"
-  partitioninfo=$(sfdisk -d $image | grep "$image$partition")
+  fdisk_output=$(sfdisk --json "${image_path}" )
   
-  start=$(echo $partitioninfo | awk '{print $4-0}')
-  e2fsize_blocks=$(echo $partitioninfo | awk '{print $6-0}')
+  start=$(jq ".partitiontable.partitions[] | select(.node == \"$image_path$boot_partition\").start" <<< ${fdisk_output})
+  e2fsize_blocks=$(jq ".partitiontable.partitions[] | select(.node == \"$image_path$boot_partition\").size" <<< ${fdisk_output})
   offset=$(($start*512))
 
   detach_all_loopback $image
