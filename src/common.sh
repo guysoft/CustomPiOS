@@ -373,8 +373,8 @@ function minimize_ext() {
   echo "Resizing partition $partition on $image to minimal size + $buffer MB"
   fdisk_output=$(sfdisk --json "${image_path}" )
   
-  start=$(jq ".partitiontable.partitions[] | select(.node == \"$image_path$boot_partition\").start" <<< ${fdisk_output})
-  e2fsize_blocks=$(jq ".partitiontable.partitions[] | select(.node == \"$image_path$boot_partition\").size" <<< ${fdisk_output})
+  start=$(jq ".partitiontable.partitions[] | select(.node == \"$image_path$partition\").start" <<< ${fdisk_output})
+  e2fsize_blocks=$(jq ".partitiontable.partitions[] | select(.node == \"$image_path$partition\").size" <<< ${fdisk_output})
   offset=$(($start*512))
 
   detach_all_loopback $image
