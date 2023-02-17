@@ -8,10 +8,15 @@ argparse "$@" <<EOF || exit 1
 parser.add_argument('dest', help="The destination folder")
 parser.add_argument('-g', '--get_image', action='store_true',
                     help='Pick a number [default %(default)s]')
+parser.add_argument('-v', '--variant', action='store',
+                    choices=['raspios_lite_armhf', 'raspios_lite_arm64'],
+                    default='raspios_lite_armhf',
+                    help='Which variant to use [default: %(default)s]')
 EOF
 
 echo Settings:
-echo making dstro in "$DEST"
+echo "making dstro in ${DEST}"
+echo "variant: ${VARIANT}"
 
 for a in "${MULTIPLE[@]}"; do
     echo "  $a"
@@ -37,17 +42,17 @@ chown -R "${USER}":"$(id -gn "${USER}")" "${DEST}"
 if [ "$GET_IMAGE" ]; then
     echo -n "Downloading latest Raspbian image"
 
-    CURRENT_RASPBIAN=$(curl -s https://downloads.raspberrypi.org/raspios_lite_armhf/images/ | grep raspios | tail -n 1 | awk -F "href=\"" '{print $2}' | awk -F "/" '{print $1}')
+    CURRENT_RASPBIAN=$(curl -s "https://downloads.raspberrypi.org/${VARIANT}/images/" | grep raspios | tail -n 1 | awk -F "href=\"" '{print $2}' | awk -F "/" '{print $1}')
     if [ $? -ne 0 ]; then
         echo -e "\nerror getting date"
         exit 1
     fi
-    CURRENT_RASPBIAN_FILE="$(curl -s "http://downloads.raspberrypi.org/raspios_lite_armhf/images/${CURRENT_RASPBIAN}"/ | grep .xz | head -n 1 | awk -F "href=\"" '{print $2}' | awk -F "\">" '{print $1}')"
+    CURRENT_RASPBIAN_FILE="$(curl -s "http://downloads.raspberrypi.org/${VARIANT}/images/${CURRENT_RASPBIAN}"/ | grep .xz | head -n 1 | awk -F "href=\"" '{print $2}' | awk -F "\">" '{print $1}')"
     if [ $? -ne 0 ]; then
         echo -e "\nerror getting file name"
         exit 1
     fi
-    CURRENT_RASPBIAN_URL="https://downloads.raspberrypi.org/raspios_lite_armhf/images/${CURRENT_RASPBIAN}/${CURRENT_RASPBIAN_FILE}"
+    CURRENT_RASPBIAN_URL="https://downloads.raspberrypi.org/${VARIANT}/images/${CURRENT_RASPBIAN}/${CURRENT_RASPBIAN_FILE}"
     echo " from ${CURRENT_RASPBIAN_URL}"
     curl -L -o "${DEST}/src/image/${CURRENT_RASPBIAN_FILE}" "${CURRENT_RASPBIAN_URL}"
 fi
