@@ -14,6 +14,19 @@ parser.add_argument('-v', '--variant', action='store',
                     help='Which variant to use [default: %(default)s]')
 EOF
 
+case $DEST in
+    *"-"*)
+        echo "Error, destination folder cannot contain a dash"
+        exit 1
+        ;;
+    *" "*)
+        echo "Error, destination folder cannot contain a space"
+        exit 1
+        ;;
+    *)
+        ;;
+esac
+
 echo Settings:
 echo "making dstro in ${DEST}"
 echo "variant: ${VARIANT}"
