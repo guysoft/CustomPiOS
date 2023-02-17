@@ -1,18 +1,25 @@
 #!/usr/bin/env bash
+set -euo pipefail
 DEST_FOLDER="$1"
 
-DIST_NAME=$(basename $DEST_FOLDER)
+DIST_NAME=$(basename "${DEST_FOLDER}")
 
-pushd "${DEST_FOLDER}" > /dev/null
-    pushd src/modules > /dev/null
-        mv example ${DIST_NAME,,}
-        pushd ${DIST_NAME,,} > /dev/null
-            DIST_NAME_UPPER=$(echo $DIST_NAME | awk '{print toupper($0)}')
-            sed -i "s/EXAMPLE_VAR/${DIST_NAME_UPPER}_VAR/g" config start_chroot_script
-        popd > /dev/null
-    popd > /dev/null
-    pushd src > /dev/null
-        sed -i "s/export DIST_NAME=.*/export DIST_NAME=${DIST_NAME}/g" config
-        sed -i "s/example/${DIST_NAME,,}/g" config
-    popd > /dev/null
-popd > /dev/null
+if which gsed >/dev/null; then # use gnu sed if available (macos)
+    SED="gsed"
+else
+    SED="sed"
+fi
+
+pushd "${DEST_FOLDER}" >/dev/null || exit 1
+    pushd src/modules >/dev/null || exit 1
+        mv example "${DIST_NAME,,}"
+        pushd "${DIST_NAME,,}" >/dev/null || exit 1
+            DIST_NAME_UPPER=$(echo "${DIST_NAME}" | awk '{print toupper($0)}')
+            ${SED} -i "s/EXAMPLE_VAR/${DIST_NAME_UPPER}_VAR/g" config start_chroot_script
+        popd >/dev/null || exit 1
+    popd >/dev/null || exit 1
+    pushd src >/dev/null || exit 1
+        ${SED} -i "s/export DIST_NAME=.*/export DIST_NAME=${DIST_NAME}/g" config
+        ${SED} -i "s/example/${DIST_NAME,,}/g" config
+    popd >/dev/null || exit 1
+popd >/dev/null || exit 1
