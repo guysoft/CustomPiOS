@@ -172,5 +172,6 @@ List of Distributions using CustomPiOS
 * `UbuntuDockerPi <https://github.com/guysoft/UbuntuDockerPi>`_ - Distro ships with Ubuntu ARM 64bit Docker and docker-compose ready to build stuff for arm64v8/aarch64 or host whatever you like.
 * `FluiddPi <https://github.com/cadriel/fluiddpi>`_ - Distro that packages `Fluidd <https://github.com/cadriel/fluidd>`_, `Moonraker <https://github.com/Arksine/moonraker>`_, and `Klipper <https://github.com/KevinOConnor/klipper>`_ into the ultimate 3D printer firmware package.
 * `My Naturewatch Camera <https://github.com/interactionresearchstudio/NaturewatchCameraServer>`_ - A Python / OpenCV camera server to stream Pi camera content to a remote client through a website.
+* `PiFireOS <https://github.com/calonmerc/PiFireOS>`_ - Distro for pellet grill/smoker control, running `PiFire <https://nebhead.github.io/PiFire>`.
 
 Code contribution would be appreciated!
