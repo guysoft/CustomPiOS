@@ -203,6 +203,7 @@ function mount_image() {
 	  sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) "${image_path}" "${mount_path}"/"${boot_mount_path}"
   fi
   sudo mkdir -p $mount_path/dev/pts
+  sudo mkdir -p $mount_path/proc
   sudo mount -o bind /dev $mount_path/dev
   sudo mount -o bind /dev/pts $mount_path/dev/pts
   sudo mount -o bind /proc $mount_path/proc
