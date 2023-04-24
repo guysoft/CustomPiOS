@@ -203,6 +203,7 @@ function mount_image() {
 	  sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) "${image_path}" "${mount_path}"/"${boot_mount_path}"
   fi
   sudo mkdir -p $mount_path/dev/pts
+  sudo mkdir -p $mount_path/proc
   sudo mount -o bind /dev $mount_path/dev
   sudo mount -o bind /dev/pts $mount_path/dev/pts
   sudo mount -o bind /proc $mount_path/proc
@@ -296,9 +297,30 @@ FDISK
   test_for_image $image
   LODEV=$(losetup -f --show -o $offset $image)
   trap 'losetup -d $LODEV' EXIT
-
-  e2fsck -fy $LODEV
-  resize2fs -p $LODEV
+  if ( file -Ls $LODEV | grep -qi ext ); then
+    e2fsck -fy $LODEV
+    resize2fs -p $LODEV
+  elif ( file -Ls $LODEV | grep -qi btrfs ); then
+    btrfs check --repair $LODEV
+    if ( mount | grep $LODEV ); then
+      TDIR=$(mount | grep $LODEV)
+      btrfs filesystem resize max "$TDIR"
+    else
+      # btrfs needs to be mounted in order to resize
+      TDIR=$(mktemp -d /tmp/CPiOS_XXXX)
+      # the following two lines should be pointless, but I had many iterations
+      # where the mount below fails, but adding these two lines (which were
+      # intended for debugging, really) seemed to add enough delay (??) to
+      # make it work
+      umount $LODEV || true
+      ls -l "$TDIR" > /dev/null
+      if mount $LODEV "$TDIR" ; then
+        btrfs filesystem resize max "$TDIR"
+        umount $LODEV
+      fi
+      rmdir "$TDIR"
+    fi
+  fi
   losetup -d $LODEV
 
   trap - EXIT
