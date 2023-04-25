@@ -64,6 +64,9 @@ function execute_chroot_script() {
         chroot . usr/bin/qemu-aarch64-static /bin/bash /chroot_script
       fi
     fi
+  elif [ "$BASE_ARCH" == "armv7l" ] && [ "$(uname -m)" != "armv7l" ]; then
+    echo "Building on aarch64/arm64 device a armv7l system, using qemu-arm-static"
+    chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
   else
     echo "Building on ARM device a armv7l/aarch64/arm64 system, not using qemu"
     chroot . /bin/bash /chroot_script
