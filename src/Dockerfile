@@ -14,6 +14,7 @@ RUN set -x \
         qemu \
         qemu-user-static/bullseye-backports \
         sudo \
+        file \
         fdisk \
         jq \
         zip \
