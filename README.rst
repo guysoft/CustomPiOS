@@ -158,6 +158,7 @@ List of Distributions using CustomPiOS
 --------------------------------------
 
 * `OctoPi <https://octopi.octoprint.org/>`_ - The ready-to-go Raspberry Pi image with OctoPrint
+* `MonsterPi <https://docs.fdm-monster.net/guides/monsterpi>`_ - An Ubuntu ARM 64bit Raspbery Pi image running `FDM Monster <https://fdm-monster.net/>`_. This 3D Print server will help you connect 200+ OctoPrints together while providing a strong, professional workflow.
 * `FarmPi <https://farmpi.kevenaar.name/>`_ - An Ubuntu ARM 64bit Raspbery Pi image running `OctoFarm <https://octofarm.net/>`_
 * `FullPageOS <https://github.com/guysoft/FullPageOS>`_ - A Raspberry Pi distro to display a full page browser on boot
 * `Zynthian <http://zynthian.org/>`_ - Open Synth Platform
