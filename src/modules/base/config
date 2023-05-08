@@ -71,6 +71,8 @@ fi
 # a host:port combo for a apt-proxy (such as apt-cacher-ng) to use
 [ -n "$BASE_APT_PROXY" ] || BASE_APT_PROXY=
 
+[ -n "$BASE_APT_MIRROR" ] || BASE_APT_MIRROR=
+
 # an alternative pypi index url to use, e.g. a proxy such as devpi
 [ -n "$BASE_PYPI_INDEX" ] || BASE_PYPI_INDEX=
 

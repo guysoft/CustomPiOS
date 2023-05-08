@@ -11,6 +11,10 @@ export LC_ALL=C
 
 source /common.sh
 install_cleanup_trap
+if [ -n "${BASE_APT_MIRROR}" ]; then
+   echo -n "${BASE_APT_MIRROR}" | cat - /etc/apt/sources.list > /tmp/filename.tmp
+   mv /tmp/filename.tmp /etc/apt/sources.list
+fi
 
 if [ "${BASE_DISTRO}" == "ubuntu" ]; then
   unpack /filesystem/ubuntu / root
