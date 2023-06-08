@@ -16,6 +16,7 @@ RUN set -x \
         sudo \
         file \
         fdisk \
+        btrfs-progs \
         jq \
         zip \
         xz-utils \
