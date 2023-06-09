@@ -439,9 +439,6 @@ function minimize_ext() {
     echo "WARNING: minimize_ext not implemented for btrfs"
     btrfs check --repair $LODEV
   fi
-  
-  losetup -d $LODEV
-
 
 }
 
