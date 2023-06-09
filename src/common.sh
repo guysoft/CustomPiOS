@@ -298,8 +298,8 @@ FDISK
   LODEV=$(losetup -f --show -o $offset $image)
   trap 'losetup -d $LODEV' EXIT
   if ( file -Ls $LODEV | grep -qi ext ); then
-    e2fsck -fy $LODEV
-    resize2fs -p $LODEV
+      e2fsck -fy $LODEV
+      resize2fs -p $LODEV
   elif ( file -Ls $LODEV | grep -qi btrfs ); then
     btrfs check --repair $LODEV
     if ( mount | grep $LODEV ); then
@@ -404,34 +404,45 @@ function minimize_ext() {
   LODEV=$(losetup -f --show -o $offset $image)
   trap 'losetup -d $LODEV' EXIT
 
-  e2fsck -fy $LODEV
-  e2fblocksize=$(tune2fs -l $LODEV | grep -i "block size" | awk -F: '{print $2-0}')
-  e2fminsize=$(resize2fs -P $LODEV 2>/dev/null | grep -i "minimum size" | awk -F: '{print $2-0}')
+  if ( file -Ls $LODEV | grep -qi ext ); then
+    e2fsck -fy $LODEV
+    resize2fs -p $LODEV
+      
+    e2fblocksize=$(tune2fs -l $LODEV | grep -i "block size" | awk -F: '{print $2-0}')
+    e2fminsize=$(resize2fs -P $LODEV 2>/dev/null | grep -i "minimum size" | awk -F: '{print $2-0}')
 
-  e2fminsize_bytes=$(($e2fminsize * $e2fblocksize))
-  e2ftarget_bytes=$(($buffer * 1024 * 1024 + $e2fminsize_bytes))
-  e2fsize_bytes=$((($e2fsize_blocks - 1) * 512))
+    e2fminsize_bytes=$(($e2fminsize * $e2fblocksize))
+    e2ftarget_bytes=$(($buffer * 1024 * 1024 + $e2fminsize_bytes))
+    e2fsize_bytes=$((($e2fsize_blocks - 1) * 512))
 
-  e2fminsize_mb=$(($e2fminsize_bytes / 1024 / 1024))
-  e2fminsize_blocks=$(($e2fminsize_bytes / 512 + 1))
-  e2ftarget_mb=$(($e2ftarget_bytes / 1024 / 1024))
-  e2ftarget_blocks=$(($e2ftarget_bytes / 512 + 1))
-  e2fsize_mb=$(($e2fsize_bytes / 1024 / 1024))
-  
-  size_offset_mb=$(($e2fsize_mb - $e2ftarget_mb))
+    e2fminsize_mb=$(($e2fminsize_bytes / 1024 / 1024))
+    e2fminsize_blocks=$(($e2fminsize_bytes / 512 + 1))
+    e2ftarget_mb=$(($e2ftarget_bytes / 1024 / 1024))
+    e2ftarget_blocks=$(($e2ftarget_bytes / 512 + 1))
+    e2fsize_mb=$(($e2fsize_bytes / 1024 / 1024))
+    
+    size_offset_mb=$(($e2fsize_mb - $e2ftarget_mb))
+    
+    
+    echo "Actual size is $e2fsize_mb MB ($e2fsize_blocks blocks), Minimum size is $e2fminsize_mb MB ($e2fminsize file system blocks, $e2fminsize_blocks blocks)"
+    echo "Resizing to $e2ftarget_mb MB ($e2ftarget_blocks blocks)" 
+    
+    if [ $size_offset_mb -gt 0 ]; then
+          echo "Partition size is bigger then the desired size, shrinking"
+          shrink_ext $image $partition $(($e2ftarget_mb - 1)) # -1 to compensat rounding mistakes
+    elif [ $size_offset_mb -lt 0 ]; then
+      echo "Partition size is lower then the desired size, enlarging"
+          enlarge_ext $image $partition $((-$size_offset_mb + 1)) # +1 to compensat rounding mistakes
+    fi
+
+  elif ( file -Ls $LODEV | grep -qi btrfs ); then
+    echo "WARNING: minimize_ext not implemented for btrfs"
+    btrfs check --repair $LODEV
+  fi
   
   losetup -d $LODEV
 
-  echo "Actual size is $e2fsize_mb MB ($e2fsize_blocks blocks), Minimum size is $e2fminsize_mb MB ($e2fminsize file system blocks, $e2fminsize_blocks blocks)"
-  echo "Resizing to $e2ftarget_mb MB ($e2ftarget_blocks blocks)" 
-  
-  if [ $size_offset_mb -gt 0 ]; then
-	echo "Partition size is bigger then the desired size, shrinking"
-	shrink_ext $image $partition $(($e2ftarget_mb - 1)) # -1 to compensat rounding mistakes
-  elif [ $size_offset_mb -lt 0 ]; then
-    echo "Partition size is lower then the desired size, enlarging"
-	enlarge_ext $image $partition $((-$size_offset_mb + 1)) # +1 to compensat rounding mistakes
-  fi
+
 }
 
 # Skip apt update if Cache not older than 1 Hour.
