@@ -27,7 +27,7 @@ function execute_chroot_script() {
 
   #black magic of qemu-arm-static
   # cp `which qemu-arm-static` usr/bin
-  if [ "$(uname -m)" != "armv7l" ] && [ "$(uname -m)" != "aarch64" ] ; then
+  if [ "$(uname -m)" != "armv7l" ] || [ "$(uname -m)" != "aarch64" ] ; then
     if [ "$BASE_ARCH" == "armv7l" ]; then
       if (grep -q gentoo /etc/os-release);then
         ROOT="`realpath .`" emerge --usepkgonly --oneshot --nodeps qemu
