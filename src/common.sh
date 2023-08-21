@@ -320,6 +320,8 @@ FDISK
       fi
       rmdir "$TDIR"
     fi
+  else
+    echo "Could not determine the filesystem of the volume, output is: $(file -Ls $LODEV)"
   fi
   losetup -d $LODEV
 
