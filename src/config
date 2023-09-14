@@ -1,17 +1,15 @@
 CONFIG_DIR=$(dirname $(realpath -s "${BASH_SOURCE}"))
 
-export BUILD_VARIANT=default
-BUILD_FLAVOR=default
 WORKSPACE_POSTFIX=
 
-if [ "$#" -gt 0 ]; then
-  export BUILD_VARIANT="$1"
-fi
+export BUILD_VARIANT=""
+BUILD_VARIANT="$1"
+: ${BUILD_VARIANT:=default}
 
+export BUILD_FLAVOR=""
 # Disable flavor system
-# if [ "$#" -gt 1 ]; then
-#   BUILD_FLAVOR=$2
-# fi
+#BUILD_FLAVOR="$1"
+: ${BUILD_FLAVOR:=default}
 
 echo -e "--> Building VARIANT $BUILD_VARIANT, FLAVOR $BUILD_FLAVOR"
 
