@@ -6,6 +6,8 @@
 ########
 
 ### Cleanup
-apt clean -y
-apt autoclean -y
+if [ "${PKGUPGRADE_CLEANUP}" = "y" ]; then
+    apt clean -y
+    apt autoclean -y
+fi
 
