@@ -94,6 +94,17 @@ function execute_chroot_script() {
   fi
 }
 
+# check prerequisites
+if [ -n "$BASE_IMAGE_ENLARGEROOT" ] || [ -n "$BASE_IMAGE_RESIZEROOT" ]; then
+    # resizing the root partition requires 'sfdisk' in our path
+    which sfdisk >/dev/null 2>/dev/null || \
+        die "'sfdisk' not found in PATH; did you mean to run the script as root?"
+fi
+
+
+# start!
+
+
 mkdir -p $BASE_WORKSPACE
 mkdir -p $BASE_MOUNT_PATH
 
