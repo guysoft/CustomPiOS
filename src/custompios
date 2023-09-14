@@ -9,6 +9,8 @@ export LC_ALL=C
 
 source ${CUSTOM_PI_OS_PATH}/common.sh
 
+echo_green -e "\nBUILD STARTED @ $(date)!\n"
+
 function execute_chroot_script() {
 
   # In docker, these extra commands are required to enable this black-magic
@@ -200,4 +202,4 @@ pushd $BASE_WORKSPACE
   fi
 popd
 
-echo_green -e "\nBUILD SUCCEEDED!\n"
+echo_green -e "\nBUILD SUCCEEDED @ $(date)!\n"
