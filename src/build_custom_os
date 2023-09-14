@@ -9,17 +9,21 @@ usage: $0 [OPTIONS] [<variant>]
 	builds the current distro
 
 OPTIONS
+	-l <logfile>	write build-log to given file (instead of ${LOG:-build.log}
 	-h	print this help and exit
 
 EOF
 
 }
 
-while getopts "h" opt; do
+while getopts "hl:" opt; do
 	case "$opt" in
 		h)
 			usage
 			exit 0
+			;;
+		l)
+			export LOG="$OPTARG"
 			;;
 		?)
 			usage
