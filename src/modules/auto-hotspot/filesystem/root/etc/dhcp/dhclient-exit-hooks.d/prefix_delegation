@@ -1,6 +1,6 @@
 # This script assigns a delegated IPv6 prefix obtained via DHCPv6 to another interface
 #
-# Usage: This scrips is designed to be called from dhclient-script (isc-dhcp-client).
+# Usage: This script is designed to be called from dhclient-script (isc-dhcp-client).
 #
 # LOCATION: /etc/dhcp/dhclient-exit-hooks.d/prefix_delegation
 # RECOMMENDED PACKAGES: ipv6calc

@@ -70,7 +70,7 @@ echo -e "Please 'reboot' to take changes effect.\n"
 function main {
     local arg
     if [ "$(id -u)" != "0" ]; then
-        echo -e "\n$(basename "${0}"): This script needs root priviledges!\n"
+        echo -e "\n$(basename "${0}"): This script needs root privileges!\n"
         exit 1
     fi
     if [ "${#}" == "0" ]; then
