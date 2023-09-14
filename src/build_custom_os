@@ -1,8 +1,40 @@
 #!/usr/bin/env bash
 set -e
-set -x
+
+
+usage() {
+	cat <<EOF
+usage: $0 [OPTIONS] [<variant>]
+
+	builds the current distro
+
+OPTIONS
+	-h	print this help and exit
+
+EOF
+
+}
+
+while getopts "h" opt; do
+	case "$opt" in
+		h)
+			usage
+			exit 0
+			;;
+		?)
+			usage
+			exit 2
+			;;
+	esac
+done
+shift $(($OPTIND - 1))
+
 echo "Distro path: ${DIST_PATH}"
 echo "CustomPiOS path: ${CUSTOM_PI_OS_PATH}"
 echo "================================================================"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-${DIR}/build $1
+
+
+set -x
+
+${DIR}/build "$1"
