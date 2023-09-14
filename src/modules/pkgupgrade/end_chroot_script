@@ -7,7 +7,7 @@
 
 ### Cleanup
 if [ "${PKGUPGRADE_CLEANUP}" = "y" ]; then
-    apt clean -y
-    apt autoclean -y
+    apt-get clean -y
+    apt-get autoclean -y
 fi
 
