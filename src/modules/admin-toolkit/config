@@ -1,7 +1,7 @@
 ########################################################################################
 #
 #  admin-toolkit helps to harden your pi, install other packages easily, and add files out of the box.
-#  Some things require a user to be added and others dont. Some things are indended to be used with FullPageOS
+#  Some things require a user to be added and others dont. Some things are intended to be used with FullPageOS
 #  and the scripts that come with it, but there are uses outside of that, if you edit a bit of code.
 #  This has only been used with FullPageOS, and Raspbian Buster on a pi4
 #
@@ -46,7 +46,7 @@ ADMIN_TOOLKIT_HOSTNAME_CHANGE_SCRIPT=no
 ######### SSH Section #####################################
 #
 #  If you didn't set a user in the above section SSH Settings won't be applied.
-#  If you don't set a ssh key, disabling passwords for ssh wont apply.
+#  If you don't set a ssh key, disabling passwords for ssh won't apply.
 #  
 
 #  Add the public ssh key that you wish to use for connections to the pi
@@ -77,7 +77,7 @@ ADMIN_TOOLKIT_HOSTNAME_CHANGE_SCRIPT=no
 ######### Install Package(s) ##############################
 #  This might not work for you. Some packages cannot be installed in chroot.
 #  Keep in mind your image will be bigger and take longer to build.
-#  Use quotes if listing multiple packages (space Seperated list) ex. LIST="fortune cowsay..."
+#  Use quotes if listing multiple packages (space Separated list) ex. LIST="fortune cowsay..."
 [ -n "$ADMIN_TOOLKIT_INSTALL_LIST" ] || ADMIN_TOOLKIT_INSTALL_LIST=no
 
 
@@ -87,7 +87,7 @@ ADMIN_TOOLKIT_HOSTNAME_CHANGE_SCRIPT=no
 #  other ports will be closed by default. "yes" to configure
 [ -n "$ADMIN_TOOLKIT_UFW_INSTALL" ] || ADMIN_TOOLKIT_UFW_INSTALL=no
 
-#  To allow multiple open ports make a CSV(coma seperated list) to configure.
+#  To allow multiple open ports make a CSV(coma separated list) to configure.
 [ -n "$ADMIN_TOOLKIT_UFW_PORTS_TCP" ] || ADMIN_TOOLKIT_UFW_PORTS_TCP=no
 [ -n "$ADMIN_TOOLKIT_UFW_PORTS_UDP" ] || ADMIN_TOOLKIT_UFW_PORTS_UDP=no
 
@@ -113,7 +113,7 @@ ADMIN_TOOLKIT_HOSTNAME_CHANGE_SCRIPT=no
 #  Add a cron file to the /filesystem/tools/cron folder
 #  cron files will be placed in /var/spool/cron/crontabs/
 #  CRON_USER and file name must be the same. pi is the most common(default)
-#  Your cron file must have a new line at the bottom or import wont work.
+#  Your cron file must have a new line at the bottom or import won't work.
 #  "yes" to configure
 [ -n "$ADMIN_TOOLKIT_CRON_JOB" ] || ADMIN_TOOLKIT_CRON_JOB=no
 
@@ -138,7 +138,7 @@ ADMIN_TOOLKIT_HOSTNAME_CHANGE_SCRIPT=no
 ######### Screen Rotation Script #######################
 #  **** REQUIRES THE GUI MODULE AND pi 4 **** 
 #  Rotates the screen after start up. Since there's some issues
-#  with rotation on certian diaplays at boot this section lets you
+#  with rotation on certain displays at boot this section lets you
 #  add screen rotation after boot up.
 #  Examples: "normal","inverted","left","right"
 #  use a value other than normal to add rotation.

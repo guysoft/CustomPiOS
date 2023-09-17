@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function die () {
-    echo >&2 "$@"
+    echo_red "$@" >&2
     exit 1
 }
 
@@ -153,7 +153,7 @@ function detach_all_loopback(){
   # Cleans up mounted loopback devices from the image name
   # NOTE: it might need a better way to grep for the image name, its might clash with other builds
   for img in $(losetup  | grep $1 | awk '{ print $1 }' );  do
-    if [[ -f $img ]]; then
+    if [ -f "${img}" ] || [ -b "${img}" ]; then
     	losetup -d $img
     fi
   done
@@ -161,7 +161,7 @@ function detach_all_loopback(){
 
 function test_for_image(){
   if [ ! -f "$1" ]; then
-    echo "Warning, can't see image file: $image"
+    echo_red "Warning, can't see image file: $image"
   fi
 }
 
@@ -189,16 +189,16 @@ function mount_image() {
   boot_offset=$(($(jq ".partitiontable.partitions[] | select(.node == \"$image_path$boot_partition\").start" <<< ${fdisk_output}) * 512))
   root_offset=$(($(jq ".partitiontable.partitions[] | select(.node == \"$image_path$root_partition\").start" <<< ${fdisk_output}) * 512))
 
-  echo "Mounting image $image_path on $mount_path, offset for boot partition is $boot_offset, offset for root partition is $root_offset"
+  echo_green "Mounting image $image_path on $mount_path, offset for boot partition is $boot_offset, offset for root partition is $root_offset"
 
   # mount root and boot partition
   
   detach_all_loopback $image_path
-  echo "Mounting root parition"
+  echo_green "Mounting root partition"
   sudo losetup -f
   sudo mount -o loop,offset=$root_offset $image_path $mount_path/
   if [[ "$boot_partition" != "$root_partition" ]]; then
-	  echo "Mounting boot partition"
+	  echo_green "Mounting boot partition"
 	  sudo losetup -f
 	  sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) "${image_path}" "${mount_path}"/"${boot_mount_path}"
   fi
@@ -222,7 +222,7 @@ function unmount_image() {
   then
     for pid in $(sudo lsof -t $mount_path)
     do
-      echo "Killing process $(ps -p $pid -o comm=) with pid $pid..."
+      echo_green "Killing process $(ps -p $pid -o comm=) with pid $pid..."
       sudo kill -9 $pid
     done
   fi
@@ -240,7 +240,7 @@ function unmount_image() {
   # Also we sort in reverse to get the deepest mounts first.
   for m in $(sudo mount | grep $mount_path | awk -F " on " '{print $2}' | awk '{print $1}' | sort -r)
   do
-    echo "Unmounting $m..."
+    echo_green "Unmounting $m..."
     sudo umount $m
   done
 }
@@ -277,7 +277,7 @@ function enlarge_ext() {
   partition=$2
   size=$3
 
-  echo "Adding $size MB to partition $partition of $image"
+  echo_green "Adding $size MB to partition $partition of $image"
   start=$(sfdisk --json "${image}" | jq ".partitiontable.partitions[] | select(.node ==  \"$image$partition\").start")
   offset=$(($start*512))
   dd if=/dev/zero bs=1M count=$size >> $image
@@ -321,12 +321,12 @@ FDISK
       rmdir "$TDIR"
     fi
   else
-    echo "Could not determine the filesystem of the volume, output is: $(file -Ls $LODEV)"
+    echo_red "Could not determine the filesystem of the volume, output is: $(file -Ls $LODEV)"
   fi
   losetup -d $LODEV
 
   trap - EXIT
-  echo "Resized parition $partition of $image to +$size MB"
+  echo_green "Resized partition $partition of $image to +$size MB"
 }
 
 function shrink_ext() {
@@ -337,7 +337,7 @@ function shrink_ext() {
   partition=$2
   size=$3
   
-  echo "Resizing file system to $size MB..."
+  echo_green "Resizing file system to $size MB..."
   start=$(sfdisk --json "${image}" | jq ".partitiontable.partitions[] | select(.node ==  \"$image$partition\").start")
   offset=$(($start*512))
 
@@ -351,14 +351,14 @@ function shrink_ext() {
   e2ftarget_bytes=$(($size * 1024 * 1024))
   e2ftarget_blocks=$(($e2ftarget_bytes / 512 + 1))
 
-  echo "Resizing file system to $e2ftarget_blocks blocks..."
+  echo_green "Resizing file system to $e2ftarget_blocks blocks..."
   resize2fs $LODEV ${e2ftarget_blocks}s
   losetup -d $LODEV
   trap - EXIT
 
   new_end=$(($start + $e2ftarget_blocks))
 
-  echo "Resizing partition to end at $start + $e2ftarget_blocks = $new_end blocks..."
+  echo_green "Resizing partition to end at $start + $e2ftarget_blocks = $new_end blocks..."
   fdisk $image <<FDISK
 p
 d
@@ -373,11 +373,11 @@ w
 FDISK
 
   new_size=$((($new_end + 1) * 512))
-  echo "Truncating image to $new_size bytes..."
+  echo_green "Truncating image to $new_size bytes..."
   truncate --size=$new_size $image
   fdisk -l $image
 
-  echo "Resizing filesystem ..."
+  echo_green "Resizing filesystem ..."
   detach_all_loopback $image
   test_for_image $image
   LODEV=$(losetup -f --show -o $offset $image)
@@ -394,7 +394,7 @@ function minimize_ext() {
   partition=$2
   buffer=$3
 
-  echo "Resizing partition $partition on $image to minimal size + $buffer MB"
+  echo_green "Resizing partition $partition on $image to minimal size + $buffer MB"
   fdisk_output=$(sfdisk --json "${image_path}" )
   
   start=$(jq ".partitiontable.partitions[] | select(.node == \"$image_path$partition\").start" <<< ${fdisk_output})
@@ -426,19 +426,19 @@ function minimize_ext() {
     size_offset_mb=$(($e2fsize_mb - $e2ftarget_mb))
     
     
-    echo "Actual size is $e2fsize_mb MB ($e2fsize_blocks blocks), Minimum size is $e2fminsize_mb MB ($e2fminsize file system blocks, $e2fminsize_blocks blocks)"
-    echo "Resizing to $e2ftarget_mb MB ($e2ftarget_blocks blocks)" 
+    echo_green "Actual size is $e2fsize_mb MB ($e2fsize_blocks blocks), Minimum size is $e2fminsize_mb MB ($e2fminsize file system blocks, $e2fminsize_blocks blocks)"
+    echo_green "Resizing to $e2ftarget_mb MB ($e2ftarget_blocks blocks)"
     
     if [ $size_offset_mb -gt 0 ]; then
-          echo "Partition size is bigger then the desired size, shrinking"
+          echo_green "Partition size is bigger then the desired size, shrinking"
           shrink_ext $image $partition $(($e2ftarget_mb - 1)) # -1 to compensat rounding mistakes
     elif [ $size_offset_mb -lt 0 ]; then
-      echo "Partition size is lower then the desired size, enlarging"
+      echo_green "Partition size is lower then the desired size, enlarging"
           enlarge_ext $image $partition $((-$size_offset_mb + 1)) # +1 to compensat rounding mistakes
     fi
 
   elif ( file -Ls $LODEV | grep -qi btrfs ); then
-    echo "WARNING: minimize_ext not implemented for btrfs"
+    echo_red "WARNING: minimize_ext not implemented for btrfs"
     btrfs check --repair $LODEV
   fi
 
@@ -517,7 +517,7 @@ function systemctl_if_exists() {
     if hash systemctl 2>/dev/null; then
         systemctl "$@"
     else
-        echo "no systemctl, not running"
+        echo_red "no systemctl, not running"
     fi
 }
 

@@ -165,7 +165,7 @@ then
   raspi-config nonint do_change_locale $BASE_CONFIG_LOCALE
 fi
 
-# keybaord
+# keyboard
 if [ $BASE_CONFIG_KEYBOARD != 'default' ]
 then
   echo "Configuring keyboard"

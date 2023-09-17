@@ -9,7 +9,7 @@
 #Network Wifi & Hotspot with Network/Internet
 #A script to switch between a wifi network and an Network/Internet routed Hotspot
 #A Raspberry Pi with a network port required for Internet in hotspot mode.
-#Works at startup or with a seperate timer or manually without a reboot
+#Works at startup or with a separate timer or manually without a reboot
 #Other setup required find out more at
 #http://www.raspberryconnect.com
 
@@ -31,7 +31,7 @@ IFS=$IFSdef #reset back to defaults
 # separated by a space, eg ('mySSID1' 'mySSID2')
 #ssids=('mySSID1' 'mySSID2' 'mySSID3')
 
-#Enter the Routers Mac Addresses for hidden SSIDs, seperated by spaces ie 
+#Enter the Routers Mac Addresses for hidden SSIDs, separated by spaces ie 
 #( '11:22:33:44:55:66' 'aa:bb:cc:dd:ee:ff' ) 
 mac=()
 
@@ -210,7 +210,7 @@ then
 else #ssid or MAC address not in range
        if systemctl status hostapd | grep "(running)" >/dev/null 2>&1
        then
-              echo "Hostspot already active"
+              echo "Hotspot already active"
               # Extra tools to handle hotspot not working
               add_masquerade "${ethdev}"
               make_sure_master "${wifidev}"

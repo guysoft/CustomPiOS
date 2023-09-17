@@ -16,7 +16,7 @@ install_cleanup_trap
 # unpack /filesystem/root /
 
 apt-get update --allow-releaseinfo-change
-# workwround to intall linux-modules-extra-raspi
+# workaround to install linux-modules-extra-raspi
 sudo umount /boot
 
 apt-get install -y flash-kernel

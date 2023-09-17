@@ -18,14 +18,14 @@ if [ -z "${DEBIAN_FRONTEND}" ]; then
 fi
 
 ## Force Update
-apt update --allow-releaseinfo-change
+apt-get update --allow-releaseinfo-change
 
 ### Pre Update Section
 if [ "${PKGUPGRADE_DISTUPGRADE}" = "y" ]; then
-  echo_green "Performing 'apt ${PKGUPGRADE_DISTUPGRADE_METHOD}' ... "
-  apt ${PKGUPGRADE_DISTUPGRADE_METHOD} -y
+  echo_green "Performing 'apt-get ${PKGUPGRADE_DISTUPGRADE_METHOD}' ... "
+  apt-get ${PKGUPGRADE_DISTUPGRADE_METHOD} -y
 else
-  echo_green "Skipping Dist Upgrade ['apt ${PKGUPGRADE_DISTUPGRADE_METHOD}']."
+  echo_green "Skipping Dist Upgrade ['apt-get ${PKGUPGRADE_DISTUPGRADE_METHOD}']."
 fi
 
 ### Pre Installer Section

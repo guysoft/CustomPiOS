@@ -167,7 +167,7 @@ List of Distributions using CustomPiOS
 --------------------------------------
 
 * `OctoPi <https://octopi.octoprint.org/>`_ - The ready-to-go Raspberry Pi image with OctoPrint
-* `FarmPi <https://farmpi.kevenaar.name/>`_ - An Ubuntu ARM 64bit Raspbery Pi image running `OctoFarm <https://octofarm.net/>`_
+* `FarmPi <https://farmpi.kevenaar.name/>`_ - An Ubuntu ARM 64bit Raspberry Pi image running `OctoFarm <https://octofarm.net/>`_
 * `FullPageOS <https://github.com/guysoft/FullPageOS>`_ - A Raspberry Pi distro to display a full page browser on boot
 * `Zynthian <http://zynthian.org/>`_ - Open Synth Platform
 * `ElectricSheepPi <https://github.com/guysoft/ElectricSheepPi>`_ - A Raspberry Pi distribution to run Electric Sheep digital art
@@ -183,6 +183,6 @@ List of Distributions using CustomPiOS
 * `FluiddPi <https://github.com/cadriel/fluiddpi>`_ - Distro that packages `Fluidd <https://github.com/cadriel/fluidd>`_, `Moonraker <https://github.com/Arksine/moonraker>`_, and `Klipper <https://github.com/KevinOConnor/klipper>`_ into the ultimate 3D printer firmware package.
 * `My Naturewatch Camera <https://github.com/interactionresearchstudio/NaturewatchCameraServer>`_ - A Python / OpenCV camera server to stream Pi camera content to a remote client through a website.
 * `PiFireOS <https://github.com/calonmerc/PiFireOS>`_ - Distro for pellet grill/smoker control, running `PiFire <https://nebhead.github.io/PiFire>`_.
-* `MonsterPi <https://docs.fdm-monster.net/guides/monsterpi>`_ - An Ubuntu ARM 64bit Raspbery Pi image running `FDM Monster <https://fdm-monster.net/>`_. This 3D Print server will help you connect 200+ OctoPrints together while providing a strong, professional workflow.
+* `MonsterPi <https://docs.fdm-monster.net/guides/monsterpi>`_ - An Ubuntu ARM 64bit Raspberry Pi image running `FDM Monster <https://fdm-monster.net/>`_. This 3D Print server will help you connect 200+ OctoPrints together while providing a strong, professional workflow.
 
 Code contribution would be appreciated!

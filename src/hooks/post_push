@@ -53,7 +53,7 @@ then
 
 # Handle release
 else
-  echo "handeling: ${DOCKER_REPO}|${IMAGE_NAME}|${DOCKER_TAG}"
+  echo "handling: ${DOCKER_REPO}|${IMAGE_NAME}|${DOCKER_TAG}"
   
   RELEASE_TAG=${DOCKER_TAG%%-*}
   

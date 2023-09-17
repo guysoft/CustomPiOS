@@ -1,5 +1,5 @@
 #!/bin/bash
 #
-# this scrpit is from the CustomPiOS admin-toolkit module
+# this script is from the CustomPiOS admin-toolkit module
 
 tvservice -o

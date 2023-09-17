@@ -55,10 +55,10 @@ else
   [ -n "${BASE_BOOT_MOUNT_PATH}" ] || BASE_BOOT_MOUNT_PATH=boot
 fi
 
-# The root partiton of the image filesystem, 2 for raspbian
+# The root partition of the image filesystem, 2 for raspbian
 [ -n "$BASE_ROOT_PARTITION" ] || BASE_ROOT_PARTITION=2
 
-# if set will enlarge root parition prior to build by provided size in MB
+# if set will enlarge root partition prior to build by provided size in MB
 [ -n "$BASE_IMAGE_ENLARGEROOT" ] || BASE_IMAGE_ENLARGEROOT=200
 
 # if set will resize root partition on image after build to minimum size + 

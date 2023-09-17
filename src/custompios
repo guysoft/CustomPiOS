@@ -9,6 +9,8 @@ export LC_ALL=C
 
 source ${CUSTOM_PI_OS_PATH}/common.sh
 
+echo_green -e "\nBUILD STARTED @ $(date)!\n"
+
 function execute_chroot_script() {
 
   # In docker, these extra commands are required to enable this black-magic
@@ -91,6 +93,17 @@ function execute_chroot_script() {
     rm -rfv "filesystem"
   fi
 }
+
+# check prerequisites
+if [ -n "$BASE_IMAGE_ENLARGEROOT" ] || [ -n "$BASE_IMAGE_RESIZEROOT" ]; then
+    # resizing the root partition requires 'sfdisk' in our path
+    which sfdisk >/dev/null 2>/dev/null || \
+        die "'sfdisk' not found in PATH; did you mean to run the script as root?"
+fi
+
+
+# start!
+
 
 mkdir -p $BASE_WORKSPACE
 mkdir -p $BASE_MOUNT_PATH
@@ -200,4 +213,4 @@ pushd $BASE_WORKSPACE
   fi
 popd
 
-echo_green -e "\nBUILD SUCCEEDED!\n"
+echo_green -e "\nBUILD SUCCEEDED @ $(date)!\n"

@@ -9,7 +9,7 @@ parser.add_argument('dest', help="The destination folder")
 parser.add_argument('-g', '--get_image', action='store_true',
                     help='Pick a number [default %(default)s]')
 parser.add_argument('-v', '--variant', action='store',
-                    choices=['raspios_lite_armhf', 'raspios_lite_arm64'],
+                    choices=['raspios_lite_armhf', 'raspios_lite_arm64', 'raspios_armhf', 'raspios_arm64', 'raspios_full_armhf', 'raspios_full_arm64'],
                     default='raspios_lite_armhf',
                     help='Which variant to use [default: %(default)s]')
 EOF
