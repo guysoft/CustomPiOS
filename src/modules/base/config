@@ -16,7 +16,7 @@ BASE_VERSION=1.5.0
 [ -n "$BASE_DISTRO" ] || BASE_DISTRO=raspbian
 
 # Note: Set BASE_ZIP_IMG relative to the distro/src/workspace directory to pass a custom named file or an already extracted '.img'-file.
-if [ "${BASE_DISTRO}" == "ubuntu" ]; then
+if [ "${BASE_DISTRO}" = "ubuntu" ]; then
     # Default image ubuntu
     [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/ubuntu-*.xz | head -n 1`
     # Default user ubuntu
@@ -28,7 +28,7 @@ if [ "${BASE_DISTRO}" == "ubuntu" ]; then
     [ -n "$BASE_USER_PASSWORD" ] || BASE_USER_PASSWORD=ubuntu
 else
     # Default image raspbian
-    if [ "${BASE_DISTRO}" == "raspios64" ]; then
+    if [ "${BASE_DISTRO}" = "raspios64" ]; then
         [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}-*-arm64-*.{zip,7z,xz} | head -n 1`
     else
         [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}*.{zip,7z,xz} | head -n 1`
@@ -49,7 +49,7 @@ fi
 # [ -n "$BASE_CHROOT_SCRIPT_PATH" ] || BASE_CHROOT_SCRIPT_PATH=$BASE_SCRIPT_PATH/chroot_script
 [ -n "$BASE_MOUNT_PATH" ] || BASE_MOUNT_PATH=$BASE_WORKSPACE/mount
 
-if [ "${BASE_DISTRO}" == "ubuntu" ]; then
+if [ "${BASE_DISTRO}" = "ubuntu" ]; then
   [ -n "${BASE_BOOT_MOUNT_PATH}" ] || BASE_BOOT_MOUNT_PATH=boot/firmware
 else
   [ -n "${BASE_BOOT_MOUNT_PATH}" ] || BASE_BOOT_MOUNT_PATH=boot
