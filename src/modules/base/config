@@ -18,7 +18,7 @@ BASE_VERSION=1.5.0
 # Note: Set BASE_ZIP_IMG relative to the distro/src/workspace directory to pass a custom named file or an already extracted '.img'-file.
 if [ "${BASE_DISTRO}" = "ubuntu" ]; then
     # Default image ubuntu
-    [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/ubuntu-*.xz | head -n 1`
+    [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=$(ls -t $BASE_IMAGE_PATH/ubuntu-*.xz | head -n 1)
     # Default user ubuntu
     [ -n "$BASE_USER" ] || BASE_USER=ubuntu
     
@@ -29,9 +29,9 @@ if [ "${BASE_DISTRO}" = "ubuntu" ]; then
 else
     # Default image raspbian
     if [ "${BASE_DISTRO}" = "raspios64" ]; then
-        [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}-*-arm64-*.{zip,7z,xz} | head -n 1`
+        [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=$(ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}-*-arm64-*.{zip,7z,xz} | head -n 1)
     else
-        [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}*.{zip,7z,xz} | head -n 1`
+        [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=$(ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}*.{zip,7z,xz} | head -n 1)
     fi
     # Default user raspbian
     [ -n "$BASE_USER" ] || BASE_USER=pi
@@ -85,7 +85,7 @@ fi
 [ -n "$BASE_SSH_ENABLE" ] || BASE_SSH_ENABLE=yes
 
 #Store the commit used for CustomPiOS
-[ -n "$BASE_COMMIT" ] || BASE_COMMIT=`pushd "${CUSTOM_PI_OS_PATH}" > /dev/null ; git rev-parse HEAD ; popd > /dev/null`
+[ -n "$BASE_COMMIT" ] || BASE_COMMIT=$(git -C "${CUSTOM_PI_OS_PATH}" rev-parse HEAD)
 
 #Memory split
 [ -n "$BASE_CONFIG_MEMSPLIT" ] || BASE_CONFIG_MEMSPLIT=default
