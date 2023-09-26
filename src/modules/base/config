@@ -107,3 +107,7 @@ fi
 
 # Enable uart console on boot
 [ -n "$BASE_ENABLE_UART" ] || BASE_ENABLE_UART=no
+
+
+# Clean apt-cache after all the work is done
+: ${BASE_APT_CLEAN:=yes}

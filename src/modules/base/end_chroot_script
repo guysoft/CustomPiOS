@@ -39,5 +39,7 @@ if [ "${BASE_DISTRO}" == "ubuntu" ];then
 fi
 
 #cleanup
-apt-get clean
+if [ "${BASE_APT_CLEAN}" = "yes" ]; then
+    apt-get clean
+fi
 apt-get autoremove -y
