@@ -1,4 +1,4 @@
-FROM debian:bullseye-backports
+FROM debian:bookworm-backports
 
 MAINTAINER Guy Sheffer <guysoft at gmail dot com>
 
