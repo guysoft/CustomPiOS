@@ -1,6 +1,7 @@
 #a='base(octopi,a(b,c(a2)),mm)'
 import argparse
 import os
+from get_remote_modules import get_remote_module
 
 def handle(module, state, out):
     out.write("# " + state + "_" + module + "\n")
@@ -9,14 +10,28 @@ def handle(module, state, out):
                       os.path.join(os.environ['CUSTOM_PI_OS_PATH'], "modules", module)
         ]
     
+    found_local = False
+    found_remote = False
     for module_folder in module_folders:
         if os.path.isdir(module_folder):
-            script = os.path.join(module_folder, state + "_chroot_script")
-            if os.path.isfile(script):
-                out.write("execute_chroot_script '" + module_folder + "' '" + script + "'\n")
-            else:
-                print("WARNING: No file at - " + script)
+            found_local = True
             break
+        
+    if not found_local:
+        # TODO: Handle update
+        found_remote, module_folder = get_remote_module(module)
+        
+        
+    if not found_local and not found_remote:
+        print(f"Error: Module {module} does not exist and is not in remote modules list")
+        exit(1)
+            
+    script = os.path.join(module_folder, state + "_chroot_script")
+    if os.path.isfile(script):
+        out.write("execute_chroot_script '" + module_folder + "' '" + script + "'\n")
+    else:
+        print("WARNING: No file at - " + script)
+    
     return
 
 def parse(a, callback):
