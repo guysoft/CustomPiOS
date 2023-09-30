@@ -63,6 +63,7 @@ Requirements
 #. sudo (the script itself calls it, running as root without sudo won't work)
 #. p7zip-full
 #. Python 3.2+
+#. GitPython
 
 Known to work building configurations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
