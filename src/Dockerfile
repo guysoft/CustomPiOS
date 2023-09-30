@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-distutils \
         python3-dev \
         binfmt-support \
-        qemu \
+        qemu-system \
+        qemu-user \
         qemu-user-static \
         sudo \
         file \
