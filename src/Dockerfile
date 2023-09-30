@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         p7zip-full \
         python3 \
         binfmt-support \
-        qemu \
+        qemu-system \
+        qemu-user \
         qemu-user-static \
         sudo \
         file \
