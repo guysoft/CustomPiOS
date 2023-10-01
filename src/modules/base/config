@@ -16,9 +16,9 @@ BASE_VERSION=1.5.0
 [ -n "$BASE_DISTRO" ] || BASE_DISTRO=raspbian
 
 # Note: Set BASE_ZIP_IMG relative to the distro/src/workspace directory to pass a custom named file or an already extracted '.img'-file.
-if [ "${BASE_DISTRO}" == "ubuntu" ]; then
+if [ "${BASE_DISTRO}" = "ubuntu" ]; then
     # Default image ubuntu
-    [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/ubuntu-*.xz | head -n 1`
+    [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=$(ls -t $BASE_IMAGE_PATH/ubuntu-*.xz | head -n 1)
     # Default user ubuntu
     [ -n "$BASE_USER" ] || BASE_USER=ubuntu
     
@@ -28,10 +28,10 @@ if [ "${BASE_DISTRO}" == "ubuntu" ]; then
     [ -n "$BASE_USER_PASSWORD" ] || BASE_USER_PASSWORD=ubuntu
 else
     # Default image raspbian
-    if [ "${BASE_DISTRO}" == "raspios64" ]; then
-        [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}-*-arm64-*.{zip,7z,xz} | head -n 1`
+    if [ "${BASE_DISTRO}" = "raspios64" ]; then
+        [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=$(ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}-*-arm64-*.{zip,7z,xz} | head -n 1)
     else
-        [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=`ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}*.{zip,7z,xz} | head -n 1`
+        [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=$(ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}*.{zip,7z,xz} | head -n 1)
     fi
     # Default user raspbian
     [ -n "$BASE_USER" ] || BASE_USER=pi
@@ -49,7 +49,7 @@ fi
 # [ -n "$BASE_CHROOT_SCRIPT_PATH" ] || BASE_CHROOT_SCRIPT_PATH=$BASE_SCRIPT_PATH/chroot_script
 [ -n "$BASE_MOUNT_PATH" ] || BASE_MOUNT_PATH=$BASE_WORKSPACE/mount
 
-if [ "${BASE_DISTRO}" == "ubuntu" ]; then
+if [ "${BASE_DISTRO}" = "ubuntu" ]; then
   [ -n "${BASE_BOOT_MOUNT_PATH}" ] || BASE_BOOT_MOUNT_PATH=boot/firmware
 else
   [ -n "${BASE_BOOT_MOUNT_PATH}" ] || BASE_BOOT_MOUNT_PATH=boot
@@ -85,7 +85,7 @@ fi
 [ -n "$BASE_SSH_ENABLE" ] || BASE_SSH_ENABLE=yes
 
 #Store the commit used for CustomPiOS
-[ -n "$BASE_COMMIT" ] || BASE_COMMIT=`pushd "${CUSTOM_PI_OS_PATH}" > /dev/null ; git rev-parse HEAD ; popd > /dev/null`
+[ -n "$BASE_COMMIT" ] || BASE_COMMIT=$(git -C "${CUSTOM_PI_OS_PATH}" rev-parse HEAD)
 
 #Memory split
 [ -n "$BASE_CONFIG_MEMSPLIT" ] || BASE_CONFIG_MEMSPLIT=default
@@ -107,3 +107,7 @@ fi
 
 # Enable uart console on boot
 [ -n "$BASE_ENABLE_UART" ] || BASE_ENABLE_UART=no
+
+
+# Clean apt-cache after all the work is done
+: ${BASE_APT_CLEAN:=yes}
