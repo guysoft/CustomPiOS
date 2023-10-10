@@ -85,7 +85,7 @@ fi
 [ -n "$BASE_SSH_ENABLE" ] || BASE_SSH_ENABLE=yes
 
 #Store the commit used for CustomPiOS
-[ -n "$BASE_COMMIT" ] || BASE_COMMIT=$(git -C "${CUSTOM_PI_OS_PATH}" rev-parse HEAD)
+[ -n "$BASE_COMMIT" ] || BASE_COMMIT=$(git -C "${CUSTOM_PI_OS_PATH}" rev-parse HEAD) || true
 
 #Memory split
 [ -n "$BASE_CONFIG_MEMSPLIT" ] || BASE_CONFIG_MEMSPLIT=default
