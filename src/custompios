@@ -204,7 +204,7 @@ pushd $BASE_WORKSPACE
   
   # unmount first boot, then root partition
   unmount_image $BASE_MOUNT_PATH
-  chmod 777 $BASE_IMG_PATH
+  chmod 644 $BASE_IMG_PATH
 
   if [ -n "$BASE_IMAGE_RESIZEROOT" ]
   then
