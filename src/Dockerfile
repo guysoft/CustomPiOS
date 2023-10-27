@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3 \
         python3-distutils \
         python3-dev \
+        python3-git \
         binfmt-support \
         qemu-system \
         qemu-user \
@@ -29,10 +30,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         lsof \
   && rm -rf /var/lib/apt/lists/* \
   && apt -qyy clean
-
-RUN wget https://bootstrap.pypa.io/get-pip.py -O - | python3
-ADD requirements.txt /requirements.txt
-RUN python3 -m pip install -r /requirements.txt
 
 RUN ln -s /CustomPiOS/nightly_build_scripts/custompios_nightly_build /usr/bin/build
 RUN ln -s /usr/bin/python3 /usr/bin/python
