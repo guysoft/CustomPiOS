@@ -1,0 +1,66 @@
+modules:
+    armbian:
+      remote: MainsailOS
+      path: src/modules/armbian
+    
+    armbian_net:
+      remote: MainsailOS
+      path: src/modules/armbian_net
+
+    crowsnest:
+      remote: MainsailOS
+      path: src/modules/crowsnest
+
+    is_req_preinstall:
+      remote: MainsailOS
+      path: src/modules/is_req_preinstall
+
+    klipper:
+      remote: MainsailOS
+      path: src/modules/klipper
+
+    mainsail:
+      remote: MainsailOS
+      path: src/modules/mainsail
+
+    mainsailos:
+      remote: MainsailOS
+      path: src/modules/mainsailos
+
+    moonraker:
+      remote: MainsailOS
+      path: src/modules/moonraker
+
+    orangepi:
+      remote: MainsailOS
+      path: src/modules/orangepi
+
+    orangepi_net:
+      remote: MainsailOS
+      path: src/modules/orangepi_net
+
+    piconfig:
+      remote: MainsailOS
+      path: src/modules/piconfig
+
+    postrename:
+        remote: MainsailOS
+        path: src/modules/postrename
+
+    sonar:
+      remote: MainsailOS
+      path: src/modules/sonar
+
+    timelapse:
+      remote: MainsailOS
+      path: src/modules/timelapse
+
+    udev_fix:
+      remote: MainsailOS
+      path: src/modules/udev_fix
+
+remotes:
+  MainsailOS:
+    repo: https://github.com/mainsail-crew/MainsailOS.git
+    type: git
+    tag: develop
