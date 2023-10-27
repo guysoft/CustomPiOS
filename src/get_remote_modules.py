@@ -1,7 +1,7 @@
 import os
 import yaml
 from pathlib import Path
-from typing import Typle, Optional
+from typing import Tuple, Optional
 import git
 from git import RemoteProgress
             
@@ -35,32 +35,56 @@ def read_remotes():
         output = yaml.safe_load(f)
         return output
 
-def get_remote_module(module) -> Tuple[found, Optional[str]]:
+def get_remote_module(module) -> Tuple[bool, Optional[str]]:
     """ Gets the remote module and saves it to cache. Returns True if found, else false"""
     print(f"INFO: Module {module}, looking for remote module and downloading")
-    remotes = read_remotes()
-    print(remotes.keys())
-    if module not in remotes.keys():
+    modules_remotes = read_remotes()
+    print(modules_remotes.keys())
+    
+    if "modules" not in modules_remotes.keys() and module not in modules_remotes["modules"].keys():
         return False, None
     
     ensure_dir(REMOTES_DIR)
     
-    if remotes[module]["type"] == "git":
-        # TODO: make it so the module folder is taken in to accound and the start script is generated from there
-        # CONSIDER TODO: How to manager update from git pull
-        repo_url = remotes[module]["repo"]
-        branch = remotes[module]["tag"]
+    if "remotes" not in modules_remotes.keys() and module not in modules_remotes["modules"].keys():
+        return False, None
+    
+    module_config = modules_remotes["modules"][module]
+    
+    remote_for_module = module_config["remote"]
+    remote_config = modules_remotes["remotes"][remote_for_module]
+    
+    if remote_config.get("type", "git") == "git":
+        if "repo" not in remote_config.keys():
+            print(f"Error: repo field not set for remote: {remote_for_module} used by remote module {module}")
+            return False, None
+        
+        if "tag" not in remote_config.keys():
+            print(f"Error: repo tag field not set for remote: {remote_for_module} used by remote module {module}")
+            return False, None
+            
+        repo_url = remote_config["repo"]
+        branch = remote_config["tag"]
+        
         # credentials = base64.b64encode(f"{GHE_TOKEN}:".encode("latin-1")).decode("latin-1")
-        git.Repo.clone_from(
-            url=repo_url,
-            single_branch=True,
-            depth=1,
-            to_path=f"{os.path.join(REMOTES_DIR, module)}",
-            branch=branch,
-        )
+        # TODO: Handle update of remote
+        remote_to_path = os.path.join(REMOTES_DIR, remote_for_module)
+        if not os.path.exists(remote_to_path):
+            git.Repo.clone_from(
+                url=repo_url,
+                single_branch=True,
+                depth=1,
+                to_path=f"{remote_to_path}",
+                branch=branch,
+            )
+            
+        if "path" not in module_config.keys():
+            print(f"Error: repo tag field not set for remote: {remote_for_module} used by remote module {module}")
+            return False, None
+        module_path = os.path.join(remote_to_path, module_config["path"])
+        return True, module_path
+
     else:
         print(f"Error: unsupported type {remotes[module]['type']} for module {module}")
-
-
-    module_path = os.path.join(REMOTES_DIR, module, remotes[module]["path"])
-    return True, module_path
+        return False, None
+    return False, None
