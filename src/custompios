@@ -187,7 +187,20 @@ pushd $BASE_WORKSPACE
     # execute the base chroot script
     ### execute_chroot_script $BASE_SCRIPT_PATH $BASE_CHROOT_SCRIPT_PATH
     CHROOT_SCRIPT=${BASE_WORKSPACE}/chroot_script
-    python3 ${CUSTOM_PI_OS_PATH}/execution_order.py "${MODULES}" ${CHROOT_SCRIPT}
+    MODULES_AFTER_PATH=${BASE_WORKSPACE}/modules_after
+    MODULES_BEFORE="${MODULES}"
+    ${CUSTOM_PI_OS_PATH}/execution_order.py "${MODULES}" "${CHROOT_SCRIPT}" "${MODULES_AFTER_PATH}" "${REMOTE_AND_META_CONFIG}"
+    if [ -f "${REMOTE_AND_META_CONFIG}" ]; then
+      echo "Sourcing remote and submodules config"
+      source "${REMOTE_AND_META_CONFIG}" ${@}
+
+      MODULES_AFTER=$(cat "${MODULES_AFTER_PATH}")
+      load_module_config "${MODULES_AFTER}"
+      
+    else
+      echo "No remote and submodules config detected"
+    fi
+    echo $ARMBIAN_CONFIG_TXT_FILE
     export -f execute_chroot_script
     bash -x "${CHROOT_SCRIPT}"
     

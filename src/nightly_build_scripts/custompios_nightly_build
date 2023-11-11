@@ -11,6 +11,7 @@ argparse "$@" <<EOF || exit 1
 parser.add_argument('WORKSPACE_SUFFIX', nargs='?', default="default", help="The workspace folder suffix used folder")
 parser.add_argument('-r', '--rpi_imager', action='store_true', help='Create a rpi-imager snipplet to be published')
 parser.add_argument('-u', '--rpi_imager_url', type=str, default="MISSING_URL", help='url to the uploaded image url')
+parser.add_argument('-d', '--download', action='store_true', help='Download the latest image for board type')
 EOF
 
 WORKSPACE_POSTFIX=
@@ -40,6 +41,13 @@ pushd "${DIST_PATH}"
     #export OCTOPI_OCTOPRINT_REPO_BUILD='http://localhost/git/OctoPrint.git/'
     #export OCTOPI_MJPGSTREAMER_REPO_BUILD='http://localhost/git/mjpg-streamer.git/'
     #export OCTOPI_WIRINGPI_REPO_BUILD='http://localhost/git/wiringPi.git/'
+
+    # Download latest image of correct board type if possible
+    source "${CUSTOM_PI_OS_PATH}/config" "${WORKSPACE_SUFFIX}"
+    if [ "${DOWNLOAD}" == "yes" ]; then
+        ${CUSTOM_PI_OS_PATH}/base_image_downloader.py "${WORKSPACE_SUFFIX}"
+    fi
+
     ${CUSTOM_PI_OS_PATH}/build_custom_os "${WORKSPACE_SUFFIX}"
     exit_code=$?
     if [ $exit_code -ne 0 ]; then
@@ -59,7 +67,6 @@ pushd "${DIST_PATH}"
             echo "Error: you must have \${CUSTOM_PI_OS_PATH} to generate a rpi-imager snipplet"
             exit 1
         fi
-        source "${CUSTOM_PI_OS_PATH}/config" "${WORKSPACE_SUFFIX}"
         "${CUSTOM_PI_OS_PATH}/make_rpi-imager-snipplet.py" --rpi_imager_url "${RPI_IMAGER_URL}" -- "${WORKSPACE_SUFFIX}"
     fi
     
