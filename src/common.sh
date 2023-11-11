@@ -554,3 +554,36 @@ function set_config_var() {
   # See https://github.com/RPi-Distro/raspi-config/blob/master/raspi-config#L231
   raspi-config nonint set_config_var $1 $2 /boot/config.txt
 }
+
+
+function load_module_config() {
+  # Takes a comma seprated modules list, and exports the environment variables for it
+  MODULES_AFTER=$1
+  for module in $(echo "${MODULES_AFTER}" | tr "," "\n")
+  do
+      if [ -d "${DIST_PATH}/modules/${module}" ]; then
+          export MODULE_PATH="${DIST_PATH}/modules/${module}"
+      elif   [ -d "${CUSTOM_PI_OS_PATH}/modules/${module}" ]; then
+          export MODULE_PATH="${CUSTOM_PI_OS_PATH}/modules/${module}"
+      fi
+      
+      echo "loading $module config at ${MODULE_PATH}/config"
+      if [ -f "${MODULE_PATH}/config" ]; then
+          source "${MODULE_PATH}/config"
+      else
+          echo "WARNING: module ${module} has no config file"
+      fi
+      
+      ###############################################################################
+      # Print and export the final configuration.
+
+      echo "================================================================"
+      echo "Using the following config:"
+      module_up=${module^^} module_up=${module_up//-/_}_
+      
+      # Export variables that satisfy the $module_up prefix
+      while IFS= read -r var; do export "$var"; echo "$var"; done < <(compgen -A variable "$module_up")
+
+      echo "================================================================"
+  done
+}

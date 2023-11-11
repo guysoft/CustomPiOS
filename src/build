@@ -18,7 +18,7 @@ CUSTOM_OS_PATH=$(dirname $(realpath -s $0))
 source ${CUSTOM_PI_OS_PATH}/config ${@}
 ${CUSTOM_PI_OS_PATH}/config_sanity
 
-[ "$CONFIG_ONLY" == "yes" ] || source ${CUSTOM_OS_PATH}/custompios
+[ "$CONFIG_ONLY" == "yes" ] || source ${CUSTOM_OS_PATH}/custompios ${@}
 EOF
 
 if [ "$LOG" != "no" ]; then

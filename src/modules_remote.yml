@@ -64,3 +64,4 @@ remotes:
     repo: https://github.com/mainsail-crew/MainsailOS.git
     type: git
     tag: develop
+    auto_update: true
