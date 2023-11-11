@@ -37,7 +37,7 @@ def read_remotes():
 
 def get_remote_module(module: str) -> Tuple[bool, Optional[str]]:
     """ Gets the remote module and saves it to cache. Returns True if found, else false"""
-    print(f"INFO: Module {module}, looking for remote module and downloading")
+    print(f'INFO: Module "{module}", looking for remote module and downloading')
     modules_remotes = read_remotes()
     print(modules_remotes.keys())
     
@@ -46,7 +46,7 @@ def get_remote_module(module: str) -> Tuple[bool, Optional[str]]:
     
     ensure_dir(REMOTES_DIR)
     
-    if "remotes" not in modules_remotes.keys() and module not in modules_remotes["modules"].keys():
+    if "remotes" not in modules_remotes.keys() or module not in modules_remotes["modules"].keys():
         return False, None
     
     module_config = modules_remotes["modules"][module]
@@ -56,11 +56,11 @@ def get_remote_module(module: str) -> Tuple[bool, Optional[str]]:
     
     if remote_config.get("type", "git") == "git":
         if "repo" not in remote_config.keys():
-            print(f"Error: repo field not set for remote: {remote_for_module} used by remote module {module}")
+            print(f'Error: repo field not set for remote: "{remote_for_module}" used by remote module "{module}"')
             return False, None
         
         if "tag" not in remote_config.keys():
-            print(f"Error: repo tag field not set for remote: {remote_for_module} used by remote module {module}")
+            print(f'Error: repo tag field not set for remote: "{remote_for_module}" used by remote module "{module}"')
             return False, None
             
         repo_url = remote_config["repo"]
