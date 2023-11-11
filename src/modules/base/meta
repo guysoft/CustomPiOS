@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Base script
+# Basic and manditory settings for the base of a CustomPiOS build
+# Written by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+########
+set -e
+
+export LC_ALL=C
+
+FINAL_MODULES=()
+
+if [ "${BASE_BOARD}" == "armbian" ]; then
+    FINAL_MODULES+=("armbian")
+elif [ "${BASE_BOARD}" == "orange" ]; then
+    FINAL_MODULES+=("orange")
+fi
+
+printf '%s\n' "$(IFS=,; printf '%s' "${FINAL_MODULES[*]}")"

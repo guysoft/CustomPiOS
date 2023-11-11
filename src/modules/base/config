@@ -15,6 +15,11 @@ BASE_VERSION=1.5.0
 # Distro
 [ -n "$BASE_DISTRO" ] || BASE_DISTRO=raspbian
 
+# Board and OS
+[ -n "$BASE_BOARD" ] || BASE_BOARD="raspberrypi"
+[ -n "$BASE_OS" ] || BASE_OS="debian_bookworm"
+
+
 # Note: Set BASE_ZIP_IMG relative to the distro/src/workspace directory to pass a custom named file or an already extracted '.img'-file.
 if [ "${BASE_DISTRO}" = "ubuntu" ]; then
     # Default image ubuntu

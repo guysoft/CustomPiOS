@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Net script
+# Basic and manditory settings for the network of a CustomPiOS build
+# Written by Guy Sheffer <guysoft at gmail dot com>
+# GPL V3
+########
+set -e
+
+export LC_ALL=C
+
+FINAL_MODULES=()
+
+if [ "${BASE_BOARD}" == "armbian" ]; then
+    FINAL_MODULES+=("armbian_net")
+elif [ "${BASE_BOARD}" == "orange" ]; then
+    FINAL_MODULES+=("orange_net")
+fi
+
+printf '%s\n' "$(IFS=,; printf '%s' "${FINAL_MODULES[*]}")"
