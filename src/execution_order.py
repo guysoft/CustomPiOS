@@ -1,10 +1,10 @@
+#!/usr/bin/python3
 #a='base(octopi,a(b,c(a2)),mm)'
 import argparse
 import os
 import subprocess
 from get_remote_modules import get_remote_module
 from typing import TextIO, List, Tuple, Dict, Any
-
 
 def run_command(command: List[str], **kwargs: Dict[str, Any]):
     is_timeout = False
@@ -138,6 +138,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(add_help=True, description='Parse and run CustomPiOS chroot modules')
     parser.add_argument('modules', type=str, help='A string showing how the modules should be called')
     parser.add_argument('output_script', type=str, help='path to output the chroot script master')
+    parser.add_argument('modules_after_path', nargs='?', default=None, type=str, help='path to output the chroot script master')
+    parser.add_argument('remote_and_meta_config_path', nargs='?', default=None, type=str, help='path to output the config script of remote modules and submodules')
     args = parser.parse_args()
     
     if os.path.isfile(args.output_script):
@@ -155,6 +157,27 @@ if __name__ == "__main__":
         for module, state in modules_execution_order:
             module_folder = modules_to_modules_folder[module]
             write_modules_scripts(module, state, module_folder, f)
+
+        # List all new modules add them in, then remove existing ones
+        list_new_modules = []
+        for module, state in modules_execution_order:
+            if module not in list_new_modules:
+                list_new_modules.append(module)
+        for module, state in initial_execution_order:
+            if module in list_new_modules:
+                list_new_modules.remove(module)
         
+    # TODO2: load configs from yaml
+    if args.modules_after_path is not None:
+        with open(args.modules_after_path, "w") as w:
+            w.write(",".join(list_new_modules))
+
+    with open(args.remote_and_meta_config_path, "w") as f:
+        for module in list_new_modules:
+            module_folder = modules_to_modules_folder[module]
+            module_config_path = os.path.join(module_folder, "config")
+            if os.path.isfile(module_config_path):
+                f.write(f"source {module_config_path}\n")
+
     os.chmod(args.output_script, 0o755)
 

@@ -1,4 +1,5 @@
 CONFIG_DIR=$(dirname $(realpath -s "${BASH_SOURCE}"))
+source ${CUSTOM_PI_OS_PATH}/common.sh
 
 WORKSPACE_POSTFIX=
 
@@ -79,31 +80,16 @@ TMP="${MODULES//(/,}"
 TMP="${TMP// /}"
 MODULES_LIST="${TMP//)/,}"
 
-for module in $(echo "${MODULES_LIST}" | tr "," "\n")
-do
-    if [ -d "${DIST_PATH}/modules/${module}" ]; then
-        export MODULE_PATH="${DIST_PATH}/modules/${module}"
-    elif   [ -d "${CUSTOM_PI_OS_PATH}/modules/${module}" ]; then
-        export MODULE_PATH="${CUSTOM_PI_OS_PATH}/modules/${module}"
-    fi
-    
-    echo "loading $module config at ${MODULE_PATH}/config"
-    if [ -f "${MODULE_PATH}/config" ]; then
-        source "${MODULE_PATH}/config"
-    else
-        echo "WARNING: module ${module} has no config file"
-    fi
-    
-    ###############################################################################
-    # Print and export the final configuration.
 
-    echo "================================================================"
-    echo "Using the following config:"
-    module_up=${module^^} module_up=${module_up//-/_}_
-    
-    # Export variables that satisfy the $module_up prefix
-    while IFS= read -r var; do export "$var"; echo "$var"; done < <(compgen -A variable "$module_up")
+# Base workspace is special, it has to be sourced before the base module, so remote modules could be calcualted
+[ -n "$BASE_WORKSPACE" ] || BASE_WORKSPACE=${DIST_PATH}/workspace$WORKSPACE_POSTFIX
+# [ -n "$BASE_CHROOT_SCRIPT_PATH" ] || BASE_CHROOT_SCRIPT_PATH=$BASE_SCRIPT_PATH/chroot_script
+[ -n "$BASE_MOUNT_PATH" ] || BASE_MOUNT_PATH=$BASE_WORKSPACE/mount
 
-    echo "================================================================"
-done
+export REMOTE_AND_META_CONFIG="$BASE_WORKSPACE"/remote_and_meta_config
+# Remote modules and meta modulese go in first if they want to change standard behaviour
+if [ -f "${REMOTE_AND_META_CONFIG}" ]; then
+  source "${REMOTE_AND_META_CONFIG}"
+fi
 
+load_module_config "${MODULES_LIST}"

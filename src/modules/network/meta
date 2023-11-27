@@ -10,9 +10,9 @@ export LC_ALL=C
 
 FINAL_MODULES=()
 
-if [ "${BASE_BOARD}" == "armbian" ]; then
+if [[ "${BASE_BOARD}" = armbian* ]]; then
     FINAL_MODULES+=("armbian_net")
-elif [ "${BASE_BOARD}" == "orange" ]; then
+elif [[ "${BASE_BOARD}" = orange* ]]; then
     FINAL_MODULES+=("orange_net")
 fi
 
