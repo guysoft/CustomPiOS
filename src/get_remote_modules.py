@@ -35,7 +35,7 @@ def read_remotes():
         output = yaml.safe_load(f)
         return output
 
-def get_remote_module(module) -> Tuple[bool, Optional[str]]:
+def get_remote_module(module: str) -> Tuple[bool, Optional[str]]:
     """ Gets the remote module and saves it to cache. Returns True if found, else false"""
     print(f'INFO: Module "{module}", looking for remote module and downloading')
     modules_remotes = read_remotes()
@@ -85,6 +85,6 @@ def get_remote_module(module) -> Tuple[bool, Optional[str]]:
         return True, module_path
 
     else:
-        print(f"Error: unsupported type {remotes[module]['type']} for module {module}")
+        print(f"Error: unsupported type {modules_remotes[module]['type']} for module {module}")
         return False, None
     return False, None
