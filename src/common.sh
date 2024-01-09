@@ -150,10 +150,13 @@ function unpack() {
 }
 
 function detach_all_loopback(){
+  image_name=$1
   # Cleans up mounted loopback devices from the image name
   # NOTE: it might need a better way to grep for the image name, its might clash with other builds
   for img in $(losetup  | grep $1 | awk '{ print $1 }' );  do
-    if [ -f "${img}" ] || [ -b "${img}" ]; then
+    # test if the image name is a substring
+    if [ "${img}" != "$(printf '%s' "${img}" | sed 's/'"${image_name}"'//g')" ] && ([ -f "${img}" ] || [ -b "${img}" ]); then
+      echo "freeing up $img"
     	losetup -d $img
     fi
   done

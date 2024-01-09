@@ -116,6 +116,11 @@ fi
 mkdir -p $BASE_WORKSPACE
 mkdir -p $BASE_MOUNT_PATH
 
+# This is already genrated at "build" sourced in "config", but copying here mostly for debug
+if [ -f "${EXTRA_BAORD_CONFIG}" ]; then
+  mv -v "${EXTRA_BAORD_CONFIG}" "${BASE_WORKSPACE}"/extra_board_config
+fi
+
 # Clean exported artifacts from other builds
 rm -rf "${BASE_WORKSPACE}"/*.tar.gz
 
@@ -129,6 +134,7 @@ pushd $BASE_WORKSPACE
   fi
   if [ ! -f "$BASE_ZIP_IMG" ] || [ "$BASE_ZIP_IMG" == "" ]; then
     echo "Error: could not find image: $BASE_ZIP_IMG"
+    echo "On CustomPiOS v2 you can provide -d to download the latest image of your board automatically"
     exit 1
   fi
   
@@ -189,7 +195,7 @@ pushd $BASE_WORKSPACE
     CHROOT_SCRIPT=${BASE_WORKSPACE}/chroot_script
     MODULES_AFTER_PATH=${BASE_WORKSPACE}/modules_after
     MODULES_BEFORE="${MODULES}"
-    ${CUSTOM_PI_OS_PATH}/execution_order.py "${MODULES}" "${CHROOT_SCRIPT}" "${MODULES_AFTER_PATH}" "${REMOTE_AND_META_CONFIG}"
+    ${CUSTOM_PI_OS_PATH}/custompios_core/execution_order.py "${MODULES}" "${CHROOT_SCRIPT}" "${MODULES_AFTER_PATH}" "${REMOTE_AND_META_CONFIG}"
     if [ -f "${REMOTE_AND_META_CONFIG}" ]; then
       echo "Sourcing remote and submodules config"
       source "${REMOTE_AND_META_CONFIG}" ${@}
