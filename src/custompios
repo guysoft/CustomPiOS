@@ -108,6 +108,11 @@ fi
 mkdir -p $BASE_WORKSPACE
 mkdir -p $BASE_MOUNT_PATH
 
+# This is already genrated at "build" sourced in "config", but copying here mostly for debug
+if [ -f "${EXTRA_BAORD_CONFIG}" ]; then
+  mv -v "${EXTRA_BAORD_CONFIG}" "${BASE_WORKSPACE}"/extra_board_config
+fi
+
 # Clean exported artifacts from other builds
 rm -rf "${BASE_WORKSPACE}"/*.tar.gz
 

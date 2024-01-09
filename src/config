@@ -7,6 +7,8 @@ export BUILD_VARIANT=""
 BUILD_VARIANT="$1"
 : ${BUILD_VARIANT:=default}
 
+EXTRA_BAORD_CONFIG=$2
+
 export BUILD_FLAVOR=""
 # Disable flavor system
 #BUILD_FLAVOR="$1"
@@ -85,6 +87,13 @@ MODULES_LIST="${TMP//)/,}"
 [ -n "$BASE_WORKSPACE" ] || BASE_WORKSPACE=${DIST_PATH}/workspace$WORKSPACE_POSTFIX
 # [ -n "$BASE_CHROOT_SCRIPT_PATH" ] || BASE_CHROOT_SCRIPT_PATH=$BASE_SCRIPT_PATH/chroot_script
 [ -n "$BASE_MOUNT_PATH" ] || BASE_MOUNT_PATH=$BASE_WORKSPACE/mount
+
+# Import remote and submodules config
+if [ -f "${EXTRA_BAORD_CONFIG}" ]; then
+  source "${EXTRA_BAORD_CONFIG}"
+else
+  echo "Note: Not sourceing board config"
+fi
 
 export REMOTE_AND_META_CONFIG="$BASE_WORKSPACE"/remote_and_meta_config
 # Remote modules and meta modulese go in first if they want to change standard behaviour

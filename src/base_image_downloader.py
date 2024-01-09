@@ -7,12 +7,13 @@ import tempfile
 import hashlib
 import shutil
 import re
+from typing import Dict, Any, Optional, cast
+from common import get_image_config, read_images
 PRECENT_PROGRESS_SIZE = 5
 
 class ChecksumFailException(Exception):
     pass
 
-IMAGES_CONFIG = os.path.join(os.path.dirname(__file__), "images.yml")
 RETRY = 3
 
 def ensure_dir(d, chmod=0o777):
@@ -25,13 +26,6 @@ def ensure_dir(d, chmod=0o777):
         os.chmod(d, chmod)
         return False
     return True
-
-def read_images():
-    if not os.path.isfile(IMAGES_CONFIG):
-        raise Exception(f"Error: Remotes config file not found: {IMAGES_CONFIG}")
-    with open(IMAGES_CONFIG,'r') as f:
-        output = yaml.safe_load(f)
-        return output
 
 class DownloadProgress:
     last_precent: float = 0
@@ -53,7 +47,7 @@ def get_sha256(filename):
         return file_checksum
     return
 
-def download_image_http(board: str, dest_folder: str, redownload: bool = False):
+def download_image_http(board: Dict[str, Any], dest_folder: str, redownload: bool = False):
     url = board["url"]
     checksum = board["checksum"]
 
@@ -118,14 +112,21 @@ if __name__ == "__main__":
     base_board = os.environ.get("BASE_BOARD", None)
     base_image_path = os.environ.get("BASE_IMAGE_PATH", None)
 
-    if base_board is not None and base_board in images["images"]:
-        if images["images"][base_board]["type"] == "http":
-            download_image_http(images["images"][base_board], base_image_path)
-        elif images["images"][base_board]["type"] == "torrent":
+    if base_image_path is None:
+        print(f'Error: did not find image config file')
+        exit(1)
+    cast(str, base_image_path)
+
+    image_config = get_image_config()
+    if image_config is not None:
+        if image_config["type"] == "http":
+            download_image_http(image_config, base_image_path)
+        elif image_config["type"] == "torrent":
             print("Error: Torrent not implemented")
             exit(1)
         else:
-            print("Error: Unsupported image download type")
+            print(f'Error: Unsupported image download type: {image_config["type"]}')
             exit(1)
+
     
     print("Done")
