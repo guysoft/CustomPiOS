@@ -4,11 +4,12 @@ import argparse
 import os
 import subprocess
 from get_remote_modules import get_remote_module
-from typing import TextIO, List, Tuple, Dict, Any
+from typing import TextIO, List, Tuple, Dict, Any, cast, Union
+
 
 def run_command(command: List[str], **kwargs: Dict[str, Any]):
     is_timeout = False
-    p = subprocess.Popen(command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
+    p = subprocess.Popen(command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs) # type: ignore
     try:
         stdout, stderr = p.communicate(timeout=5)
     except subprocess.TimeoutExpired as e:
@@ -97,9 +98,12 @@ def handle_meta_modules(modules: List[Tuple[str,str]]) -> Tuple[List[Tuple[str,s
                 modules_to_modules_folder[module] = module_folder
                 break
             
-        if not found_local:
+        if not found_local and module:
             # TODO: Handle update
-            found_remote, module_folder = get_remote_module(module)
+            found_remote, module_folder_remote = get_remote_module(module)
+            if module_folder_remote is not None:
+                module_folder = module_folder_remote
+
             modules_to_modules_folder[module] = module_folder
             
             
@@ -112,7 +116,7 @@ def handle_meta_modules(modules: List[Tuple[str,str]]) -> Tuple[List[Tuple[str,s
             # Meta module detected
             print(f"Running: {meta_module_path}")
             print(f"ENV: {os.environ['BASE_BOARD']}")
-            submodules, meta_module_errors, is_timeout = run_command(meta_module_path)
+            submodules, meta_module_errors, is_timeout = run_command([meta_module_path])
             submodules = submodules.strip()
             print(f"Adding in modules: {submodules}")
             if meta_module_errors != "" or is_timeout:
