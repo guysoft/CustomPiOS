@@ -7,12 +7,13 @@ import tempfile
 import hashlib
 import shutil
 import re
+from typing import Dict, Any, Optional, cast
+from common import get_image_config, read_images
 PRECENT_PROGRESS_SIZE = 5
 
 class ChecksumFailException(Exception):
     pass
 
-IMAGES_CONFIG = os.path.join(os.path.dirname(__file__), "images.yml")
 RETRY = 3
 
 def ensure_dir(d, chmod=0o777):
@@ -26,13 +27,6 @@ def ensure_dir(d, chmod=0o777):
         return False
     return True
 
-def read_images():
-    if not os.path.isfile(IMAGES_CONFIG):
-        raise Exception(f"Error: Remotes config file not found: {IMAGES_CONFIG}")
-    with open(IMAGES_CONFIG,'r') as f:
-        output = yaml.safe_load(f)
-        return output
-
 class DownloadProgress:
     last_precent: float = 0
     def show_progress(self, block_num, block_size, total_size):
@@ -41,8 +35,10 @@ class DownloadProgress:
             print(f"{new_precent}%", end="\r")
             self.last_precent = new_precent
 
-def get_file_name(headers):
-    return re.findall("filename=(\S+)", headers["Content-Disposition"])[0]
+def get_file_name(headers, url):
+    if "Content-Disposition" in headers.keys():
+        return re.findall("filename=(\S+)", headers["Content-Disposition"])[0]
+    return url.split('/')[-1]
 
 def get_sha256(filename):
     sha256_hash = hashlib.sha256()
@@ -53,7 +49,7 @@ def get_sha256(filename):
         return file_checksum
     return
 
-def download_image_http(board: str, dest_folder: str, redownload: bool = False):
+def download_image_http(board: Dict[str, Any], dest_folder: str, redownload: bool = False):
     url = board["url"]
     checksum = board["checksum"]
 
@@ -67,7 +63,7 @@ def download_image_http(board: str, dest_folder: str, redownload: bool = False):
                 # Get sha and confirm its the right image
                 download_progress = DownloadProgress()
                 _, headers_checksum = urllib.request.urlretrieve(checksum, temp_file_checksum, download_progress.show_progress)
-                file_name_checksum = get_file_name(headers_checksum)
+                file_name_checksum = get_file_name(headers_checksum, checksum)
 
                 checksum_data = None
                 with open(temp_file_checksum, 'r') as f:
@@ -88,7 +84,7 @@ def download_image_http(board: str, dest_folder: str, redownload: bool = False):
                 download_progress = DownloadProgress()
                 _, headers = urllib.request.urlretrieve(url, temp_file_name, download_progress.show_progress)
             
-                file_name = get_file_name(headers)                        
+                file_name = get_file_name(headers, url)
                 file_checksum = get_sha256(temp_file_name)
                 if file_checksum != online_checksum:
                     print(f'Failed. Attempt # {r + 1}, checksum missmatch: {file_checksum} expected: {online_checksum}')
@@ -102,6 +98,7 @@ def download_image_http(board: str, dest_folder: str, redownload: bool = False):
                 else:
                     print('Error encoutered at {RETRY} attempt')
                     print(e)
+                    exit(1)
             else:
                 print(f"Success: {temp_file_name}")
                 break
@@ -118,14 +115,25 @@ if __name__ == "__main__":
     base_board = os.environ.get("BASE_BOARD", None)
     base_image_path = os.environ.get("BASE_IMAGE_PATH", None)
 
-    if base_board is not None and base_board in images["images"]:
-        if images["images"][base_board]["type"] == "http":
-            download_image_http(images["images"][base_board], base_image_path)
-        elif images["images"][base_board]["type"] == "torrent":
+    if base_image_path is None:
+        print(f'Error: did not find image config file')
+        exit(1)
+    cast(str, base_image_path)
+
+    image_config = get_image_config()
+    if image_config is not None:
+        if image_config["type"] == "http":
+            print(f"Downloading image for {base_board}")
+            download_image_http(image_config, base_image_path)
+        elif image_config["type"] == "torrent":
             print("Error: Torrent not implemented")
             exit(1)
         else:
-            print("Error: Unsupported image download type")
+            print(f'Error: Unsupported image download type: {image_config["type"]}')
             exit(1)
+    else:
+        print(f"Error: Image config not found for: {base_board}")
+        exit(1)
+
     
     print("Done")
