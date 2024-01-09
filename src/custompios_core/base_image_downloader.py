@@ -7,12 +7,13 @@ import tempfile
 import hashlib
 import shutil
 import re
+from typing import Dict, Any, Optional, cast, Tuple
+from common import get_image_config, read_images
 PRECENT_PROGRESS_SIZE = 5
 
 class ChecksumFailException(Exception):
     pass
 
-IMAGES_CONFIG = os.path.join(os.path.dirname(__file__), "images.yml")
 RETRY = 3
 
 def ensure_dir(d, chmod=0o777):
@@ -26,13 +27,31 @@ def ensure_dir(d, chmod=0o777):
         return False
     return True
 
-def read_images():
-    if not os.path.isfile(IMAGES_CONFIG):
-        raise Exception(f"Error: Remotes config file not found: {IMAGES_CONFIG}")
-    with open(IMAGES_CONFIG,'r') as f:
-        output = yaml.safe_load(f)
-        return output
 
+def download_webpage(url: str) -> Optional[str]:
+    try:
+        with urllib.request.urlopen(url) as response:
+            # Decode the response to a string
+            webpage = response.read().decode('utf-8')
+            return webpage
+    except Exception as e:
+        print(str(e))
+        return None
+
+def get_location_header(url: str) -> str:
+    try:
+        with urllib.request.urlopen(url) as response:
+            response_url = response.url
+
+            if response_url is None:
+                raise Exception("Location header is None, can't determine latest rpi image")
+            return response_url
+    except Exception as e:
+        print(str(e))
+        print("Error: Failed to determine latest rpi image")
+        raise e
+        
+        
 class DownloadProgress:
     last_precent: float = 0
     def show_progress(self, block_num, block_size, total_size):
@@ -41,8 +60,10 @@ class DownloadProgress:
             print(f"{new_precent}%", end="\r")
             self.last_precent = new_precent
 
-def get_file_name(headers):
-    return re.findall("filename=(\S+)", headers["Content-Disposition"])[0]
+def get_file_name(headers, url):
+    if "Content-Disposition" in headers.keys():
+        return re.findall("filename=(\S+)", headers["Content-Disposition"])[0]
+    return url.split('/')[-1]
 
 def get_sha256(filename):
     sha256_hash = hashlib.sha256()
@@ -53,10 +74,12 @@ def get_sha256(filename):
         return file_checksum
     return
 
-def download_image_http(board: str, dest_folder: str, redownload: bool = False):
+def download_image_http(board: Dict[str, Any], dest_folder: str, redownload: bool = False):
     url = board["url"]
     checksum = board["checksum"]
+    download_http(url, checksum)
 
+def download_http(url: str, checksum_url: str, dest_folder: str, redownload: bool = False):
     with tempfile.TemporaryDirectory() as tmpdirname:
         print('created temporary directory', tmpdirname)
         temp_file_name = os.path.join(tmpdirname, "image.xz")
@@ -66,8 +89,8 @@ def download_image_http(board: str, dest_folder: str, redownload: bool = False):
             try:
                 # Get sha and confirm its the right image
                 download_progress = DownloadProgress()
-                _, headers_checksum = urllib.request.urlretrieve(checksum, temp_file_checksum, download_progress.show_progress)
-                file_name_checksum = get_file_name(headers_checksum)
+                _, headers_checksum = urllib.request.urlretrieve(checksum_url, temp_file_checksum, download_progress.show_progress)
+                file_name_checksum = get_file_name(headers_checksum, checksum_url)
 
                 checksum_data = None
                 with open(temp_file_checksum, 'r') as f:
@@ -82,13 +105,13 @@ def download_image_http(board: str, dest_folder: str, redownload: bool = False):
                 if os.path.isfile(dest_file_name):
                     file_checksum = get_sha256(dest_file_name)
                     if file_checksum == online_checksum:
-                        # We got file and checksum is right
+                        print("We got base image file and checksum is right")
                         return
                 # Get the file
                 download_progress = DownloadProgress()
                 _, headers = urllib.request.urlretrieve(url, temp_file_name, download_progress.show_progress)
             
-                file_name = get_file_name(headers)                        
+                file_name = get_file_name(headers, url)
                 file_checksum = get_sha256(temp_file_name)
                 if file_checksum != online_checksum:
                     print(f'Failed. Attempt # {r + 1}, checksum missmatch: {file_checksum} expected: {online_checksum}')
@@ -102,10 +125,30 @@ def download_image_http(board: str, dest_folder: str, redownload: bool = False):
                 else:
                     print('Error encoutered at {RETRY} attempt')
                     print(e)
+                    exit(1)
             else:
                 print(f"Success: {temp_file_name}")
                 break
     return
+
+
+def download_image_rpi(board: Dict[str, Any], dest_folder: str):
+    port = board.get("port", "lite_armhf")
+    os_name = f"raspios"
+    distribution = board.get("distribution", "bookworm")
+    version_file = board.get("version_file", "latest")
+    version_folder = board.get("version_folder", "latest")
+
+    latest_url = f"https://downloads.raspberrypi.org/{os_name}_{port}_latest"
+
+    download_url = f"https://downloads.raspberrypi.org/{os_name}_{port}/images/{os_name}_{port}-{version_folder}/{version_file}-{os_name}-{distribution}-{port}.img.xz"
+    if version_file == "latest" or version_folder == "latest":
+        download_url = get_location_header(latest_url)
+    
+    checksum_url = f"{download_url}.sha256"
+    download_http(download_url, checksum_url, dest_folder)
+    return
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(add_help=True, description='Download images based on BASE_BOARD and BASE_O')
@@ -118,14 +161,28 @@ if __name__ == "__main__":
     base_board = os.environ.get("BASE_BOARD", None)
     base_image_path = os.environ.get("BASE_IMAGE_PATH", None)
 
-    if base_board is not None and base_board in images["images"]:
-        if images["images"][base_board]["type"] == "http":
-            download_image_http(images["images"][base_board], base_image_path)
-        elif images["images"][base_board]["type"] == "torrent":
+    if base_image_path is None:
+        print(f'Error: did not find image config file')
+        exit(1)
+    cast(str, base_image_path)
+
+    image_config = get_image_config()
+    if image_config is not None:
+        if image_config["type"] == "http":
+            print(f"Downloading image for {base_board}")
+            download_image_http(image_config, base_image_path)
+        elif image_config["type"] == "rpi":
+            print(f"Downloading Raspberry Pi image for {base_board}")
+            download_image_rpi(image_config, base_image_path)
+        elif image_config["type"] == "torrent":
             print("Error: Torrent not implemented")
             exit(1)
         else:
-            print("Error: Unsupported image download type")
+            print(f'Error: Unsupported image download type: {image_config["type"]}')
             exit(1)
+    else:
+        print(f"Error: Image config not found for: {base_board}")
+        exit(1)
+
     
     print("Done")

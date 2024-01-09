@@ -4,10 +4,11 @@ from pathlib import Path
 from typing import Tuple, Optional
 import git
 from git import RemoteProgress
+from common import get_custompios_folder
             
 # TODO add env var to set this
-REMOTES_DIR = os.path.join(os.path.dirname(__file__), "remotes")
-REMOTE_CONFIG = os.path.join(os.path.dirname(__file__), "modules_remote.yml")
+REMOTES_DIR = os.path.join(get_custompios_folder(), "remotes")
+REMOTE_CONFIG = os.path.join(get_custompios_folder(), "modules_remote.yml")
 
 
 class CloneProgress(RemoteProgress):
