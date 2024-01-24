@@ -186,7 +186,7 @@ pushd $BASE_WORKSPACE
     CHROOT_SCRIPT=${BASE_WORKSPACE}/chroot_script
     MODULES_AFTER_PATH=${BASE_WORKSPACE}/modules_after
     MODULES_BEFORE="${MODULES}"
-    ${CUSTOM_PI_OS_PATH}/execution_order.py "${MODULES}" "${CHROOT_SCRIPT}" "${MODULES_AFTER_PATH}" "${REMOTE_AND_META_CONFIG}"
+    ${CUSTOM_PI_OS_PATH}/custompios-core/execution_order.py "${MODULES}" "${CHROOT_SCRIPT}" "${MODULES_AFTER_PATH}" "${REMOTE_AND_META_CONFIG}"
     if [ -f "${REMOTE_AND_META_CONFIG}" ]; then
       echo "Sourcing remote and submodules config"
       source "${REMOTE_AND_META_CONFIG}" ${@}

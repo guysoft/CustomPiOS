@@ -45,7 +45,7 @@ pushd "${DIST_PATH}"
     # Download latest image of correct board type if possible
     source "${CUSTOM_PI_OS_PATH}/config" "${WORKSPACE_SUFFIX}"
     if [ "${DOWNLOAD}" == "yes" ]; then
-        ${CUSTOM_PI_OS_PATH}/base_image_downloader.py "${WORKSPACE_SUFFIX}"
+        ${CUSTOM_PI_OS_PATH}/custompios-core/base_image_downloader.py "${WORKSPACE_SUFFIX}"
     fi
 
     ${CUSTOM_PI_OS_PATH}/build_custom_os "${WORKSPACE_SUFFIX}"
@@ -67,7 +67,7 @@ pushd "${DIST_PATH}"
             echo "Error: you must have \${CUSTOM_PI_OS_PATH} to generate a rpi-imager snipplet"
             exit 1
         fi
-        "${CUSTOM_PI_OS_PATH}/make_rpi-imager-snipplet.py" --rpi_imager_url "${RPI_IMAGER_URL}" -- "${WORKSPACE_SUFFIX}"
+        "${CUSTOM_PI_OS_PATH}/custompios-core/make_rpi-imager-snipplet.py" --rpi_imager_url "${RPI_IMAGER_URL}" -- "${WORKSPACE_SUFFIX}"
     fi
     
     chmod 777 ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/*

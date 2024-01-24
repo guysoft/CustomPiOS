@@ -2,8 +2,17 @@
 from typing import Dict, Any, Optional, cast
 import yaml
 import os
+from pathlib import Path
 
-IMAGES_CONFIG = os.path.join(os.path.dirname(__file__), "images.yml")
+def get_custompios_folder():
+    custompios_path = os.environ.get("CUSTOM_PI_OS_PATH", None)
+    if custompios_path is not None:
+        return Path(custompios_path)
+    return Path(__file__).parent.parent
+
+
+IMAGES_CONFIG = os.path.join(get_custompios_folder(), "images.yml")
+
 
 def read_images():
     if not os.path.isfile(IMAGES_CONFIG):
