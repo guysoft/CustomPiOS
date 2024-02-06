@@ -1,0 +1,50 @@
+images:
+    raspberrypiarmhf:
+      url: "https://downloads.raspberrypi.com/raspios_oldstable_lite_armhf/images/raspios_oldstable_lite_armhf-2023-10-10/2023-05-03-raspios-bullseye-armhf-lite.img.xz.torrent"
+      checksum: "https://downloads.raspberrypi.com/raspios_oldstable_lite_armhf/images/raspios_oldstable_lite_armhf-2023-10-10/2023-05-03-raspios-bullseye-armhf-lite.img.xz.sha256"
+      type: torrent
+      env:
+        BASE_ARCH: armhf
+    raspberrypiarm64:
+      url: "https://downloads.raspberrypi.com/raspios_oldstable_lite_arm64/images/raspios_oldstable_lite_arm64-2023-10-10/2023-05-03-raspios-bullseye-arm64-lite.img.xz.torrent"
+      checksum: "https://downloads.raspberrypi.com/raspios_oldstable_lite_arm64/images/raspios_oldstable_lite_arm64-2023-10-10/2023-05-03-raspios-bullseye-arm64-lite.img.xz.sha256"
+      type: torrent
+      env:
+        BASE_ARCH: arm64
+    orangepi_orangepi_zero2:
+      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/orangepi-orangepi_zero2_bullseye.img.xz"
+      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/orangepi-orangepi_zero2_bullseye.img.xz.sha256"
+      type: http
+      env:
+        BASE_ARCH: arm64
+    armbian_bananapim2zero:
+      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-bananapi_m2_zero_bullseye.img.xz"
+      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-bananapi_m2_zero_bullseye.img.xz.sha256"
+      type: http
+      env:
+        BASE_ARCH: arm64
+    armbian_orangepi3lts:
+      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi3_lts_bullseye.img.xz"
+      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi3_lts_bullseye.img.xz.sha256"
+      type: http
+      env:
+        BASE_ARCH: arm64
+    armbian_orangepi4lts:
+      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi4_lts_bullseye.img.xz"
+      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi4_lts_bullseye.img.xz.sha256"
+      type: http
+      env:
+        BASE_ARCH: arm64
+        BASE_DISTRO: armbian
+        BASE_IMAGE_RASPBIAN: "no"
+    raspbian_lepotato:
+      url: "https://distro.libre.computer/ci/raspbian/11/2023-05-03-raspbian-bullseye-arm64-lite%2Baml-s905x-cc.img.xz"
+      checksum: "https://distro.libre.computer/ci/raspbian/11/SHA256SUMS"
+      type: http
+      env:
+        BASE_ARCH: arm64
+        BASE_DISTRO: raspbian
+        BASE_IMAGE_RASPBIAN: "yes"
+        BASE_ADD_USER: "yes"
+        BASE_USER: "pi"
+        BASE_USER_PASSWORD: "lepotato"
