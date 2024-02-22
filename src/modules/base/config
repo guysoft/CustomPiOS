@@ -49,11 +49,7 @@ fi
 # [ -n "$BASE_CHROOT_SCRIPT_PATH" ] || BASE_CHROOT_SCRIPT_PATH=$BASE_SCRIPT_PATH/chroot_script
 [ -n "$BASE_MOUNT_PATH" ] || BASE_MOUNT_PATH=$BASE_WORKSPACE/mount
 
-if [ "${BASE_DISTRO}" = "ubuntu" ]; then
-  [ -n "${BASE_BOOT_MOUNT_PATH}" ] || BASE_BOOT_MOUNT_PATH=boot/firmware
-else
-  [ -n "${BASE_BOOT_MOUNT_PATH}" ] || BASE_BOOT_MOUNT_PATH=boot
-fi
+[ -n "${BASE_BOOT_MOUNT_PATH}" ] || BASE_BOOT_MOUNT_PATH=boot/firmware
 
 # The root partition of the image filesystem, 2 for raspbian
 [ -n "$BASE_ROOT_PARTITION" ] || BASE_ROOT_PARTITION=2
