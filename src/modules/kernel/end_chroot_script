@@ -46,19 +46,19 @@ function build_kernel(){
             
             mkdir kernel-rt
             INSTALL_MOD_PATH=kernel-rt make modules_install
-            copy_and_save arch/arm/boot/Image /boot/${KERNEL_SELECT}.img
+            copy_and_save arch/arm/boot/Image /"${BASE_BOOT_MOUNT_PATH}"/${KERNEL_SELECT}.img
             
             # TODO: figure out which dtbo to move
-            copy_and_save arch/arm/boot/dts/overlays/*.dtb* /boot/overlays/
-            copy_and_save arch/arm/boot/dts/overlays/README /boot/overlays/
+            copy_and_save arch/arm/boot/dts/overlays/*.dtb* /"${BASE_BOOT_MOUNT_PATH}"/overlays/
+            copy_and_save arch/arm/boot/dts/overlays/README /"${BASE_BOOT_MOUNT_PATH}"/overlays/
             
             pushd arch/arm/boot/dts
                 if [ "$KERNEL" == "kernel7" ]; then
-                    copy_and_save bcm2709-rpi-2-b.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb bcm2710-rpi-3-b-plus.dtb /boot/
+                    copy_and_save bcm2709-rpi-2-b.dtb bcm2710-rpi-3-b.dtb bcm2710-rpi-cm3.dtb bcm2710-rpi-3-b-plus.dtb /"${BASE_BOOT_MOUNT_PATH}"/
                 elif [ "$KERNEL" == "kernel" ]; then
-                    copy_and_save bcm2708-rpi-0-w.dtb bcm2708-rpi-b-plus.dtb bcm2708-rpi-b.dtb bcm2708-rpi-cm.dtb bcm2708-rpi-zero.dtb bcm2708-rpi-zero-w.dtb bcm2708-rpi-cm.dtb /boot/
+                    copy_and_save bcm2708-rpi-0-w.dtb bcm2708-rpi-b-plus.dtb bcm2708-rpi-b.dtb bcm2708-rpi-cm.dtb bcm2708-rpi-zero.dtb bcm2708-rpi-zero-w.dtb bcm2708-rpi-cm.dtb /"${BASE_BOOT_MOUNT_PATH}"/
                 elif [ "$KERNEL" == "kernel7l" ]; then
-                    copy_and_save bcm2711-rpi-4-b.dtb /boot/
+                    copy_and_save bcm2711-rpi-4-b.dtb /"${BASE_BOOT_MOUNT_PATH}"/
                 fi
             popd
 

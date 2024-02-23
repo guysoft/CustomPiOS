@@ -17,7 +17,7 @@ install_cleanup_trap
 
 apt-get update --allow-releaseinfo-change
 # workaround to install linux-modules-extra-raspi
-sudo umount /boot
+sudo umount /"${BASE_BOOT_MOUNT_PATH}"
 
 apt-get install -y flash-kernel
 # patch -p1 < fix-flash-kernel-rpi4.patch

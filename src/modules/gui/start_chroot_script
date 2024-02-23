@@ -36,5 +36,5 @@ if [ "$GUI_INCLUDE_ACCELERATION" == "yes" ]
         systemctl enable enable_gpu_first_boot.service
         
     else
-        echo "gpu_mem=128" >> /boot/config.txt
+        echo "gpu_mem=128" >> /"${BASE_BOOT_MOUNT_PATH}"/config.txt
 fi
