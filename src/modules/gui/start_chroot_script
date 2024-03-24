@@ -8,8 +8,10 @@ set -e
 
 source /common.sh
 
-unpack /filesystem/home/pi /home/pi pi
+unpack /filesystem/opt /opt/custompios pi
 unpack /filesystem/root_init /
+
+ln -s /opt/custompios/scripts /home/pi/scripts
 
 echo exit 101 > /usr/sbin/policy-rc.d
 chmod +x /usr/sbin/policy-rc.d

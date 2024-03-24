@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ ! -f /etc/updated_lightdm_conf ]; then
+    sed -i 's/UID_1000_PLACEHOLDER/'$(id -nu 1000)'/g' /etc/lightdm/lightdm.conf
+    touch /etc/updated_lightdm_conf
+    # sudo shutdown -r now
+fi
