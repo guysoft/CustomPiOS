@@ -300,6 +300,9 @@ FDISK
   if ( file -Ls $LODEV | grep -qi ext ); then
       e2fsck -fy $LODEV
       resize2fs -p $LODEV
+  elif ( file -Ls $LODEV | grep -qi f2fs ); then
+    fsck.f2fs -f $LODEV
+      resize.f2fs $LODEV
   elif ( file -Ls $LODEV | grep -qi btrfs ); then
     btrfs check --repair $LODEV
     if ( mount | grep $LODEV ); then
