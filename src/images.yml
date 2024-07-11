@@ -1,8 +1,11 @@
 images:
     raspberrypiarmhf:
-      url: "https://downloads.raspberrypi.com/raspios_oldstable_lite_armhf/images/raspios_oldstable_lite_armhf-2023-10-10/2023-05-03-raspios-bullseye-armhf-lite.img.xz.torrent"
-      checksum: "https://downloads.raspberrypi.com/raspios_oldstable_lite_armhf/images/raspios_oldstable_lite_armhf-2023-10-10/2023-05-03-raspios-bullseye-armhf-lite.img.xz.sha256"
-      type: torrent
+      # url: "https://downloads.raspberrypi.com/raspios_oldstable_lite_armhf/images/raspios_oldstable_lite_armhf-2023-10-10/2023-05-03-raspios-bullseye-armhf-lite.img.xz.torrent"
+      # checksum: "https://downloads.raspberrypi.com/raspios_oldstable_lite_armhf/images/raspios_oldstable_lite_armhf-2023-10-10/2023-05-03-raspios-bullseye-armhf-lite.img.xz.sha256"
+      # type: torrent
+      url: "https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2024-03-15/2024-03-15-raspios-bookworm-armhf-lite.img.xz"
+      checksum: "https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2024-03-15/2024-03-15-raspios-bookworm-armhf-lite.img.xz.sha256"
+      type: http
       env:
         BASE_ARCH: armhf
     raspberrypiarm64:
