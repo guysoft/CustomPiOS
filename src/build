@@ -10,16 +10,16 @@ define(){ IFS='\n' read -r -d '' ${1} || true; }
 
 define SCRIPT <<'EOF'
 BUILD_SCRIPT_PATH=$(dirname $(realpath -s $BASH_SOURCE))
-export EXTRA_BAORD_CONFIG=$(mktemp)
-${BUILD_SCRIPT_PATH}/custompios-core/generate_board_config.py "${EXTRA_BAORD_CONFIG}"
-echo "Temp source file: ${EXTRA_BAORD_CONFIG}"
+export EXTRA_BOARD_CONFIG=$(mktemp)
+${BUILD_SCRIPT_PATH}/custompios_core/generate_board_config.py "${EXTRA_BOARD_CONFIG}"
+echo "Temp source file: ${EXTRA_BOARD_CONFIG}"
 
 source ${BUILD_SCRIPT_PATH}/common.sh
 install_cleanup_trap
 
 CUSTOM_OS_PATH=$(dirname $(realpath -s $0))
 
-source ${CUSTOM_PI_OS_PATH}/config ${1} "${EXTRA_BAORD_CONFIG}" ${@}
+source ${CUSTOM_PI_OS_PATH}/config ${1} "${EXTRA_BOARD_CONFIG}" ${@}
 ${CUSTOM_PI_OS_PATH}/config_sanity
 
 [ "$CONFIG_ONLY" == "yes" ] || source ${CUSTOM_OS_PATH}/custompios ${@}

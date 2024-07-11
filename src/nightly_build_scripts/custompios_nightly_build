@@ -12,6 +12,7 @@ parser.add_argument('WORKSPACE_SUFFIX', nargs='?', default="default", help="The 
 parser.add_argument('-r', '--rpi_imager', action='store_true', help='Create a rpi-imager snipplet to be published')
 parser.add_argument('-u', '--rpi_imager_url', type=str, default="MISSING_URL", help='url to the uploaded image url')
 parser.add_argument('-d', '--download', action='store_true', help='Download the latest image for board type')
+parser.add_argument('-b', '--board', type=str, help='Set board type')
 EOF
 
 WORKSPACE_POSTFIX=
@@ -24,6 +25,14 @@ fi
 if [ "${SHA256}" == "yes" ]; then
     echo "Saving image hash type sha256"
     sha256sum "${IMG_FILENAME}" > "${IMG_FILENAME}".sha256
+fi
+
+if [ ! -z "${BOARD}" ]; then
+    export BASE_BOARD="${BOARD}"
+fi
+if [ "${BASE_BOARD}" == "" ]; then
+    echo "No BASE_BOARD defined, defaulting to raspberrypiarmhf"
+    export BASE_BOARD="raspberrypiarmhf"
 fi
 
 for i in `lsof "${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/mount" | awk '{print $2}'`; do kill -9 $i; done || true
@@ -45,7 +54,7 @@ pushd "${DIST_PATH}"
     # Download latest image of correct board type if possible
     source "${CUSTOM_PI_OS_PATH}/config" "${WORKSPACE_SUFFIX}"
     if [ "${DOWNLOAD}" == "yes" ]; then
-        ${CUSTOM_PI_OS_PATH}/custompios-core/base_image_downloader.py "${WORKSPACE_SUFFIX}"
+        ${CUSTOM_PI_OS_PATH}/custompios_core/base_image_downloader.py "${WORKSPACE_SUFFIX}"
     fi
 
     ${CUSTOM_PI_OS_PATH}/build_custom_os "${WORKSPACE_SUFFIX}"
@@ -67,7 +76,7 @@ pushd "${DIST_PATH}"
             echo "Error: you must have \${CUSTOM_PI_OS_PATH} to generate a rpi-imager snipplet"
             exit 1
         fi
-        "${CUSTOM_PI_OS_PATH}/custompios-core/make_rpi-imager-snipplet.py" --rpi_imager_url "${RPI_IMAGER_URL}" -- "${WORKSPACE_SUFFIX}"
+        "${CUSTOM_PI_OS_PATH}/custompios_core/make_rpi-imager-snipplet.py" --rpi_imager_url "${RPI_IMAGER_URL}" -- "${WORKSPACE_SUFFIX}"
     fi
     
     chmod 777 ${DIST_PATH}/workspace${WORKSPACE_POSTFIX}/*

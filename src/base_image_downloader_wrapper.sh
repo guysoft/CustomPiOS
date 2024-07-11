@@ -17,5 +17,5 @@ fi
 # source "${DIST_PATH}/config"
 source "${CUSTOM_PI_OS_PATH}/config" "${WORKSPACE_SUFFIX}"
 
-python3 ${CUSTOM_PI_OS_PATH}/custompios-core/base_image_downloader.py "${WORKSPACE_SUFFIX}"
+python3 ${CUSTOM_PI_OS_PATH}/custompios_core/base_image_downloader.py "${WORKSPACE_SUFFIX}"
 

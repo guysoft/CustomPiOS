@@ -35,8 +35,10 @@ class DownloadProgress:
             print(f"{new_precent}%", end="\r")
             self.last_precent = new_precent
 
-def get_file_name(headers):
-    return re.findall("filename=(\S+)", headers["Content-Disposition"])[0]
+def get_file_name(headers, url):
+    if "Content-Disposition" in headers.keys():
+        return re.findall("filename=(\S+)", headers["Content-Disposition"])[0]
+    return url.split('/')[-1]
 
 def get_sha256(filename):
     sha256_hash = hashlib.sha256()
@@ -61,7 +63,7 @@ def download_image_http(board: Dict[str, Any], dest_folder: str, redownload: boo
                 # Get sha and confirm its the right image
                 download_progress = DownloadProgress()
                 _, headers_checksum = urllib.request.urlretrieve(checksum, temp_file_checksum, download_progress.show_progress)
-                file_name_checksum = get_file_name(headers_checksum)
+                file_name_checksum = get_file_name(headers_checksum, checksum)
 
                 checksum_data = None
                 with open(temp_file_checksum, 'r') as f:
@@ -82,7 +84,7 @@ def download_image_http(board: Dict[str, Any], dest_folder: str, redownload: boo
                 download_progress = DownloadProgress()
                 _, headers = urllib.request.urlretrieve(url, temp_file_name, download_progress.show_progress)
             
-                file_name = get_file_name(headers)                        
+                file_name = get_file_name(headers, url)
                 file_checksum = get_sha256(temp_file_name)
                 if file_checksum != online_checksum:
                     print(f'Failed. Attempt # {r + 1}, checksum missmatch: {file_checksum} expected: {online_checksum}')
@@ -96,6 +98,7 @@ def download_image_http(board: Dict[str, Any], dest_folder: str, redownload: boo
                 else:
                     print('Error encoutered at {RETRY} attempt')
                     print(e)
+                    exit(1)
             else:
                 print(f"Success: {temp_file_name}")
                 break
@@ -120,6 +123,7 @@ if __name__ == "__main__":
     image_config = get_image_config()
     if image_config is not None:
         if image_config["type"] == "http":
+            print(f"Downloading image for {base_board}")
             download_image_http(image_config, base_image_path)
         elif image_config["type"] == "torrent":
             print("Error: Torrent not implemented")
@@ -127,6 +131,9 @@ if __name__ == "__main__":
         else:
             print(f'Error: Unsupported image download type: {image_config["type"]}')
             exit(1)
+    else:
+        print(f"Error: Image config not found for: {base_board}")
+        exit(1)
 
     
     print("Done")
