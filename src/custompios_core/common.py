@@ -14,7 +14,7 @@ def get_custompios_folder():
 IMAGES_CONFIG = os.path.join(get_custompios_folder(), "images.yml")
 
 
-def read_images():
+def read_images() -> Dict[str, Dict[str,str]]:
     if not os.path.isfile(IMAGES_CONFIG):
         raise Exception(f"Error: Remotes config file not found: {IMAGES_CONFIG}")
     with open(IMAGES_CONFIG,'r') as f:

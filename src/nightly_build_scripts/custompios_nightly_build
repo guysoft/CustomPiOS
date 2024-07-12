@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 set -e
 
 export DIST_PATH=/distro
@@ -15,6 +14,11 @@ parser.add_argument('-d', '--download', action='store_true', help='Download the 
 parser.add_argument('-b', '--board', type=str, help='Set board type')
 EOF
 
+if [ "${BOARD}" = "list" ]; then
+    "${CUSTOM_PI_OS_PATH}/custompios_core/list_boards.py"
+    exit
+fi
+set -x
 WORKSPACE_POSTFIX=
 if [ "${WORKSPACE_SUFFIX}" != 'default' ]; then
   WORKSPACE_POSTFIX=-"${WORKSPACE_SUFFIX}"
