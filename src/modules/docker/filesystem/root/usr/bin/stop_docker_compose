@@ -3,7 +3,7 @@
 for docker_compose_service in DOCKER_COMPOSE_BOOT_PATH_PLACEHOLDER/*/; do
     pushd "${docker_compose_service}"
         if [ -f docker-compose.yml ]; then
-            docker-compose docker-compose down --remove-orphans
+            docker-compose down --remove-orphans
         fi
     popd
 done
