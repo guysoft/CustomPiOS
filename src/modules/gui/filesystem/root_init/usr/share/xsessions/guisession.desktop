@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
 Name=GUISession
-Exec=/home/pi/scripts/start_gui
+Exec=/opt/custompios/scripts/start_gui
 Comment=Startup of the minimal CustomPiOS GUI
 Type=Application

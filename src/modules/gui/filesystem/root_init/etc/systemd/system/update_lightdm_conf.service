@@ -1,0 +1,8 @@
+[Unit]
+Description=on first boot set up the user name auto login in lightdm.service
+[Service]
+ExecStart=/opt/custompios/scripts/update_lightdm_conf
+Type=oneshot
+RemainAfterExit=yes
+[Install]
+WantedBy=lightdm.service

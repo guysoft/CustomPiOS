@@ -55,7 +55,7 @@ if [ "${BASE_ADD_USER}" == "yes" ]; then
             local pw_encrypt
             if [ -n "${BASE_USER}" ] || [ -n "${BASE_USER_PASSWORD}" ]; then
                 pw_encrypt="$(echo "${BASE_USER_PASSWORD}" | openssl passwd -6 -stdin)"
-                echo "${BASE_USER}:${pw_encrypt}" > /boot/userconf.txt
+                echo "${BASE_USER}:${pw_encrypt}" > /"${BASE_BOOT_MOUNT_PATH}"/userconf.txt
 
                 # Upgrade pkg first, make sure latest version will be patched
                 apt-get install --yes --only-upgrade userconf-pi
@@ -117,7 +117,7 @@ fi
 
 if [ "$BASE_SSH_ENABLE" == "yes" ]
 then
-  touch /boot/ssh
+  touch /"${BASE_BOOT_MOUNT_PATH}"/ssh
   ### Fix SSH incoming
   echo "IPQoS 0x00" >> /etc/ssh/sshd_config
 
@@ -175,7 +175,7 @@ fi
 # Enable uart on boot
 if [ ${BASE_ENABLE_UART} == "yes" ]
 then
-    if ! grep -q "^enable_uart=1" /boot/config.txt ; then
-      echo "enable_uart=1" >> /boot/config.txt
+    if ! grep -q "^enable_uart=1" /"${BASE_BOOT_MOUNT_PATH}"/config.txt ; then
+      echo "enable_uart=1" >> /"${BASE_BOOT_MOUNT_PATH}"/config.txt
     fi
 fi
