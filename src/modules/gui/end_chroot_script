@@ -11,9 +11,19 @@ install_cleanup_trap
 sed -i 's/#user-session=.*/user-session=guisession/g' /etc/lightdm/lightdm.conf
 # This is now down as a systemd service to handle username conf on boot
 sed -i 's/#autologin-user=.*/autologin-user=UID_1000_PLACEHOLDER/g' /etc/lightdm/lightdm.conf
+
 systemctl enable update_lightdm_conf.service
+
+# cancel-rename overrides auto login see https://github.com/RPi-Distro/pi-gen/issues/780
+if [ "${BASE_DISTRO}" == "raspbian" ] || [ "${BASE_DISTRO}" == "raspios64" ] || [ "${BASE_DISTRO}" == "raspios" ]; then
+    mkdir -p /var/lib/userconf-pi
+    touch /var/lib/userconf-pi/autologin
+fi
 
 # set the gui to run the main script of the GUI session
 sed -i "s@GUI_SESSION_PLACEHOLDEFR@${GUI_STARTUP_SCRIPT}@g" /opt/custompios/scripts/start_gui
+
+# Set the boot target to use a gui
+systemctl set-default graphical.target
 
 rm -r /usr/sbin/policy-rc.d || true
