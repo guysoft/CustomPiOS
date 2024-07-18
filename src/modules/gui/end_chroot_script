@@ -16,4 +16,7 @@ systemctl enable update_lightdm_conf.service
 # set the gui to run the main script of the GUI session
 sed -i "s@GUI_SESSION_PLACEHOLDEFR@${GUI_STARTUP_SCRIPT}@g" /opt/custompios/scripts/start_gui
 
+# Set the boot target to use a gui
+systemctl set-default graphical.target
+
 rm -r /usr/sbin/policy-rc.d || true
