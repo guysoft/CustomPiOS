@@ -74,6 +74,10 @@ fi
 
 [ -n "$BASE_OVERRIDE_HOSTNAME" ] || BASE_OVERRIDE_HOSTNAME=${DIST_NAME,,}
 
+# Alter DNS servers used during build (space seperated)
+# e.g. BASE_USE_ALT_DNS="1.1.1.1 8.8.8.8"
+[ -n "$BASE_USE_ALT_DNS" ] || BASE_USE_ALT_DNS=
+
 # a git mirror to use for git clones instead of original remotes
 [ -n "$BASE_BUILD_REPO_MIRROR" ] || BASE_BUILD_REPO_MIRROR=
 
