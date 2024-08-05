@@ -20,9 +20,17 @@ if [ "${BASE_DISTRO}" == "ubuntu" ]; then
   unpack /filesystem/ubuntu / root
 
   mv /etc/resolv.conf /etc/resolv.conf.orig || true
-  echo "nameserver 8.8.8.8" > /etc/resolv.conf
-  echo "nameserver 8.8.4.4" >> /etc/resolv.conf
-  echo "nameserver 1.1.1.1" >> /etc/resolv.conf
+  if [ -z "${BASE_USE_ALT_DNS}" ]; then
+    echo "nameserver 8.8.8.8" > /etc/resolv.conf
+    echo "nameserver 8.8.4.4" >> /etc/resolv.conf
+    echo "nameserver 1.1.1.1" >> /etc/resolv.conf
+  else
+    touch /etc/resolv.conf
+    for dns in ${BASE_USE_ALT_DNS}; do
+      echo "nameserver ${dns}" >> /etc/resolv.conf
+    done
+  fi
+
   
   apt-get update --allow-releaseinfo-change
   apt-get install -y net-tools wireless-tools dhcpcd5
