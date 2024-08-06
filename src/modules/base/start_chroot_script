@@ -16,22 +16,27 @@ if [ -n "${BASE_APT_MIRROR}" ]; then
    mv /tmp/filename.tmp /etc/apt/sources.list
 fi
 
-if [ "${BASE_DISTRO}" == "ubuntu" ]; then
-  unpack /filesystem/ubuntu / root
-
-  mv /etc/resolv.conf /etc/resolv.conf.orig || true
+function generate_resolvconf {
   if [ -z "${BASE_USE_ALT_DNS}" ]; then
-    echo "nameserver 8.8.8.8" > /etc/resolv.conf
-    echo "nameserver 8.8.4.4" >> /etc/resolv.conf
-    echo "nameserver 1.1.1.1" >> /etc/resolv.conf
+    touch /etc/resolv.conf
+    for dns in 8.8.8.8 8.8.4.4 1.1.1.1; do
+      echo "nameserver ${dns}" >> /etc/resolv.conf
+    done
   else
     touch /etc/resolv.conf
     for dns in ${BASE_USE_ALT_DNS}; do
       echo "nameserver ${dns}" >> /etc/resolv.conf
     done
   fi
+}
 
-  
+if [ "${BASE_DISTRO}" == "ubuntu" ]; then
+  unpack /filesystem/ubuntu / root
+
+  mv /etc/resolv.conf /etc/resolv.conf.orig || true
+
+  generate_resolvconf
+
   apt-get update --allow-releaseinfo-change
   apt-get install -y net-tools wireless-tools dhcpcd5
   if [ $( is_in_apt policykit-1 ) -eq 1 ]; then
@@ -46,6 +51,20 @@ if [ "${BASE_DISTRO}" == "ubuntu" ]; then
   #Undo prevent any installed services from automatically starting
   rm -r /usr/sbin/policy-rc.d || true
   
+fi
+
+if [ "${BASE_DISTRO}" != "ubuntu" ]; then
+  # Armbian > 24.5 workaround
+  if [ -h /etc/resolv.conf ]; then
+    link_target="$(ls -l /etc/resolv.conf | cut -f2 -d">" | sed 's/^[[:space:]]//')"
+    echo "${link_target}" > /.resolvconf_link
+    rm -f /etc/resolv.conf
+  else
+    mv /etc/resolv.conf /etc/resolv.conf.orig || true
+  fi
+
+  generate_resolvconf
+
 fi
 
 #Helper Function for create_userconf
