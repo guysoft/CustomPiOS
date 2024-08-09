@@ -1,0 +1,21 @@
+#### Enable network manager configuration from boot
+####
+#### Written by Guy Sheffer <guysoft at gmail dot com>
+#### Copyright 2024
+#### https://github.com/guysoft/CustomPiOS
+####
+#### This File is distributed under GPLv3
+
+[Unit]
+Description=persistent setup on %I
+Wants=network-pre.target
+Before=network-pre.target
+BindsTo=sys-subsystem-net-devices-%i.device
+After=sys-subsystem-net-devices-%i.device
+
+[Service]
+ExecStart=/opt/custompios/copy-network-manager-config %I
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

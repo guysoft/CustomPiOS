@@ -12,28 +12,38 @@ export LC_ALL=C
 source /common.sh
 install_cleanup_trap
 
-unpack /filesystem/boot /"${BASE_BOOT_MOUNT_PATH}"
+if [ "${NETWORK_WPA_SUPPLICANT}" == "yes" ]; then
+    unpack /filesystem/wpa-supplicant/boot /"${BASE_BOOT_MOUNT_PATH}"
+    DIST_NETWORK_FILE=/"${BASE_BOOT_MOUNT_PATH}"/${DIST_NAME,,}-wpa-supplicant.txt
 
-DIST_NETWORK_FILE=/"${BASE_BOOT_MOUNT_PATH}"/${DIST_NAME,,}-wpa-supplicant.txt
+    # allow configuring multiple wifi networks via /boot/DIST_NAME-wpa-supplicant.txt
+    mv /"${BASE_BOOT_MOUNT_PATH}"/custompios-wpa-supplicant.txt ${DIST_NETWORK_FILE}
 
-# allow configuring multiple wifi networks via /boot/DIST_NAME-wpa-supplicant.txt
-mv /"${BASE_BOOT_MOUNT_PATH}"/custompios-wpa-supplicant.txt ${DIST_NETWORK_FILE}
+    if [ "${BASE_DISTRO}" == "ubuntu" ] || [ "${BASE_DISTRO}" == "armbian" ]; then
+        echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev" > /etc/wpa_supplicant/wpa_supplicant.conf
+        echo "update_config=1" >> /etc/wpa_supplicant/wpa_supplicant.conf
+    fi
 
-if [ "${BASE_DISTRO}" == "ubuntu" ] || [ "${BASE_DISTRO}" == "armbian" ]; then
-    echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev" > /etc/wpa_supplicant/wpa_supplicant.conf
-    echo "update_config=1" >> /etc/wpa_supplicant/wpa_supplicant.conf
+    cat /etc/wpa_supplicant/wpa_supplicant.conf >> ${DIST_NETWORK_FILE}  # append distributed conf to our own
+    rm -f /etc/wpa_supplicant/wpa_supplicant.conf                        # remove distributed conf
+
+    # create symlink
+    ln -s "${DIST_NETWORK_FILE}" /etc/wpa_supplicant/wpa_supplicant.conf
 fi
 
-cat /etc/wpa_supplicant/wpa_supplicant.conf >> ${DIST_NETWORK_FILE}  # append distributed conf to our own
-rm -f /etc/wpa_supplicant/wpa_supplicant.conf                        # remove distributed conf
+if [ "${NETWORK_NETWORK_MANAGER}" == "yes" ]; then
+    unpack filesystem/network-manager/root / root
+    unpack filesystem/network-manager/boot /"${BASE_BOOT_MOUNT_PATH}"
+
+    # mv /"${BASE_BOOT_MOUNT_PATH}"/wifi.nmconnection ${DIST_NETWORK_FILE}
+
+    systemctl_if_exists enable copy-network-manager-config@wlan0.service
+fi
 
 if [ "${BASE_DISTRO}" == "raspbian" ]; then
     # Workaround rfkill not unblocking on boot
     rm /var/lib/systemd/rfkill/*
 fi
-
-# create symlink
-ln -s "${DIST_NETWORK_FILE}" /etc/wpa_supplicant/wpa_supplicant.conf
 
 # copy /etc/wpa_supplicant/ifupdown.sh to /etc/ifplugd/action.d/ifupdown - for wlan auto reconnect
 [ -f /etc/ifplugd/action.d/ifupdown ] && mv /etc/ifplugd/action.d/ifupdown /etc/ifplugd/action.d/ifupdown.original
