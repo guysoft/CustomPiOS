@@ -29,6 +29,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         zip \
         xz-utils \
         lsof \
+        f2fs-tools \
   && rm -rf /var/lib/apt/lists/* \
   && apt -qyy clean
 
