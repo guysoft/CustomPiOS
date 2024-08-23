@@ -39,8 +39,6 @@ function execute_chroot_script() {
     elif [ "$BASE_ARCH" == "aarch64" ] || [ "$BASE_ARCH" == "arm64" ]; then
       if (grep -q gentoo /etc/os-release);then
         ROOT="`realpath .`" emerge --usepkgonly --oneshot --nodeps qemu
-      else
-        cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static
       fi
     fi
   fi
