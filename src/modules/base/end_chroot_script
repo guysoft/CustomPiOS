@@ -38,6 +38,17 @@ if [ "${BASE_DISTRO}" == "ubuntu" ];then
     echo "127.0.0.1 ${BASE_OVERRIDE_HOSTNAME}" > /etc/hosts
 fi
 
+# restore resolve.conf
+if [ -f /.resolvconf_link ]; then
+  resolvconf_target="$(cat /.resolvconf_link)"
+  ln -sf "${resolvconf_target}" /etc/resolv.conf 2>/dev/null
+  rm -f /.resolvconf_link
+else
+  if [ -f /etc/resolv.conf.orig ]; then
+    mv /etc/resolv.conf.orig /etc/resolv.conf
+  fi
+fi
+
 #cleanup
 if [ "${BASE_APT_CLEAN}" = "yes" ]; then
     apt-get clean
