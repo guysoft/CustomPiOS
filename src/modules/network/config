@@ -11,3 +11,9 @@
 # udev - creates a udev rules that should affect all wifi devices.
 
 [ -n "$NETWORK_PWRSAVE_TYPE" ] || NETWORK_PWRSAVE_TYPE=udev
+
+# Enable WPA-Supplicant boot folder support (pre rpios bookworm)
+[ -n "$NETWORK_WPA_SUPPLICANT" ] || NETWORK_WPA_SUPPLICANT=no
+
+# Enable Network Manager boot folder support (bookworm)
+[ -n "$NETWORK_NETWORK_MANAGER" ] || NETWORK_NETWORK_MANAGER=yes
