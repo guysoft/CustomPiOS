@@ -1,0 +1,66 @@
+images:
+    raspberrypiarmhf:
+      description: "Official raspberrypi lite 32bit image"
+      type: rpi
+      env:
+        BASE_ARCH: armhf
+    raspberrypiarm64:
+      description: "Official raspberrypi lite 64bit image"
+      type: rpi
+      port: lite_arm64
+      env:
+        BASE_ARCH: arm64
+    raspberrypiarmhf_full:
+      description: "Official raspberrypi full 32bit image"
+      type: rpi
+      port: full_armhf
+      env:
+        BASE_ARCH: armhf
+    raspberrypiarm64:
+      description: "Official raspberrypi full 64bit image"
+      type: rpi
+      port: full_arm64
+      env:
+        BASE_ARCH: arm64
+    orangepi_orangepi_zero2:
+      description: "Orange Pi Zero2"
+      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/orangepi-orangepi_zero2_bullseye.img.xz"
+      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/orangepi-orangepi_zero2_bullseye.img.xz.sha256"
+      type: http
+      env:
+        BASE_ARCH: arm64
+    armbian_bananapim2zero:
+      description: "Banana Pi BPI-M2 ZERO"
+      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-bananapi_m2_zero_bullseye.img.xz"
+      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-bananapi_m2_zero_bullseye.img.xz.sha256"
+      type: http
+      env:
+        BASE_ARCH: arm64
+    armbian_orangepi3lts:
+      description: "Orange Pi 3 LTS"
+      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi3_lts_bullseye.img.xz"
+      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi3_lts_bullseye.img.xz.sha256"
+      type: http
+      env:
+        BASE_ARCH: arm64
+    armbian_orangepi4lts:
+      description: "Orange Pi 4 LTS"
+      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi4_lts_bullseye.img.xz"
+      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi4_lts_bullseye.img.xz.sha256"
+      type: http
+      env:
+        BASE_ARCH: arm64
+        BASE_DISTRO: armbian
+        BASE_IMAGE_RASPBIAN: "no"
+    raspbian_lepotato:
+      description: "Le Potato AML-S905X-CC Raspbian image"
+      url: "https://distro.libre.computer/ci/raspbian/11/2023-05-03-raspbian-bullseye-arm64-lite%2Baml-s905x-cc.img.xz"
+      checksum: "https://distro.libre.computer/ci/raspbian/11/SHA256SUMS"
+      type: http
+      env:
+        BASE_ARCH: arm64
+        BASE_DISTRO: raspbian
+        BASE_IMAGE_RASPBIAN: "yes"
+        BASE_ADD_USER: "yes"
+        BASE_USER: "pi"
+        BASE_USER_PASSWORD: "lepotato"

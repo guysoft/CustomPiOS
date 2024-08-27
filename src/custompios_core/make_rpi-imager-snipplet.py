@@ -6,6 +6,7 @@ import os
 import argparse
 from datetime import date
 import glob
+from typing import Optional, Dict, Union
 
 
 
@@ -44,12 +45,13 @@ if __name__ == "__main__":
 
     output_path = os.path.join(workspace_path, "rpi-imager-snipplet.json")
     
-    json_out = {"name": name,
-                "description": description,
-                "url": url,
-                "icon": icon,
-                "release_date": release_date,
-                }
+    json_out: Dict[str, Optional[Union[str, int]]] = {
+        "name": name,
+        "description": description,
+        "url": url,
+        "icon": icon,
+        "release_date": release_date,
+        }
     
     if website is not None:
         json_out["website"] = website
@@ -60,14 +62,14 @@ if __name__ == "__main__":
         json_out["extract_sha256"] = f.read().split()[0]
 
     json_out["extract_size"] = None
-    with zipfile.ZipFile(zip_local) as zipfile:
-        json_out["extract_size"] = zipfile.filelist[0].file_size
+    with zipfile.ZipFile(zip_local) as zip_file:
+        json_out["extract_size"] = zip_file.filelist[0].file_size
     
     json_out["image_download_size"] = os.stat(zip_local).st_size
 
     json_out["image_download_sha256"] = None
-    with open(zip_local,"rb") as f:
-        json_out["image_download_sha256"] = hashlib.sha256(f.read()).hexdigest()
+    with open(zip_local,"rb") as fh:
+        json_out["image_download_sha256"] = hashlib.sha256(fh.read()).hexdigest()
     
     with open(output_path, "w") as w:
         json.dump(json_out, w, indent=2)

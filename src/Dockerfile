@@ -13,6 +13,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         wget \
         p7zip-full \
         python3 \
+        python3-distutils \
+        python3-dev \
+        python3-git \
+        python3-yaml \
         binfmt-support \
         qemu-system \
         qemu-user \

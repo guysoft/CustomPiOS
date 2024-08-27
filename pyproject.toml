@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "custompios"
+version = "2.0.0"
+description = "A Raspberry Pi and other ARM devices distribution builder. CustomPiOS opens an already existing image, modifies it and repackages the image ready to ship."
+authors = ["Guy Sheffer <guysoft@gmail.com>"]
+license = "GPLv3"
+readme = "README.rst"
+packages = [
+#     { include = "src/*" },
+    { include = "custompios_core", from = "src" }
+    ]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+GitPython = "^3.1.41"
+
+[tool.poetry.group.dev.dependencies]
+types-PyYAML = "^6.0.12.12"
+
+[tool.poetry.scripts]
+custompios_build = 'custompios_core.multi_build:main'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

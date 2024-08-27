@@ -1,6 +1,7 @@
 VARIANT_CONFIG_DIR=$(realpath -s $(dirname $(realpath -s $BASH_SOURCE))/../..)
 BASE_ZIP_IMG=`ls -t ${DIST_PATH}/image-armbian/*.{zip,7z,xz} | head -n 1`
 BASE_APT_CACHE=no
+BASE_BOARD=armbian
 OCTOPI_INCLUDE_WIRINGPI=no
 export BASE_DISTRO=armbian
 # The root partition of the image filesystem, 2 for raspbian, 1 for armbian

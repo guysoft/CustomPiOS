@@ -1,0 +1,24 @@
+# Uncomment everything below this line and set your ssid and password
+# [connection]
+# id=wifi
+# uuid=593819b8-135a-4a3e-9611-c36cdeadbeef
+# type=wifi
+# interface-name=wlan0
+
+# [wifi]
+# mode=infrastructure
+# ssid=set your wifi ssid here
+
+# [wifi-security]
+# auth-alg=open
+# key-mgmt=wpa-psk
+# psk=set your password here
+
+# [ipv4]
+# method=auto
+
+# [ipv6]
+# addr-gen-mode=default
+# method=auto
+
+# [proxy]

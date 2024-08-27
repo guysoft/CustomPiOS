@@ -150,10 +150,13 @@ function unpack() {
 }
 
 function detach_all_loopback(){
+  image_name=$1
   # Cleans up mounted loopback devices from the image name
   # NOTE: it might need a better way to grep for the image name, its might clash with other builds
   for img in $(losetup  | grep $1 | awk '{ print $1 }' );  do
-    if [ -f "${img}" ] || [ -b "${img}" ]; then
+    # test if the image name is a substring
+    if [ "${img}" != "$(printf '%s' "${img}" | sed 's/'"${image_name}"'//g')" ] && ([ -f "${img}" ] || [ -b "${img}" ]); then
+      echo "freeing up $img"
     	losetup -d $img
     fi
   done
@@ -556,4 +559,37 @@ function set_config_var() {
   # Set a value for a specific variable in /boot/config.txt
   # See https://github.com/RPi-Distro/raspi-config/blob/master/raspi-config#L231
   raspi-config nonint set_config_var $1 $2 /boot/config.txt
+}
+
+
+function load_module_config() {
+  # Takes a comma seprated modules list, and exports the environment variables for it
+  MODULES_AFTER=$1
+  for module in $(echo "${MODULES_AFTER}" | tr "," "\n")
+  do
+      if [ -d "${DIST_PATH}/modules/${module}" ]; then
+          export MODULE_PATH="${DIST_PATH}/modules/${module}"
+      elif   [ -d "${CUSTOM_PI_OS_PATH}/modules/${module}" ]; then
+          export MODULE_PATH="${CUSTOM_PI_OS_PATH}/modules/${module}"
+      fi
+      
+      echo "loading $module config at ${MODULE_PATH}/config"
+      if [ -f "${MODULE_PATH}/config" ]; then
+          source "${MODULE_PATH}/config"
+      else
+          echo "WARNING: module ${module} has no config file"
+      fi
+      
+      ###############################################################################
+      # Print and export the final configuration.
+
+      echo "================================================================"
+      echo "Using the following config:"
+      module_up=${module^^} module_up=${module_up//-/_}_
+      
+      # Export variables that satisfy the $module_up prefix
+      while IFS= read -r var; do export "$var"; echo "$var"; done < <(compgen -A variable "$module_up")
+
+      echo "================================================================"
+  done
 }
