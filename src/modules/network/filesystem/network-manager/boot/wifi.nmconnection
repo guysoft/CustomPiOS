@@ -1,7 +1,6 @@
 # Uncomment everything below this line and set your ssid and password
 # [connection]
 # id=wifi
-# uuid=593819b8-135a-4a3e-9611-c36cdeadbeef
 # type=wifi
 # interface-name=wlan0
 
