@@ -64,3 +64,13 @@ images:
         BASE_ADD_USER: "yes"
         BASE_USER: "pi"
         BASE_USER_PASSWORD: "lepotato"
+    debian_lepotato:
+      description: "Le Potato AML-S905X-CC Debian image"
+      type: libre.computer
+      env:
+        BASE_ARCH: arm64
+        BASE_DISTRO: debian
+        BASE_BOOT_MOUNT_PATH: boot/efi
+        BASE_IMAGE_RASPBIAN: "no"
+        BASE_USER: "pi"
+        BASE_USER_PASSWORD: "lepotato"

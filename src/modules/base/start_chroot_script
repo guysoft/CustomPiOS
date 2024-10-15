@@ -142,8 +142,18 @@ then
   cat /home/"${BASE_USER}"/.pydistutils.cfg
 fi
 
+
+if [ "$BASE_DISTRO" == "debian" ]; then
+    # This fails if we don't disable password expire, so removing that so we can install avahi-daemon
+    chage -d $(date +%Y-%m-%d) root
+fi
+
 if [ "$BASE_SSH_ENABLE" == "yes" ]
 then
+  if [ "$BASE_DISTRO" == "debian" ]; then
+    apt-get update --allow-releaseinfo-change
+    apt-get install -y openssh-server
+  fi
   touch /"${BASE_BOOT_MOUNT_PATH}"/ssh
   ### Fix SSH incoming
   echo "IPQoS 0x00" >> /etc/ssh/sshd_config
@@ -159,7 +169,8 @@ then
 fi
 
 # Store version buildbase
-echo "$CUSTOM_PI_OS_BUILDBASE" > /etc/custompios_buildbase
+# TODO: FIX
+# echo "$CUSTOM_PI_OS_BUILDBASE" > /etc/custompios_buildbase
 
 # Store dist version
 echo "$DIST_VERSION" > /etc/${DIST_NAME,,}_version

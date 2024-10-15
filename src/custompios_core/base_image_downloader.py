@@ -7,9 +7,15 @@ import tempfile
 import hashlib
 import shutil
 import re
+import urllib.parse
+from enum import Enum, auto
 from typing import Dict, Any, Optional, cast, Tuple
 from common import get_image_config, read_images
 PRECENT_PROGRESS_SIZE = 5
+
+class ChecksumType(Enum):
+    URL = auto() # a url for the checksum file
+    STRING = auto() # A string in the format "checksum filename"
 
 class ChecksumFailException(Exception):
     pass
@@ -74,12 +80,12 @@ def get_sha256(filename):
         return file_checksum
     return
 
-def download_image_http(board: Dict[str, Any], dest_folder: str, redownload: bool = False):
+def download_image_http(board: Dict[str, Any], dest_folder: str):
     url = board["url"]
     checksum = board["checksum"]
-    download_http(url, checksum)
+    download_http(url, checksum, dest_folder)
 
-def download_http(url: str, checksum_url: str, dest_folder: str, redownload: bool = False):
+def download_http(url: str, checksum_argument: str, dest_folder: str, checksum_type: ChecksumType = ChecksumType.URL):
     with tempfile.TemporaryDirectory() as tmpdirname:
         print('created temporary directory', tmpdirname)
         temp_file_name = os.path.join(tmpdirname, "image.xz")
@@ -89,18 +95,30 @@ def download_http(url: str, checksum_url: str, dest_folder: str, redownload: boo
             try:
                 # Get sha and confirm its the right image
                 download_progress = DownloadProgress()
-                _, headers_checksum = urllib.request.urlretrieve(checksum_url, temp_file_checksum, download_progress.show_progress)
-                file_name_checksum = get_file_name(headers_checksum, checksum_url)
 
-                checksum_data = None
-                with open(temp_file_checksum, 'r') as f:
-                    checksum_data = f.read()
+                # We need to get the checksum as one of ChecksumType enum, the result goes in to online_checksum
+                online_checksum = None
+                if checksum_type == ChecksumType.URL:
+                    print(checksum_type)
+                    exit(1)
+                    _, headers_checksum = urllib.request.urlretrieve(checksum_argument, temp_file_checksum, download_progress.show_progress)
+                    file_name_checksum = get_file_name(headers_checksum, checksum_argument)
 
-                checksum_data_parsed = [x.strip() for x in checksum_data.split()]
+                    checksum_data = None
+                    with open(temp_file_checksum, 'r') as f:
+                        checksum_data = f.read()
+
+                    checksum_data_parsed = [x.strip() for x in checksum_data.split()]
+                    
+                elif checksum_type == ChecksumType.STRING:
+                    checksum_data_parsed = checksum_argument.split(" ")
+                else:
+                    print("Error: provided a non-existant checksum type")
+                    exit(1)
                 online_checksum = checksum_data_parsed[0]
                 file_name_from_checksum = checksum_data_parsed[1]
                 dest_file_name = os.path.join(dest_folder, file_name_from_checksum)
-                print(f"Downloading {dest_file_name}")
+                print(f"Downloading {dest_file_name} from {url}")
 
                 if os.path.isfile(dest_file_name):
                     file_checksum = get_sha256(dest_file_name)
@@ -149,6 +167,40 @@ def download_image_rpi(board: Dict[str, Any], dest_folder: str):
     download_http(download_url, checksum_url, dest_folder)
     return
 
+def get_checksum_libre_computer(os_name: str, os_version: str, file_name: str) -> Optional[str]:
+    checksum_url = f"https://computer-libre-distro.us-east-1.linodeobjects.com/ci/{os_name}/{os_version}/SHA256SUMS"
+    checksum_files_data = download_webpage(checksum_url)
+    for line in checksum_files_data.splitlines():
+        checksum, name = line.split(maxsplit=1)
+        print(name)
+        if name == file_name:
+            return f"{checksum} {file_name}"
+    return None
+
+
+def download_image_libre_computer(board: Dict[str, Any], dest_folder: str):
+    # URL example: https://distro.libre.computer/ci/raspbian/12/2023-10-10-raspbian-bookworm-arm64%2Baml-s905x-cc.img.xz
+    # URL example: https://distro.libre.computer/ci/debian/12/debian-12-base-arm64%2Baml-s905x-cc.img.xz
+    port = board.get("port", "base")
+    arch = board.get("arch", "arm64+aml")
+    distribution = board.get("distribution", "bookworm")
+    os_name = board.get("os_name", "debian")
+    os_version = board.get("os_version", "12")
+    board = "s905x-cc"
+
+    # download_url = f"https://downloads.raspberrypi.org/{os_name}_{port}/images/{os_name}_{port}-{version_folder}/{version_file}-{os_name}-{distribution}-{port}.img.xz"
+    file_name = None
+    if os_name == "debian":
+        file_name = f"{os_name}-{os_version}-{port}-{arch}-{board}.img.xz"
+        download_url = f"https://distro.libre.computer/ci/{os_name}/{os_version}/{urllib.parse.quote(file_name)}"
+    
+    checksum = get_checksum_libre_computer(os_name, os_version, file_name)
+    if checksum is None:
+        print(f"Error: Can't find the correct checksum for {file_name}")
+        exit(1)
+    
+    download_http(download_url, checksum, dest_folder, ChecksumType.STRING)
+    return
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(add_help=True, description='Download images based on BASE_BOARD and BASE_O')
@@ -171,9 +223,13 @@ if __name__ == "__main__":
         if image_config["type"] == "http":
             print(f"Downloading image for {base_board}")
             download_image_http(image_config, base_image_path)
+            download_image_http(image_config, base_image_path)
         elif image_config["type"] == "rpi":
             print(f"Downloading Raspberry Pi image for {base_board}")
             download_image_rpi(image_config, base_image_path)
+        elif image_config["type"] == "libre.computer":
+            print(f"Downloading image for {base_board}")
+            download_image_libre_computer(image_config, base_image_path)
         elif image_config["type"] == "torrent":
             print("Error: Torrent not implemented")
             exit(1)
