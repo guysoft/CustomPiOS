@@ -11,7 +11,7 @@ install_cleanup_trap
 
 apt-get update --allow-releaseinfo-change --allow-releaseinfo-change
 if [ $( is_in_apt policykit-1 ) -eq 1 ]; then
-  sudo apt-get -y install policykit-1
+  apt-get -y install policykit-1
 fi
 
 # prevent any installed services from automatically starting
