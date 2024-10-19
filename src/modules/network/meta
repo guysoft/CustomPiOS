@@ -16,4 +16,8 @@ elif [[ "${BASE_BOARD}" = orange* ]]; then
     FINAL_MODULES+=("orange_net")
 fi
 
+if [[ "${NETWORK_HEADLESS_NM}" = "yes" ]]; then
+    FINAL_MODULES+=("headless_nm")
+fi
+
 printf '%s\n' "$(IFS=,; printf '%s' "${FINAL_MODULES[*]}")"
