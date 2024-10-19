@@ -16,4 +16,7 @@
 [ -n "$NETWORK_WPA_SUPPLICANT" ] || NETWORK_WPA_SUPPLICANT=no
 
 # Enable Network Manager boot folder support (bookworm)
-[ -n "$NETWORK_NETWORK_MANAGER" ] || NETWORK_NETWORK_MANAGER=yes
+[ -n "$NETWORK_NETWORK_MANAGER" ] || NETWORK_NETWORK_MANAGER=no
+
+# Enable Headless Network Manager boot folder support (bookworm)
+[ -n "$NETWORK_HEADLESS_NM" ] || NETWORK_HEADLESS_NM=yes
