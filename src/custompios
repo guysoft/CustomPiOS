@@ -15,12 +15,14 @@ function execute_chroot_script() {
 
   # In docker, these extra commands are required to enable this black-magic
   if [ -f /.dockerenv ] && [ "$(uname -m)" != "armv7l" ] && [ "$(uname -m)" != "aarch64" ] ; then
-    if [ "$BASE_ARCH" == "armv7l" ]; then
+    if [ "$BASE_ARCH" == "armv7l" ] || [ "$BASE_ARCH" == "armhf" ]; then
       update-binfmts --enable qemu-arm
     elif [ "$BASE_ARCH" == "aarch64" ] || [ "$BASE_ARCH" == "arm64" ]; then
       update-binfmts --enable qemu-aarch64
     fi
-    mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc || true
+    if ! mount | grep -q "/proc/sys/fs/binfmt_misc"; then
+        mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc || true
+    fi
   fi
   #move filesystem files
   if [ -d "$1/filesystem" ]; then
@@ -30,7 +32,7 @@ function execute_chroot_script() {
   #black magic of qemu-arm-static
   # cp `which qemu-arm-static` usr/bin
   if [ "$(uname -m)" != "armv7l" ] || [ "$(uname -m)" != "aarch64" ] ; then
-    if [ "$BASE_ARCH" == "armv7l" ]; then
+    if [ "$BASE_ARCH" == "armv7l" ] || [ "$BASE_ARCH" == "armhf" ]; then
       if (grep -q gentoo /etc/os-release);then
         ROOT="`realpath .`" emerge --usepkgonly --oneshot --nodeps qemu
       else
@@ -51,11 +53,14 @@ function execute_chroot_script() {
   chmod 755 common.sh
   
   if [ "$(uname -m)" != "armv7l" ] && [ "$(uname -m)" != "aarch64" ] && [ "$(uname -m)" != "arm64" ] ; then
-    if [ "$BASE_ARCH" == "armv7l" ]; then
+    echo "Detected we are on a non-arm device"
+    if [ "$BASE_ARCH" == "armv7l" ] || [ "$BASE_ARCH" == "armhf" ]; then
       echo "Building on non-ARM device a armv7l system, using qemu-arm-static"
       if (grep -q gentoo /etc/os-release);then
+        echo "Building on gentoo non-ARM device a aarch64/arm64 system, using qemu-aarch64-static"
         chroot . usr/bin/qemu-arm /bin/bash /chroot_script
       else
+        echo "Using normal non-arm qemu for armv7l"
         chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
       fi
     elif [ "$BASE_ARCH" == "aarch64" ] || [ "$BASE_ARCH" == "arm64" ]; then
@@ -65,8 +70,11 @@ function execute_chroot_script() {
       else
         chroot . usr/bin/qemu-aarch64-static /bin/bash /chroot_script
       fi
+    else
+        echo "Unknown arch, building on: $(uname -m) image: $BASE_ARCH"
+	exit 1
     fi
-  elif [ "$BASE_ARCH" == "armv7l" ] && [ "$(uname -m)" != "armv7l" ]; then
+  elif { [ "$BASE_ARCH" == "armv7l" ] || [ "$BASE_ARCH" == "armhf" ]; }  && [ "$(uname -m)" != "armv7l" ]; then
     echo "Building on aarch64/arm64 device a armv7l system, using qemu-arm-static"
     chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
   else
