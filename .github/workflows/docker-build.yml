@@ -6,9 +6,10 @@ on:
       - "master"
       - "devel"
       - "docker-github-actions"
-      - "feature/remote-module-support"
-      - "feature/meta-modules"
+      - "release/v1"
       - "beta"
+    tags:
+      - "*"
 
 jobs:
   docker:
