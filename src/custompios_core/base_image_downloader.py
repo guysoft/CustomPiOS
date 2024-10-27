@@ -99,8 +99,6 @@ def download_http(url: str, checksum_argument: str, dest_folder: str, checksum_t
                 # We need to get the checksum as one of ChecksumType enum, the result goes in to online_checksum
                 online_checksum = None
                 if checksum_type == ChecksumType.URL:
-                    print(checksum_type)
-                    exit(1)
                     _, headers_checksum = urllib.request.urlretrieve(checksum_argument, temp_file_checksum, download_progress.show_progress)
                     file_name_checksum = get_file_name(headers_checksum, checksum_argument)
 
