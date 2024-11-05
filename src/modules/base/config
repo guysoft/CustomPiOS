@@ -9,7 +9,7 @@ BASE_VERSION=2.0.0
 [ -n "$BASE_POSTSCRIPT" ] || BASE_POSTSCRIPT=
 
 # Board and OS
-[ -n "$BASE_BOARD" ] || BASE_BOARD="raspberrypi"
+[ -n "$BASE_BOARD" ] || BASE_BOARD="raspberrypiarmhf"
 [ -n "$BASE_OS" ] || BASE_OS="debian_bookworm"
 
 # TODO: UNIFY AND MAKE A SINGLE IMAGE FLOW, ATM THERE IS THE OLD AND NEW FLOW TOGETHER, UBUTU CAN GO IN ITS OWN
