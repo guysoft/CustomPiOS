@@ -14,8 +14,9 @@ BASE_VERSION=2.0.0
 
 # TODO: UNIFY AND MAKE A SINGLE IMAGE FLOW, ATM THERE IS THE OLD AND NEW FLOW TOGETHER, UBUTU CAN GO IN ITS OWN
 
+echo "GOT BASE BOARD $BASE_BOARD"
 #[ -n "$BASE_SCRIPT_PATH" ] || BASE_SCRIPT_PATH=$CONFIG_DIR
-if [ "${BASE_BOARD}" == "raspberrypiarmhf" ] && [ "${BASE_BOARD}" == "raspberrypiarm64" ]; then
+if [ "${BASE_BOARD}" == "raspberrypiarmhf" ] || [ "${BASE_BOARD}" == "raspberrypiarm64" ]; then
     [ -n "$BASE_IMAGE_PATH" ] || BASE_IMAGE_PATH=${DIST_PATH}/image
 else
     [ -n "$BASE_IMAGE_PATH" ] || BASE_IMAGE_PATH=${DIST_PATH}/image-"${BASE_BOARD}"
@@ -39,7 +40,7 @@ if [ "${BASE_DISTRO}" = "ubuntu" ]; then
     [ -n "$BASE_USER_PASSWORD" ] || BASE_USER_PASSWORD=ubuntu
 else
     # Default image raspbian
-    if [ "${BASE_DISTRO}" == "raspios64" ] && [ "${BASE_BOARD}" == "raspberrypiarmhf" ] && [ "${BASE_BOARD}" == "raspberrypiarm64" ]; then
+    if [ "${BASE_DISTRO}" == "raspios64" ] && [ "${BASE_BOARD}" == "raspberrypiarm64" ]; then
         [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=$(ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}-*-arm64-*.{zip,7z,xz} | head -n 1)
     else
         [ -n "$BASE_ZIP_IMG" ] || BASE_ZIP_IMG=$(ls -t $BASE_IMAGE_PATH/*-{raspbian,raspios}*.{zip,7z,xz} | head -n 1)
