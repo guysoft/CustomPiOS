@@ -16,7 +16,7 @@ images:
       port: full_armhf
       env:
         BASE_ARCH: armhf
-    raspberrypiarm64:
+    raspberrypiarm64_full:
       description: "Official raspberrypi full 64bit image"
       type: rpi
       port: full_arm64
