@@ -54,9 +54,11 @@ images:
         BASE_IMAGE_RASPBIAN: "no"
     raspbian_lepotato:
       description: "Le Potato AML-S905X-CC Raspbian image"
-      url: "https://distro.libre.computer/ci/raspbian/11/2023-05-03-raspbian-bullseye-arm64-lite%2Baml-s905x-cc.img.xz"
-      checksum: "https://distro.libre.computer/ci/raspbian/11/SHA256SUMS"
-      type: http
+      type: libre.computer
+      os_name: raspbian
+      os_version: 12
+      distribution: bookworm
+      port: lite
       env:
         BASE_ARCH: arm64
         BASE_DISTRO: raspbian

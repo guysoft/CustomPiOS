@@ -166,7 +166,7 @@ def download_image_rpi(board: Dict[str, Any], dest_folder: str):
     return
 
 def get_checksum_libre_computer(os_name: str, os_version: str, file_name: str) -> Optional[str]:
-    checksum_url = f"https://computer-libre-distro.us-east-1.linodeobjects.com/ci/{os_name}/{os_version}/SHA256SUMS"
+    checksum_url = f"https://distro.libre.computer/ci/{os_name}/{os_version}/SHA256SUMS"
     checksum_files_data = download_webpage(checksum_url)
     for line in checksum_files_data.splitlines():
         checksum, name = line.split(maxsplit=1)
@@ -191,7 +191,8 @@ def download_image_libre_computer(board: Dict[str, Any], dest_folder: str):
     if os_name == "debian":
         file_name = f"{os_name}-{os_version}-{port}-{arch}-{board}.img.xz"
         download_url = f"https://distro.libre.computer/ci/{os_name}/{os_version}/{urllib.parse.quote(file_name)}"
-    
+    elif os_name == "raspbian":
+        download_url = f"https://distro.libre.computer/ci/{os_name}/{os_version}/{urllib.parse.quote(file_name)}"
     checksum = get_checksum_libre_computer(os_name, os_version, file_name)
     if checksum is None:
         print(f"Error: Can't find the correct checksum for {file_name}")
