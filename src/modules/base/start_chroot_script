@@ -53,7 +53,7 @@ if [ "${BASE_DISTRO}" == "ubuntu" ]; then
   
 fi
 
-if [ "${BASE_DISTRO}" != "ubuntu" ]; then
+if [ "${BASE_DISTRO}" != "ubuntu" ] || [ "${BASE_BASEBOARD}" == "debian_lepotato" ]; then
   # Armbian > 24.5 workaround
   if [ -h /etc/resolv.conf ]; then
     link_target="$(ls -l /etc/resolv.conf | cut -f2 -d">" | sed 's/^[[:space:]]//')"
@@ -65,6 +65,14 @@ if [ "${BASE_DISTRO}" != "ubuntu" ]; then
 
   generate_resolvconf
 
+fi
+
+# Fix EXPKEYSIG 2E5FB7FC58C58FFB see https://hub.libre.computer/t/signatures-were-invalid-expkeysig-2e5fb7fc58c58ffb/4166/2
+if [ "${BASE_BOARD}" == "debian_lepotato" ]; then
+     generate_resolvconf
+     wget https://deb.libre.computer/repo/pool/main/libr/libretech-keyring/libretech-keyring_2024.05.19_all.deb
+     dpkg -i libretech-keyring_2024.05.19_all.deb
+     rm libretech-keyring_2024.05.19_all.deb
 fi
 
 #Helper Function for create_userconf
