@@ -168,6 +168,38 @@ function test_for_image(){
   fi
 }
 
+function get_loopback_to_partition(){
+  local image=$1
+  local partition_number=$2
+
+  # Get the loopback device mappings for the image
+  local output
+  # sudo losetup -f
+  # LOOP_DEVICE=$(sudo losetup --find --show $image)
+  output=$(sudo kpartx -av "$image")
+
+  # Find the correct line for the specified partition number
+  count=1
+  while IFS= read -r line; do
+      # Extract the loop device name and partition from the line
+      local loop_device partition
+      loop_device=$(echo "$line" | awk '{print $3}')
+      partition=$count
+
+      # Check if the partition matches the partition number
+      if [[ "$partition" == "$partition_number" ]]; then
+          echo "/dev/${loop_device#p*} /dev/mapper/${loop_device}"
+          return
+      fi
+      count=$((count+1))
+
+  done <<< "$output"
+
+  echo "Error: Failed to find parition: $partition_number on image: $image"
+  exit 1
+}
+
+
 function mount_image() {
   image_path=$1
   root_partition=$2
@@ -186,24 +218,44 @@ function mount_image() {
   else
     boot_partition=1
   fi
+  
+  if ! command -v kpartx >/dev/null 2>&1; then
+    # dump the partition table, locate boot partition and root partition
+    fdisk_output=$(sfdisk --json "${image_path}" )
+    boot_offset=$(($(jq ".partitiontable.partitions[] | select(.node == \"$image_path$boot_partition\").start" <<< ${fdisk_output}) * 512))
+    root_offset=$(($(jq ".partitiontable.partitions[] | select(.node == \"$image_path$root_partition\").start" <<< ${fdisk_output}) * 512))
+    echo_green "Mounting image $image_path on $mount_path, offset for boot partition is $boot_offset, offset for root partition is $root_offset"
+  else
+    echo_green "Mounting image $image_path on $mount_path, using kpartx for mapping"
+  fi
 
-  # dump the partition table, locate boot partition and root partition
-  fdisk_output=$(sfdisk --json "${image_path}" )
-  boot_offset=$(($(jq ".partitiontable.partitions[] | select(.node == \"$image_path$boot_partition\").start" <<< ${fdisk_output}) * 512))
-  root_offset=$(($(jq ".partitiontable.partitions[] | select(.node == \"$image_path$root_partition\").start" <<< ${fdisk_output}) * 512))
-
-  echo_green "Mounting image $image_path on $mount_path, offset for boot partition is $boot_offset, offset for root partition is $root_offset"
+  
 
   # mount root and boot partition
   
   detach_all_loopback $image_path
   echo_green "Mounting root partition"
-  sudo losetup -f
-  sudo mount -o loop,offset=$root_offset $image_path $mount_path/
+  if ! command -v kpartx >/dev/null 2>&1; then
+    sudo losetup -f
+    sudo mount -o loop,offset=$root_offset $image_path $mount_path/
+  else
+    result=($(get_loopback_to_partition $image_path $root_partition))
+    LOOP_DEVICE=${result[0]}
+    LOOP_PARITION=${result[1]}
+  fi
+
+  sudo mount "${LOOP_PARITION}" "${mount_path}"
   if [[ "$boot_partition" != "$root_partition" ]]; then
 	  echo_green "Mounting boot partition"
-	  sudo losetup -f
-	  sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) "${image_path}" "${mount_path}"/"${boot_mount_path}"
+    if ! command -v kpartx >/dev/null 2>&1; then
+      sudo losetup -f
+      sudo mount -o loop,offset=$boot_offset,sizelimit=$( expr $root_offset - $boot_offset ) "${image_path}" "${mount_path}"/"${boot_mount_path}"
+    else
+	    result_boot=($(get_loopback_to_partition $image_path $boot_partition))
+      LOOP_BOOT_DEVICE=${result[0]}
+      LOOP_BOOT_PARITION=${result[1]}
+	    sudo mount "${LOOP_BOOT_PARITION}" "${mount_path}"/"${boot_mount_path}"
+    fi
   fi
   sudo mkdir -p $mount_path/dev/pts
   sudo mkdir -p $mount_path/proc

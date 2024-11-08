@@ -64,6 +64,7 @@ Requirements
 #. p7zip-full
 #. Python 3.2+
 #. GitPython
+#. kpartx - optional if you need to run update-grub in the image
 
 Known to work building configurations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

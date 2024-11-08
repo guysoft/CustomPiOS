@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         xz-utils \
         lsof \
         f2fs-tools \
+        kpartx \
   && rm -rf /var/lib/apt/lists/* \
   && apt -qyy clean
 
