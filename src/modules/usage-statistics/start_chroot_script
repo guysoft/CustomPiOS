@@ -13,6 +13,9 @@ apt-get update --allow-releaseinfo-change
 apt-get -y install curl
 
 unpack /filesystem/root /
+if [ "${BASE_BOARD}" == "debian_lepotato" ]; then
+    unpack /filesystem/root_lepotato /
+fi
 
 # Set hotspot name and password
 sed -i s"@USAGE_STATISTICS_URL@$USAGE_STATISTICS_URL@g" /usr/bin/boot_report
