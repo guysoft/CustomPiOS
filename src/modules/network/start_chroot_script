@@ -29,6 +29,12 @@ if [ "${NETWORK_WPA_SUPPLICANT}" == "yes" ]; then
 
     # create symlink
     ln -s "${DIST_NETWORK_FILE}" /etc/wpa_supplicant/wpa_supplicant.conf
+
+	# copy /etc/wpa_supplicant/ifupdown.sh to /etc/ifplugd/action.d/ifupdown - for wlan auto reconnect
+	[ -f /etc/ifplugd/action.d/ifupdown ] && mv /etc/ifplugd/action.d/ifupdown /etc/ifplugd/action.d/ifupdown.original
+	[ -f /etc/wpa_supplicant/ifupdown.sh ] && ln -s /etc/wpa_supplicant/ifupdown.sh /etc/ifplugd/action.d/ifupdown
+
+
 fi
 
 if [ "${NETWORK_NETWORK_MANAGER}" == "yes" ]; then
@@ -44,10 +50,6 @@ if [ "${BASE_DISTRO}" == "raspbian" ]; then
     # Workaround rfkill not unblocking on boot
     rm /var/lib/systemd/rfkill/*
 fi
-
-# copy /etc/wpa_supplicant/ifupdown.sh to /etc/ifplugd/action.d/ifupdown - for wlan auto reconnect
-[ -f /etc/ifplugd/action.d/ifupdown ] && mv /etc/ifplugd/action.d/ifupdown /etc/ifplugd/action.d/ifupdown.original
-[ -f /etc/wpa_supplicant/ifupdown.sh ] && ln -s /etc/wpa_supplicant/ifupdown.sh /etc/ifplugd/action.d/ifupdown
 
 if [ "$NETWORK_ENABLE_NTP_QUIRKS" == "yes" ]; then
 	if [ ! -f "/etc/rc.local" ];then
