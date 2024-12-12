@@ -41,6 +41,11 @@ if [ "${NETWORK_NETWORK_MANAGER}" == "yes" ]; then
     unpack filesystem/network-manager/root / root
     unpack filesystem/network-manager/boot /"${BASE_BOOT_MOUNT_PATH}"
 
+    if [ "${BASE_BOARD}" == "debian_lepotato" ]; then
+        apt_update_skip
+        apt-get install -y network-manager
+    fi
+
     # mv /"${BASE_BOOT_MOUNT_PATH}"/wifi.nmconnection ${DIST_NETWORK_FILE}
 
     systemctl_if_exists enable copy-network-manager-config@wlan0.service
@@ -56,7 +61,7 @@ if [ ! -f "/etc/rc.local" ];then
 fi
 
 # prevent ntp updates from failing due to some Rpi3 weirdness, see also "Fix SSH" further below
-apt-get update --allow-releaseinfo-change
+apt_update_skip
 apt-get install -y iptables
 sed -i 's@exit 0@@' /etc/rc.local
 echo '/sbin/iptables -t mangle -I POSTROUTING 1 -o wlan0 -p udp --dport 123 -j TOS --set-tos 0x00' >> /etc/rc.local
