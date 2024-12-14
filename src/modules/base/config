@@ -16,7 +16,7 @@ BASE_VERSION=2.0.0
 
 echo "GOT BASE BOARD $BASE_BOARD"
 #[ -n "$BASE_SCRIPT_PATH" ] || BASE_SCRIPT_PATH=$CONFIG_DIR
-if [ "${BASE_BOARD}" == "raspberrypiarmhf" ] || [ "${BASE_BOARD}" == "raspberrypiarm64" ]; then
+if [ "${BASE_BOARD}" == "raspberrypiarmhf" ]; then
     [ -n "$BASE_IMAGE_PATH" ] || BASE_IMAGE_PATH=${DIST_PATH}/image
 else
     [ -n "$BASE_IMAGE_PATH" ] || BASE_IMAGE_PATH=${DIST_PATH}/image-"${BASE_BOARD}"
