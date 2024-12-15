@@ -54,6 +54,10 @@ fi
 if [ "${BASE_DISTRO}" == "raspbian" ]; then
     # Workaround rfkill not unblocking on boot
     rm /var/lib/systemd/rfkill/*
+
+    if [ -f "/var/lib/NetworkManager/NetworkManager.state" ]; then
+        sed -i 's/WirelessEnabled=false/WirelessEnabled=true/g' /var/lib/NetworkManager/NetworkManager.state
+    fi
 fi
 
 if [ ! -f "/etc/rc.local" ];then
