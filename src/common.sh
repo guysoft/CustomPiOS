@@ -210,8 +210,8 @@ function mount_image() {
   sudo mkdir -p $mount_path/sys
   sudo mount -o bind /dev $mount_path/dev
   sudo mount -o bind /dev/pts $mount_path/dev/pts
-  sudo mount -o bind /proc $mount_path/proc
-  sudo mount -o bind /sys $mount_path/sys
+  sudo mount -o bind,ro /proc $mount_path/proc
+  sudo mount -o bind,ro /sys $mount_path/sys
 }
 
 function unmount_image() {

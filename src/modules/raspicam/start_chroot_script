@@ -5,3 +5,5 @@ set -e
 echo "# enable raspicam" >> /"${BASE_BOOT_MOUNT_PATH}"/config.txt
 echo "start_x=1" >> /"${BASE_BOOT_MOUNT_PATH}"/config.txt
 echo "gpu_mem=128" >> /"${BASE_BOOT_MOUNT_PATH}"/config.txt
+# See why camera_auto_detect=0 https://github.com/guysoft/OctoPi/issues/837#issuecomment-2536532941
+sed -i 's/^camera_auto_detect=.*$/camera_auto_detect=0/' /"${BASE_BOOT_MOUNT_PATH}"/config.txt

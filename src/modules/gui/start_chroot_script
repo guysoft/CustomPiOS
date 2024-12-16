@@ -16,11 +16,11 @@ ln -s /opt/custompios/scripts /home/pi/scripts
 echo exit 101 > /usr/sbin/policy-rc.d
 chmod +x /usr/sbin/policy-rc.d
 
-apt-get update --allow-releaseinfo-change
-apt-get install -y --force-yes matchbox-window-manager xorg lightdm
+apt_update_skip
+apt-get install -y --force-yes matchbox-window-manager xorg lightdm xinput
 if [ "$GUI_INCLUDE_ACCELERATION" == "yes" ]
     then
-        apt-get update --allow-releaseinfo-change
+        apt_update_skip
         apt-get -y --force-yes install xcompmgr libgl1-mesa-dri mesa-utils compton libconfig9
         
         # Hack to pass non-interactive install

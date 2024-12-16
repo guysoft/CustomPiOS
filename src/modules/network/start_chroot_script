@@ -41,6 +41,11 @@ if [ "${NETWORK_NETWORK_MANAGER}" == "yes" ]; then
     unpack filesystem/network-manager/root / root
     unpack filesystem/network-manager/boot /"${BASE_BOOT_MOUNT_PATH}"
 
+    if [ "${BASE_BOARD}" == "debian_lepotato" ]; then
+        apt_update_skip
+        apt-get install -y network-manager
+    fi
+
     # mv /"${BASE_BOOT_MOUNT_PATH}"/wifi.nmconnection ${DIST_NETWORK_FILE}
 
     systemctl_if_exists enable copy-network-manager-config@wlan0.service
@@ -49,6 +54,10 @@ fi
 if [ "${BASE_DISTRO}" == "raspbian" ]; then
     # Workaround rfkill not unblocking on boot
     rm /var/lib/systemd/rfkill/*
+
+    if [ -f "/var/lib/NetworkManager/NetworkManager.state" ]; then
+        sed -i 's/WirelessEnabled=false/WirelessEnabled=true/g' /var/lib/NetworkManager/NetworkManager.state
+    fi
 fi
 
 if [ "$NETWORK_ENABLE_NTP_QUIRKS" == "yes" ]; then
