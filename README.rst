@@ -186,5 +186,6 @@ List of Distributions using CustomPiOS
 * `PiFireOS <https://github.com/calonmerc/PiFireOS>`_ - Distro for pellet grill/smoker control, running `PiFire <https://nebhead.github.io/PiFire>`_.
 * `MonsterPi <https://docs.fdm-monster.net/guides/monsterpi>`_ - An Ubuntu ARM 64bit Raspberry Pi image running `FDM Monster <https://fdm-monster.net/>`_. This 3D Print server will help you connect 200+ OctoPrints together while providing a strong, professional workflow.
 * `AllStarLink <https://allstarlink.org>`_ - AllStarLink is a network of Amateur Radio repeaters, remote base stations and hot spots accessible to each other via Voice over Internet Protocol. The ASL3 Pi Appliance uses CustomPiOS
+* `LEDPotato <https://github.com/guysoft/LEDPotato>`_ - A Le Potato AML-S905X-CC distrubtion that controls ws2812 LEDs over uart right on boot 
 
 Code contribution would be appreciated!
