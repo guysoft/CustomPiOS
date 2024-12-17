@@ -134,7 +134,7 @@ fi
 
 if [ -n "$BASE_PYPI_INDEX" ]
 then
-  pip_index_config="[global]\nindex-url = $BASE_PYPI_INDEX"
+  pip_index_config="[global]\nindex-url = $BASE_PYPI_INDEX\nextra-index-url = https://pypi.python.org/simple/"
   easyinstall_index_config="[easy_install]\nindex-url = $BASE_PYPI_INDEX"
 
   mkdir -p /root/.pip
