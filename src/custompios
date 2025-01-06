@@ -52,35 +52,7 @@ function execute_chroot_script() {
   cp "${CUSTOM_PI_OS_PATH}"/common.sh common.sh
   chmod 755 common.sh
   
-  if [ "$(uname -m)" != "armv7l" ] && [ "$(uname -m)" != "aarch64" ] && [ "$(uname -m)" != "arm64" ] ; then
-    echo "Detected we are on a non-arm device"
-    if [ "$BASE_ARCH" == "armv7l" ] || [ "$BASE_ARCH" == "armhf" ]; then
-      echo "Building on non-ARM device a armv7l system, using qemu-arm-static"
-      if (grep -q gentoo /etc/os-release);then
-        echo "Building on gentoo non-ARM device a aarch64/arm64 system, using qemu-aarch64-static"
-        chroot . usr/bin/qemu-arm /bin/bash /chroot_script
-      else
-        echo "Using normal non-arm qemu for armv7l"
-        chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
-      fi
-    elif [ "$BASE_ARCH" == "aarch64" ] || [ "$BASE_ARCH" == "arm64" ]; then
-      echo "Building on non-ARM device a aarch64/arm64 system, using qemu-aarch64-static"
-      if (grep -q gentoo /etc/os-release);then
-        chroot . usr/bin/qemu-aarch64 /bin/bash /chroot_script
-      else
-        chroot . usr/bin/qemu-aarch64-static /bin/bash /chroot_script
-      fi
-    else
-        echo "Unknown arch, building on: $(uname -m) image: $BASE_ARCH"
-	exit 1
-    fi
-  elif { [ "$BASE_ARCH" == "armv7l" ] || [ "$BASE_ARCH" == "armhf" ]; }  && [ "$(uname -m)" != "armv7l" ]; then
-    echo "Building on aarch64/arm64 device a armv7l system, using qemu-arm-static"
-    chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
-  else
-    echo "Building on ARM device a armv7l/aarch64/arm64 system, not using qemu"
-    chroot . /bin/bash /chroot_script
-  fi
+  chroot_correct_qemu "$(uname -m)" "$BASE_ARCH" "$2" "${CUSTOM_PI_OS_PATH}"
   
   # Handle exported items
   if [ -d "custompios_export" ]; then

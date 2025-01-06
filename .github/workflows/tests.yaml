@@ -1,0 +1,37 @@
+name: Run Tests via Makefile
+
+on:
+  push:
+    branches:
+      - "master"
+      - "devel"
+      - "docker-github-actions"
+      - "release/v1"
+      - "feature/unit-testing"
+      - "beta"
+    tags:
+      - "*"
+
+jobs:
+  test:
+    name: Run Makefile Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # - name: Install dependencies
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y qemu-user-static binfmt-support
+
+      - name: Run Makefile
+        run: make test
+
+      - name: Archive test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: tests/
+          retention-days: 60
