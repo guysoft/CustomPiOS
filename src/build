@@ -8,6 +8,11 @@ set -x
 
 define(){ IFS='\n' read -r -d '' ${1} || true; }
 
+# Source in dist config to seed generate_board_config.py
+# but will then be overwritten ${CUSTOM_PI_OS_PATH}/config for
+# 'final' configuration
+source ${DIST_PATH}/config
+
 define SCRIPT <<'EOF'
 BUILD_SCRIPT_PATH=$(dirname $(realpath -s $BASH_SOURCE))
 export EXTRA_BOARD_CONFIG=$(mktemp)
