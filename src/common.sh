@@ -599,6 +599,8 @@ function load_module_config() {
 function chroot_correct_qemu() {
     local host_arch="$1"
     local target_arch="$2"
+    local chroot_script="$3"
+    local custom_pi_os_path="$4"
 
     # Validate inputs
     if [[ -z "$host_arch" ]] || [[ -z "$target_arch" ]]; then

@@ -7,7 +7,7 @@ set -e
 
 export LC_ALL=C
 
-source ${CUSTOM_PI_OS_PATH}/common.sh
+source "${CUSTOM_PI_OS_PATH}"/common.sh
 
 echo_green -e "\nBUILD STARTED @ $(date)!\n"
 
@@ -51,7 +51,6 @@ function execute_chroot_script() {
   chmod 755 chroot_script
   cp "${CUSTOM_PI_OS_PATH}"/common.sh common.sh
   chmod 755 common.sh
-  
   chroot_correct_qemu "$(uname -m)" "$BASE_ARCH" "$2" "${CUSTOM_PI_OS_PATH}"
   
   # Handle exported items
@@ -100,7 +99,7 @@ install_cleanup_trap
 install_fail_on_error_trap
 unmount_image $BASE_MOUNT_PATH force || true
 
-pushd $BASE_WORKSPACE
+pushd "${BASE_WORKSPACE}"
   if [ -e *.img ]; then  
     rm *.img
   fi
@@ -179,6 +178,8 @@ pushd $BASE_WORKSPACE
       echo "No remote and submodules config detected"
     fi
     echo $ARMBIAN_CONFIG_TXT_FILE
+    # if you need anything from common running in execute_chroot_script, export it here
+    export -f chroot_correct_qemu
     export -f execute_chroot_script
     bash -x "${CHROOT_SCRIPT}"
     
