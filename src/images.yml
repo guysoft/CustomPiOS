@@ -35,7 +35,7 @@ images:
       checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-bananapi_m2_zero_bullseye.img.xz.sha256"
       type: http
       env:
-        BASE_ARCH: arm64
+        BASE_ARCH: armhf
     armbian_orangepi3lts:
       description: "Orange Pi 3 LTS"
       url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi3_lts_bullseye.img.xz"
