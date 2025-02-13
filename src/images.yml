@@ -24,29 +24,29 @@ images:
         BASE_ARCH: arm64
     orangepi_orangepi_zero2:
       description: "Orange Pi Zero2"
-      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/orangepi-orangepi_zero2_bullseye.img.xz"
-      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/orangepi-orangepi_zero2_bullseye.img.xz.sha256"
+      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/orangepi-orangepi_zero2_bookworm.img.xz"
+      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/orangepi-orangepi_zero2_bookworm.img.xz.sha256"
       type: http
       env:
         BASE_ARCH: arm64
     armbian_bananapim2zero:
       description: "Banana Pi BPI-M2 ZERO"
-      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-bananapi_m2_zero_bullseye.img.xz"
-      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-bananapi_m2_zero_bullseye.img.xz.sha256"
+      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-bananapi_m2_zero_bookworm.img.xz"
+      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-bananapi_m2_zero_bookworm.img.xz.sha256"
       type: http
       env:
         BASE_ARCH: armhf
     armbian_orangepi3lts:
       description: "Orange Pi 3 LTS"
-      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi3_lts_bullseye.img.xz"
-      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi3_lts_bullseye.img.xz.sha256"
+      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi3_lts_bookworm.img.xz"
+      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi3_lts_bookworm.img.xz.sha256"
       type: http
       env:
         BASE_ARCH: arm64
     armbian_orangepi4lts:
       description: "Orange Pi 4 LTS"
-      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi4_lts_bullseye.img.xz"
-      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi4_lts_bullseye.img.xz.sha256"
+      url: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi4_lts_bookworm.img.xz"
+      checksum: "https://github.com/mainsail-crew/armbian-builds/releases/latest/download/armbian-orangepi4_lts_bookworm.img.xz.sha256"
       type: http
       env:
         BASE_ARCH: arm64
