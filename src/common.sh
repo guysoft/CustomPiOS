@@ -616,7 +616,7 @@ function chroot_correct_qemu() {
     chmod 755 common.sh
 
     # Set up QEMU if needed
-    if [[ "$host_arch" != "armv7l" ]] || [[ "$host_arch" != "aarch64" ]]; then
+    if [[ "$host_arch" != "armv7l" ]] && [[ "$host_arch" != "aarch64" ]]; then
         if [[ "$target_arch" == "armv7l" ]] || [[ "$target_arch" == "armhf" ]]; then
             if grep -q gentoo /etc/os-release; then
                 ROOT="$(realpath .)" emerge --usepkgonly --oneshot --nodeps qemu
@@ -630,6 +630,8 @@ function chroot_correct_qemu() {
                 cp "$(which qemu-aarch64-static)" usr/bin/qemu-aarch64-static
             fi
         fi
+    elif [[ ( "$target_arch" == "armv7l" || "$target_arch" == "armhf" ) && "$host_arch" != "armv7l" ]]; then
+        cp "$(which qemu-aarch64-static)" usr/bin/qemu-aarch64-static
     fi
 
     # Execute chroot with appropriate QEMU setup
@@ -655,7 +657,7 @@ function chroot_correct_qemu() {
             echo "Unknown arch, building on: $host_arch image: $target_arch"
             return 1
         fi
-    elif { [[ "$target_arch" == "armv7l" ]] || [[ "$target_arch" == "armhf" ]]; } && [[ "$host_arch" != "armv7l" ]]; then
+    elif [[ ( "$target_arch" == "armv7l" || "$target_arch" == "armhf" ) && "$host_arch" != "armv7l" ]]; then
         echo "Building on aarch64/arm64 device a armv7l system, using qemu-arm-static"
         chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
     else
