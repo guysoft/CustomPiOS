@@ -9,15 +9,27 @@ set -x
 define(){ IFS='\n' read -r -d '' ${1} || true; }
 
 define SCRIPT <<'EOF'
-BUILD_SCRIPT_PATH=$(dirname $(realpath -s $BASH_SOURCE))
+CUSTOM_OS_PATH=$(dirname $(realpath -s $0))
+CONFIG_FILE="${CUSTOM_PI_OS_PATH}/config"
+
+if [ -f "$CONFIG_FILE" ]; then
+    BASE_BOARD_FROM_CONFIG=$(bash -c "source \"$CONFIG_FILE\" >/dev/null 2>&1; echo \$BASE_BOARD")
+    if [ -n "$BASE_BOARD_FROM_CONFIG" ]; then
+        export BASE_BOARD="$BASE_BOARD_FROM_CONFIG"
+        echo "BASE_BOARD set to ${BASE_BOARD} from ${CONFIG_FILE} before generating board config."
+    else
+        echo "BASE_BOARD not found in ${CONFIG_FILE}."
+    fi
+else
+    echo "Config file ${CONFIG_FILE} does not exist."
+fi
+
 export EXTRA_BOARD_CONFIG=$(mktemp)
 ${BUILD_SCRIPT_PATH}/custompios_core/generate_board_config.py "${EXTRA_BOARD_CONFIG}"
 echo "Temp source file: ${EXTRA_BOARD_CONFIG}"
 
 source ${BUILD_SCRIPT_PATH}/common.sh
 install_cleanup_trap
-
-CUSTOM_OS_PATH=$(dirname $(realpath -s $0))
 
 source ${CUSTOM_PI_OS_PATH}/config "${1}" "${EXTRA_BOARD_CONFIG}" ${@}
 ${CUSTOM_PI_OS_PATH}/config_sanity
