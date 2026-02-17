@@ -39,7 +39,43 @@ setup_mocks() {
     export -f realpath
 }
 
-# Define test matrix
+# Define test matrix for setup_qemu_static (QEMU binary copy logic)
+# Expected patterns match against the mocked cp/emerge output
+declare -A copy_test_matrix=(
+    # x86_64 host -- always needs qemu
+    ["x86_64:armv7l:ubuntu"]="Copying /usr/bin/qemu-arm-static to usr/bin/qemu-arm-static"
+    ["x86_64:armhf:ubuntu"]="Copying /usr/bin/qemu-arm-static to usr/bin/qemu-arm-static"
+    ["x86_64:aarch64:ubuntu"]="Copying /usr/bin/qemu-aarch64-static to usr/bin/qemu-aarch64-static"
+    ["x86_64:arm64:ubuntu"]="Copying /usr/bin/qemu-aarch64-static to usr/bin/qemu-aarch64-static"
+    ["x86_64:armv7l:gentoo"]="Emerging qemu"
+    ["x86_64:armhf:gentoo"]="Emerging qemu"
+    ["x86_64:aarch64:gentoo"]="Emerging qemu"
+    ["x86_64:arm64:gentoo"]="Emerging qemu"
+
+    # armv7l host -- never needs qemu (native for armv7l/armhf, no support for aarch64)
+    ["armv7l:armv7l:ubuntu"]=""
+    ["armv7l:armhf:ubuntu"]=""
+    ["armv7l:aarch64:ubuntu"]=""
+    ["armv7l:arm64:ubuntu"]=""
+    ["armv7l:armv7l:gentoo"]=""
+    ["armv7l:armhf:gentoo"]=""
+    ["armv7l:aarch64:gentoo"]=""
+    ["armv7l:arm64:gentoo"]=""
+
+    # aarch64 host building aarch64/arm64 -- no qemu needed (native)
+    ["aarch64:aarch64:ubuntu"]=""
+    ["aarch64:arm64:ubuntu"]=""
+    ["aarch64:aarch64:gentoo"]=""
+    ["aarch64:arm64:gentoo"]=""
+
+    # aarch64 host building armv7l/armhf -- needs qemu-arm-static
+    ["aarch64:armv7l:ubuntu"]="Copying /usr/bin/qemu-arm-static to usr/bin/qemu-arm-static"
+    ["aarch64:armhf:ubuntu"]="Copying /usr/bin/qemu-arm-static to usr/bin/qemu-arm-static"
+    ["aarch64:armv7l:gentoo"]="Copying /usr/bin/qemu-arm-static to usr/bin/qemu-arm-static"
+    ["aarch64:armhf:gentoo"]="Copying /usr/bin/qemu-arm-static to usr/bin/qemu-arm-static"
+)
+
+# Define test matrix for chroot_correct_qemu (chroot execution logic)
 declare -A test_matrix=(
     # x86_64 host
     ["x86_64:armv7l:gentoo"]="gentoo"
@@ -113,7 +149,48 @@ print_test_matrix() {
     echo
 }
 
-# Run a single test case
+# Run a single copy test case (for setup_qemu_static)
+run_copy_test_case() {
+    local host="$1"
+    local target="$2"
+    local os="$3"
+    local test_name="QEMU Copy Test"
+    local key="${host}:${target}:${os}"
+    local expected_pattern="${copy_test_matrix[$key]}"
+    
+    print_test_header "$test_name"
+    echo "Parameters:"
+    echo "  Host Architecture: $host"
+    echo "  Target Architecture: $target"
+    echo "  Operating System: $os"
+    echo "  Expected Pattern: ${expected_pattern:-(empty output)}"
+    
+    MOCK_OS="$os"
+    local output=$(setup_qemu_static "$host" "$target" 2>&1)
+    local is_passed=false
+    
+    if [[ -z "$expected_pattern" ]]; then
+        # Expect empty output (no qemu copy needed)
+        if [[ -z "$output" ]]; then
+            is_passed=true
+        fi
+    elif [[ "$output" =~ $expected_pattern ]]; then
+        is_passed=true
+    fi
+
+    echo -e "${BLUE}Command Output:${NC}"
+    echo "${output:-(empty)}"
+    
+    print_test_result "$test_name" "$is_passed" "$output" "${expected_pattern:-(empty output)}"
+    
+    if $is_passed; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Run a single test case (for chroot_correct_qemu)
 run_test_case() {
     local host="$1"
     local target="$2"
@@ -204,8 +281,21 @@ run_tests() {
     # Print test matrix
     print_test_matrix
 
-    # Run architecture combination tests
-    echo -e "${BLUE}Running Architecture Combination Tests${NC}"
+    # Run QEMU copy tests (setup_qemu_static)
+    echo -e "${BLUE}Running QEMU Binary Copy Tests (setup_qemu_static)${NC}"
+    for key in "${!copy_test_matrix[@]}"; do
+        IFS=':' read -r host target os <<< "$key"
+        ((test_count++))
+        
+        if run_copy_test_case "$host" "$target" "$os"; then
+            ((tests_passed++))
+        else
+            failed_tests+=("copy:$key")
+        fi
+    done
+
+    # Run architecture combination tests (chroot_correct_qemu)
+    echo -e "${BLUE}Running Chroot Execution Tests (chroot_correct_qemu)${NC}"
     for key in "${!test_matrix[@]}"; do
         IFS=':' read -r host target os <<< "$key"
         ((test_count++))

@@ -30,27 +30,7 @@ function execute_chroot_script() {
   fi
 
   #black magic of qemu-arm-static
-  if [ "$(uname -m)" != "armv7l" ] && [ "$(uname -m)" != "aarch64" ] ; then
-    if [ "$BASE_ARCH" == "armv7l" ] || [ "$BASE_ARCH" == "armhf" ]; then
-      if (grep -q gentoo /etc/os-release);then
-        ROOT="`realpath .`" emerge --usepkgonly --oneshot --nodeps qemu
-      else
-        if [ "${BASE_ARCH}" != "$(uname -m)" ]; then
-          cp `which qemu-arm-static` usr/bin/qemu-arm-static
-        fi
-      fi
-    elif [ "$BASE_ARCH" == "aarch64" ] || [ "$BASE_ARCH" == "arm64" ]; then
-      if (grep -q gentoo /etc/os-release);then
-        ROOT="`realpath .`" emerge --usepkgonly --oneshot --nodeps qemu
-      else
-        if [ "${BASE_ARCH}" != "$(uname -m)" ]; then
-          cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static
-        fi
-      fi
-    fi
-  elif [[ ( "$BASE_ARCH" == "armv7l" || "$BASE_ARCH" == "armhf" ) && "$(uname -m)" != "armv7l" ]]; then
-    cp `which qemu-aarch64-static` usr/bin/qemu-aarch64-static
-  fi
+  setup_qemu_static "$(uname -m)" "$BASE_ARCH"
   
   cp $2 chroot_script
   chmod 755 chroot_script
@@ -184,6 +164,7 @@ pushd "${BASE_WORKSPACE}"
     fi
     echo $ARMBIAN_CONFIG_TXT_FILE
     # if you need anything from common running in execute_chroot_script, export it here
+    export -f setup_qemu_static
     export -f chroot_correct_qemu
     export -f execute_chroot_script
     bash -x "${CHROOT_SCRIPT}"

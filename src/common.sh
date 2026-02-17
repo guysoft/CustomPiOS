@@ -596,6 +596,43 @@ function load_module_config() {
   done
 }
 
+function setup_qemu_static() {
+    # Copy the correct qemu-*-static binary into the chroot, if needed.
+    # Usage: setup_qemu_static host_arch target_arch
+    local host_arch="$1"
+    local target_arch="$2"
+
+    if [[ -z "$host_arch" ]] || [[ -z "$target_arch" ]]; then
+        echo "Error: setup_qemu_static requires host_arch and target_arch"
+        return 1
+    fi
+
+    # Host is not ARM at all (e.g. x86_64) -- need full QEMU emulation
+    if [[ "$host_arch" != "armv7l" ]] && [[ "$host_arch" != "aarch64" ]]; then
+        if [[ "$target_arch" == "armv7l" ]] || [[ "$target_arch" == "armhf" ]]; then
+            if grep -q gentoo /etc/os-release; then
+                ROOT="$(realpath .)" emerge --usepkgonly --oneshot --nodeps qemu
+            else
+                if [[ "$target_arch" != "$host_arch" ]]; then
+                    cp "$(which qemu-arm-static)" usr/bin/qemu-arm-static
+                fi
+            fi
+        elif [[ "$target_arch" == "aarch64" ]] || [[ "$target_arch" == "arm64" ]]; then
+            if grep -q gentoo /etc/os-release; then
+                ROOT="$(realpath .)" emerge --usepkgonly --oneshot --nodeps qemu
+            else
+                if [[ "$target_arch" != "$host_arch" ]]; then
+                    cp "$(which qemu-aarch64-static)" usr/bin/qemu-aarch64-static
+                fi
+            fi
+        fi
+    elif [[ ( "$target_arch" == "armv7l" || "$target_arch" == "armhf" ) && "$host_arch" != "armv7l" ]]; then
+        # aarch64 host building armv7l/armhf: need 32-bit ARM emulation
+        cp "$(which qemu-arm-static)" usr/bin/qemu-arm-static
+    fi
+    # Otherwise: same arch or armv7l host -- no QEMU needed
+}
+
 function chroot_correct_qemu() {
     local host_arch="$1"
     local target_arch="$2"
@@ -616,23 +653,7 @@ function chroot_correct_qemu() {
     chmod 755 common.sh
 
     # Set up QEMU if needed
-    if [[ "$host_arch" != "armv7l" ]] && [[ "$host_arch" != "aarch64" ]]; then
-        if [[ "$target_arch" == "armv7l" ]] || [[ "$target_arch" == "armhf" ]]; then
-            if grep -q gentoo /etc/os-release; then
-                ROOT="$(realpath .)" emerge --usepkgonly --oneshot --nodeps qemu
-            else
-                cp "$(which qemu-arm-static)" usr/bin/qemu-arm-static
-            fi
-        elif [[ "$target_arch" == "aarch64" ]] || [[ "$target_arch" == "arm64" ]]; then
-            if grep -q gentoo /etc/os-release; then
-                ROOT="$(realpath .)" emerge --usepkgonly --oneshot --nodeps qemu
-            else
-                cp "$(which qemu-aarch64-static)" usr/bin/qemu-aarch64-static
-            fi
-        fi
-    elif [[ ( "$target_arch" == "armv7l" || "$target_arch" == "armhf" ) && "$host_arch" != "armv7l" ]]; then
-        cp "$(which qemu-aarch64-static)" usr/bin/qemu-aarch64-static
-    fi
+    setup_qemu_static "$host_arch" "$target_arch"
 
     # Execute chroot with appropriate QEMU setup
     if [[ "$host_arch" != "armv7l" ]] && [[ "$host_arch" != "aarch64" ]] && [[ "$host_arch" != "arm64" ]]; then
