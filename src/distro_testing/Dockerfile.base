@@ -1,0 +1,7 @@
+FROM ptrsr/pi-ci:latest
+
+ENV LIBGUESTFS_BACKEND=direct
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    sshpass openssh-client curl socat imagemagick \
+    && rm -rf /var/lib/apt/lists/*

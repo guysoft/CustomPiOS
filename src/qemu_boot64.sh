@@ -36,7 +36,7 @@ if [ ! -f "${BASE_IMG_PATH}" ]; then
     rm -rf /tmp/debian_bootpart || true
     mkdir /tmp/debian_bootpart
     cp kernel8.img /tmp/debian_bootpart
-    DTB_PATH="$(ls *-3-b.dtb | head)"
+    DTB_PATH="$(ls *.dtb | head)"
     # 	sudo bash -c 'cp initrd.img*-arm64 /tmp/debian_bootpart'
     cp ${DTB_PATH} /tmp/debian_bootpart
     # 	sudo bash -c 'cp cmdline.txt /tmp/debian_bootpart'
@@ -55,12 +55,12 @@ fi
 #/usr/bin/qemu-system-arm -kernel ${KERNEL_PATH} -cpu arm1176 -m 256 -M versatilepb -dtb ${DTB_PATH}  -no-reboot -serial stdio -append 'root=/dev/sda2 panic=1 rootfstype=ext4 rw' -hda ${BASE_IMG_PATH} -net nic -net user,hostfwd=tcp::5022-:22
 
 
-DTB_PATH=$(ls /tmp/debian_bootpart/*-3-b.dtb | head)
+DTB_PATH=$(ls /tmp/debian_bootpart/*-4-b.dtb | head)
 
 qemu-system-aarch64 \
 -kernel /tmp/debian_bootpart/kernel8.img \
 -dtb "${DTB_PATH}" \
--m 1024 -M raspi3 \
+-m 2G -M raspi4b \
 -cpu cortex-a53 \
 -serial stdio \
 -append "rw earlycon=pl011,0x3f201000 console=ttyAMA0 loglevel=8 root=/dev/mmcblk0p2 fsck.repair=yes net.ifnames=0 rootwait memtest=1" \
