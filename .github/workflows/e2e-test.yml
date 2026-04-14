@@ -1,0 +1,83 @@
+name: E2E Test (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      image-artifact-name:
+        required: true
+        type: string
+      distro-name:
+        required: true
+        type: string
+      docker-context:
+        required: false
+        type: string
+        default: 'testing/'
+      timeout-minutes:
+        required: false
+        type: number
+        default: 45
+      poll-interval:
+        required: false
+        type: number
+        default: 5
+      max-poll-iterations:
+        required: false
+        type: number
+        default: 360
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download image from build
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.image-artifact-name }}
+          path: image/
+
+      - name: Build test Docker image
+        run: DOCKER_BUILDKIT=0 docker build -t e2e-test ${{ inputs.docker-context }}
+
+      - name: Start E2E test container
+        run: |
+          mkdir -p artifacts
+          IMG=$(find image/ -name '*.img' | head -1)
+          docker run -d --name e2e-test \
+            -v "$PWD/artifacts:/output" \
+            -v "$(realpath $IMG):/input/image.img:ro" \
+            -e ARTIFACTS_DIR=/output \
+            -e DISTRO_NAME="${{ inputs.distro-name }}" \
+            e2e-test
+
+      - name: Wait for tests to complete
+        run: |
+          for i in $(seq 1 ${{ inputs.max-poll-iterations }}); do
+            [ -f artifacts/exit-code ] && break
+            sleep ${{ inputs.poll-interval }}
+          done
+          if [ ! -f artifacts/exit-code ]; then
+            echo "ERROR: Tests did not complete within timeout"
+            docker logs e2e-test 2>&1 | tail -80
+            exit 1
+          fi
+          echo "Tests finished with exit code: $(cat artifacts/exit-code)"
+          cat artifacts/test-results.txt 2>/dev/null || true
+
+      - name: Collect logs and stop container
+        if: always()
+        run: |
+          docker logs e2e-test > artifacts/container.log 2>&1 || true
+          docker stop e2e-test 2>/dev/null || true
+
+      - name: Check test result
+        run: exit "$(cat artifacts/exit-code 2>/dev/null || echo 1)"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results
+          path: artifacts/
