@@ -1,16 +1,15 @@
 #!/bin/bash
 set -e
 
-HOST="${1:-localhost}"
-PORT="${2:-2222}"
-USER="pi"
-PASS="raspberry"
+export E2E_SSH_HOST="${1:-localhost}"
+export E2E_SSH_PORT="${2:-2222}"
 
-SSH_CMD="sshpass -p $PASS ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PreferredAuthentications=password -o PubkeyAuthentication=no -o LogLevel=ERROR -p $PORT ${USER}@${HOST}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+source "$(dirname "$SCRIPT_DIR")/scripts/ssh-helpers.sh"
 
 echo "Test: SSH login and run 'echo hello world'"
 
-OUTPUT=$($SSH_CMD 'echo hello world' 2>/dev/null)
+OUTPUT=$(ssh_cmd 'echo hello world' 2>/dev/null)
 
 if [ "$OUTPUT" = "hello world" ]; then
     echo "  Output: '$OUTPUT'"
