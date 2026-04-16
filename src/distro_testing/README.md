@@ -1,21 +1,25 @@
-# CustomPiOS Distro Testing Framework
+# CustomPiOS Distro E2E Testing Framework
 
-A shared e2e testing framework for distros built with CustomPiOS. It boots a built image in QEMU inside a Docker container, waits for SSH, runs test scripts, and captures a QEMU screenshot.
+A shared end-to-end testing framework for distros built with CustomPiOS. It boots a built Raspberry Pi image in QEMU inside a Docker container, waits for SSH, runs test scripts, and captures artifacts.
 
-This directory (`src/distro_testing/`) provides the **generic** infrastructure. Each distro adds its own `testing/` directory with distro-specific tests and hooks.
+This directory (`src/distro_testing/`) provides the **shared** infrastructure. Each distro adds its own `testing/` directory with distro-specific tests and hooks.
 
 ## How It Works
 
 ```
-┌─────────────────────────────────────────────────┐
-│  Docker container (ptrsr/pi-ci + test tools)    │
-│                                                 │
-│  1. prepare-image.sh  →  convert & patch image  │
-│  2. boot-qemu.sh      →  start QEMU -M virt    │
-│  3. wait-for-ssh.sh   →  poll until SSH ready   │
-│  4. test_*.sh          →  run all tests via SSH │
-│  5. screendump         →  QEMU monitor capture  │
-└─────────────────────────────────────────────────┘
+GitHub Actions
+  build job: builds .img using CustomPiOS
+  e2e-test job: calls reusable workflow
+    docker build (multi-stage from custompios container)
+    docker run with .img mounted
+      1. prepare-image.sh   --> convert to qcow2, patch for QEMU
+         hooks/prepare-image.sh  --> (optional) distro patches
+      2. boot-qemu.sh       --> start QEMU -M virt (aarch64)
+      3. wait-for-ssh.sh    --> poll until SSH ready
+         hooks/post-boot.sh      --> (optional) guest setup
+      4. test_*.sh           --> run all tests via SSH
+      5. hooks/screenshot.sh --> (optional) capture screenshot
+      6. collect artifacts   --> exit-code, logs, screenshots
 ```
 
 ## Directory Structure
@@ -24,35 +28,42 @@ This directory (`src/distro_testing/`) provides the **generic** infrastructure. 
 
 ```
 src/distro_testing/
-├── Dockerfile.base          # Reference base image (ptrsr/pi-ci + tools)
-├── README.md                # This file
-├── scripts/
-│   ├── prepare-image.sh     # Generic image prep (qcow2, fstab, SSH, etc.)
-│   ├── boot-qemu.sh         # QEMU boot with configurable ports
-│   ├── wait-for-ssh.sh      # SSH readiness poller
-│   └── entrypoint.sh        # Test orchestrator
-└── tests/
-    └── test_boot.sh          # Generic SSH boot test
+  README.md                # This file
+  scripts/
+    entrypoint.sh          # Test orchestrator
+    prepare-image.sh       # Generic image prep (qcow2, fstab, SSH, systemd)
+    boot-qemu.sh           # QEMU boot with configurable port forwarding
+    wait-for-ssh.sh        # SSH readiness poller
+    ssh-helpers.sh         # Shared ssh_cmd/scp_cmd functions for test scripts
+  tests/
+    test_boot.sh           # Generic SSH smoke test (always runs first)
 ```
 
 ### In Your Distro (`testing/`)
 
 ```
 testing/
-├── Dockerfile               # Extends base, copies both shared + distro files
-├── tests/
-│   └── test_myservice.sh    # Distro-specific tests
-└── hooks/
-    └── prepare-image.sh     # (optional) Distro-specific image patches
+  Dockerfile              # Multi-stage build: custompios + your packages
+  tests/
+    test_myservice.sh     # Distro-specific tests
+  hooks/
+    prepare-image.sh      # (optional) Image patches via guestfish
+    post-boot.sh          # (optional) Guest setup after SSH is ready
+    screenshot.sh         # (optional) Capture a screenshot for artifacts
 ```
 
 ## Adding E2E Tests to Your Distro
 
-### 1. Create the Dockerfile
+### Step 1: Create the Dockerfile
 
-Your distro's `testing/Dockerfile` copies the shared framework (placed in `custompios/` by CI) and your distro-specific tests:
+Your `testing/Dockerfile` uses a Docker multi-stage build to pull shared scripts from the published CustomPiOS container. No checkout or file copy needed.
+
+**Minimal example** (like FullPageOS):
 
 ```dockerfile
+ARG CUSTOMPIOS_TAG=devel
+FROM ghcr.io/guysoft/custompios:${CUSTOMPIOS_TAG} AS custompios
+
 FROM ptrsr/pi-ci:latest
 
 ENV LIBGUESTFS_BACKEND=direct
@@ -61,11 +72,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     sshpass openssh-client curl socat imagemagick \
     && rm -rf /var/lib/apt/lists/*
 
-# Shared framework from CustomPiOS (copied into build context by CI)
-COPY custompios/scripts/ /test/scripts/
-COPY custompios/tests/ /test/tests/
+COPY --from=custompios /CustomPiOS/distro_testing/scripts/ /test/scripts/
+COPY --from=custompios /CustomPiOS/distro_testing/tests/ /test/tests/
 
-# Distro-specific tests and hooks
 COPY tests/ /test/tests/
 COPY hooks/ /test/hooks/
 
@@ -75,29 +84,59 @@ RUN chmod +x /test/scripts/*.sh /test/tests/*.sh; \
 ENTRYPOINT ["/test/scripts/entrypoint.sh"]
 ```
 
-### 2. Write Test Scripts
+The `CUSTOMPIOS_TAG` ARG defaults to `devel`. Override it to test against a feature branch container (e.g. `feature-e2e`).
 
-Test scripts live in `testing/tests/` and follow this convention:
+**Extended example** (like OctoPi -- adds Chrome + Tesseract for browser screenshots):
+
+```dockerfile
+ARG CUSTOMPIOS_TAG=devel
+FROM ghcr.io/guysoft/custompios:${CUSTOMPIOS_TAG} AS custompios
+
+FROM ptrsr/pi-ci:latest
+
+ENV LIBGUESTFS_BACKEND=direct
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    sshpass openssh-client curl socat imagemagick wget gnupg \
+    dbus dbus-x11 fonts-liberation tesseract-ocr \
+    && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub \
+       | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] \
+       http://dl.google.com/linux/chrome/deb/ stable main" \
+       > /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update && apt-get install -y --no-install-recommends google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=custompios /CustomPiOS/distro_testing/scripts/ /test/scripts/
+COPY --from=custompios /CustomPiOS/distro_testing/tests/ /test/tests/
+
+COPY tests/ /test/tests/
+COPY hooks/ /test/hooks/
+
+RUN chmod +x /test/scripts/*.sh /test/tests/*.sh; \
+    chmod +x /test/hooks/*.sh 2>/dev/null || true
+
+ENTRYPOINT ["/test/scripts/entrypoint.sh"]
+```
+
+### Step 2: Write Test Scripts
+
+Test scripts live in `testing/tests/` and are named `test_*.sh`. They are executed in glob order after the shared `test_boot.sh` smoke test.
+
+Source `ssh-helpers.sh` to get `ssh_cmd` and `scp_cmd` functions instead of building SSH command strings manually:
 
 ```bash
 #!/bin/bash
 set -e
 
-HOST="${1:-localhost}"
-PORT="${2:-2222}"
+export E2E_SSH_HOST="${1:-localhost}"
+export E2E_SSH_PORT="${2:-2222}"
 ARTIFACTS_DIR="${3:-}"
-USER="pi"
-PASS="raspberry"
+source /test/scripts/ssh-helpers.sh
 
-SSH_CMD="sshpass -p $PASS ssh -o StrictHostKeyChecking=no \
-    -o UserKnownHostsFile=/dev/null \
-    -o PreferredAuthentications=password \
-    -o PubkeyAuthentication=no \
-    -o LogLevel=ERROR \
-    -p $PORT ${USER}@${HOST}"
+echo "Test: myservice is running"
 
-# Your test logic here -- use $SSH_CMD to run commands on the guest
-OUTPUT=$($SSH_CMD 'systemctl is-active myservice' 2>/dev/null)
+OUTPUT=$(ssh_cmd 'systemctl is-active myservice' 2>/dev/null)
 
 if [ "$OUTPUT" = "active" ]; then
     echo "  PASS: myservice is running"
@@ -109,38 +148,124 @@ fi
 ```
 
 **Conventions:**
-- Script name must start with `test_` (e.g. `test_myservice.sh`)
+
+- File name must start with `test_` (e.g. `test_myservice.sh`)
 - Arguments: `$1` = host, `$2` = SSH port, `$3` = artifacts directory (optional)
 - Exit 0 for pass, non-zero for fail
-- Use the `SSH_CMD` pattern shown above for guest commands
+- Source `/test/scripts/ssh-helpers.sh` for SSH access to the guest
+- Use `ssh_cmd` to run commands on the guest, `scp_cmd` to copy files
 
-### 3. Write a Prepare-Image Hook (optional)
+**`ssh-helpers.sh` reference:**
 
-If your distro needs image patches beyond the generic ones (e.g. fixing configs for QEMU), create `testing/hooks/prepare-image.sh`:
+| Function | Usage | Description |
+|----------|-------|-------------|
+| `ssh_cmd` | `ssh_cmd "command"` | Run a command on the QEMU guest via SSH |
+| `scp_cmd` | `scp_cmd "user@host:/remote" "/local"` | Copy files to/from the guest |
+
+Environment variables (set before sourcing, or use defaults):
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `E2E_SSH_HOST` | `localhost` | SSH host |
+| `E2E_SSH_PORT` | `2222` | SSH port |
+| `E2E_SSH_USER` | `pi` | SSH username |
+| `E2E_SSH_PASS` | `raspberry` | SSH password |
+
+### Step 3: Add Hooks (optional)
+
+Hooks let your distro customize behavior at specific points in the test lifecycle. Place them in `testing/hooks/`.
+
+#### `hooks/prepare-image.sh` -- Patch the image before QEMU boots
+
+Called after the shared image preparation (qcow2 conversion, fstab, SSH setup). Use guestfish to modify files inside the image.
+
+**Example** (OctoPi -- fix haproxy for IPv4-only QEMU networking):
 
 ```bash
 #!/bin/bash
 set -e
 IMAGE_FILE="${1:?Usage: $0 <image.qcow2>}"
-
 export LIBGUESTFS_BACKEND=direct
 
-# Example: patch a config file inside the image
-guestfish -a "$IMAGE_FILE" <<EOF
+guestfish -a "$IMAGE_FILE" <<GFEOF
 run
 mount /dev/sda2 /
-# your guestfish commands here
+download /etc/haproxy/haproxy.cfg /tmp/haproxy.cfg
 umount /
-EOF
+GFEOF
 
-echo 'Distro-specific patches applied'
+sed -i 's/bind :::80 v4v6/bind *:80/' /tmp/haproxy.cfg
+sed -i 's/bind :::443 v4v6/bind *:443/' /tmp/haproxy.cfg
+
+guestfish -a "$IMAGE_FILE" <<GFEOF2
+run
+mount /dev/sda2 /
+upload /tmp/haproxy.cfg /etc/haproxy/haproxy.cfg
+umount /
+GFEOF2
 ```
 
-The hook receives the qcow2 image path as `$1` and is called after the generic preparation completes.
+Common uses: fix service configs for QEMU, mask hardware-specific systemd units, remove X11 drivers that conflict with virtio-gpu.
+
+#### `hooks/post-boot.sh` -- Setup after SSH is ready
+
+Called after SSH is ready but before tests run. Use `ssh_cmd` to install packages, start services, or configure the guest.
+
+**Example** (FullPageOS -- start a virtual display and GUI):
+
+```bash
+#!/bin/bash
+export E2E_SSH_HOST="${1:-localhost}"
+export E2E_SSH_PORT="${2:-2222}"
+source /test/scripts/ssh-helpers.sh
+
+ssh_cmd "sudo apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y -qq xvfb x11-apps 2>&1 | tail -5"
+ssh_cmd "sudo nohup Xvfb :0 -screen 0 1280x720x24 -ac > /tmp/xvfb.log 2>&1 &"
+sleep 3
+ssh_cmd "sudo -u pi nohup bash -c 'export DISPLAY=:0; /opt/custompios/scripts/start_gui' \
+    > /tmp/start_gui.log 2>&1 &"
+```
+
+#### `hooks/screenshot.sh` -- Capture a screenshot after tests
+
+Called after all tests complete. Write screenshot files to `$ARTIFACTS_DIR`.
+
+Arguments: `$1` = host, `$2` = SSH port, `$3` = artifacts directory.
+
+### Step 4: Add the CI Workflow
+
+Use the reusable workflow from CustomPiOS instead of writing inline CI steps. Your distro workflow needs two jobs:
+
+1. **build** -- builds the image and uploads it as an artifact (your existing job)
+2. **e2e-test** -- calls the reusable workflow
+
+```yaml
+  e2e-test:
+    needs: build
+    uses: guysoft/CustomPiOS/.github/workflows/e2e-test.yml@devel
+    with:
+      image-artifact-name: mydistro-arm64
+      distro-name: MyDistro
+      timeout-minutes: 45
+```
+
+**Reusable workflow inputs:**
+
+| Input | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `image-artifact-name` | yes | -- | Name of the artifact from your build job |
+| `distro-name` | yes | -- | Shown in test output banner |
+| `docker-context` | no | `testing/` | Path to your Dockerfile directory |
+| `timeout-minutes` | no | `45` | Job timeout |
+| `poll-interval` | no | `5` | Seconds between exit-code checks |
+| `max-poll-iterations` | no | `360` | Max poll attempts |
+
+The reusable workflow handles: download artifact, `docker build`, `docker run`, poll for completion, collect logs, upload artifacts.
 
 ## Environment Variables
 
-Configure the test environment via Docker `-e` flags or in your workflow:
+Configure the test environment via Docker `-e` flags:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -149,132 +274,52 @@ Configure the test environment via Docker `-e` flags or in your workflow:
 | `QEMU_HTTP_PORT` | `8080` | Host port forwarded to guest HTTP (80) |
 | `QEMU_EXTRA_PORTS` | *(empty)* | Additional hostfwd entries, e.g. `hostfwd=tcp::5900-:5900` |
 | `QEMU_EXTRA_ARGS` | *(empty)* | Extra QEMU flags, e.g. `-device virtio-gpu-pci` |
-| `QEMU_MONITOR_SOCK` | `/tmp/qemu-monitor.sock` | Path to QEMU monitor socket for screendump |
+| `QEMU_MONITOR_SOCK` | `/tmp/qemu-monitor.sock` | Path to QEMU monitor socket |
 | `SSH_TIMEOUT` | `600` | Seconds to wait for SSH before giving up |
 | `ARTIFACTS_DIR` | *(empty)* | Directory to write test results, logs, screenshots |
 | `KEEP_ALIVE` | *(empty)* | If set, container stays alive after tests (for debugging) |
 
-## CI Integration (GitHub Actions)
+## Artifacts
 
-Add an `e2e-test` job to your workflow. The key steps are:
+The framework writes these files to `$ARTIFACTS_DIR`:
 
-1. Build the image (your existing build job)
-2. Download the built artifact
-3. Checkout CustomPiOS and copy `src/distro_testing/` into your Docker build context
-4. Build and run the test container
-
-```yaml
-  e2e-test:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Checkout CustomPiOS
-        uses: actions/checkout@v4
-        with:
-          repository: 'guysoft/CustomPiOS'
-          path: CustomPiOS
-
-      - name: Download image from build
-        uses: actions/download-artifact@v4
-        with:
-          name: build-image
-          path: image/
-
-      - name: Prepare testing context
-        run: |
-          mkdir -p testing/custompios
-          cp -r CustomPiOS/src/distro_testing/scripts testing/custompios/scripts
-          cp -r CustomPiOS/src/distro_testing/tests testing/custompios/tests
-
-      - name: Build test Docker image
-        run: DOCKER_BUILDKIT=0 docker build -t e2e-test ./testing/
-
-      - name: Start E2E test container
-        run: |
-          mkdir -p artifacts
-          IMG=$(find image/ -name '*.img' | head -1)
-          docker run -d --name e2e-test \
-            -v "$PWD/artifacts:/output" \
-            -v "$(realpath $IMG):/input/image.img:ro" \
-            -e ARTIFACTS_DIR=/output \
-            -e DISTRO_NAME="My Distro" \
-            -e KEEP_ALIVE=true \
-            e2e-test
-
-      - name: Wait for tests to complete
-        run: |
-          for i in $(seq 1 180); do
-            [ -f artifacts/exit-code ] && break
-            sleep 5
-          done
-          if [ ! -f artifacts/exit-code ]; then
-            echo "ERROR: Tests did not complete within 15 minutes"
-            docker logs e2e-test 2>&1 | tail -80
-            exit 1
-          fi
-          echo "Tests finished with exit code: $(cat artifacts/exit-code)"
-          cat artifacts/test-results.txt 2>/dev/null || true
-
-      - name: Collect logs
-        if: always()
-        run: |
-          docker logs e2e-test > artifacts/container.log 2>&1 || true
-          docker stop e2e-test 2>/dev/null || true
-
-      - name: Check test result
-        run: exit "$(cat artifacts/exit-code 2>/dev/null || echo 1)"
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: e2e-test-results
-          path: artifacts/
-```
-
-## QEMU Screenshots
-
-The entrypoint automatically attempts a QEMU monitor screendump after tests complete. For distros with a GUI (e.g. FullPageOS), add a virtual GPU:
-
-```yaml
-    -e QEMU_EXTRA_ARGS="-device virtio-gpu-pci"
-```
-
-The screenshot is captured via:
-```
-echo "screendump /tmp/screenshot.ppm" | socat - unix-connect:/tmp/qemu-monitor.sock
-```
-
-This is purely QEMU-internal -- no guest-side VNC or screenshot tools are needed. The resulting image is saved to `$ARTIFACTS_DIR/screenshot.png`.
-
-**Note:** The `-nographic` flag is always set for serial console output. The screendump captures the virtual GPU framebuffer, which is separate from the serial console. If no GPU device is added, the screendump will be empty or unavailable.
+| File | Content |
+|------|---------|
+| `exit-code` | `0` if all tests passed, `1` otherwise |
+| `test-results.txt` | `TEST_RESULT=0` or `TEST_RESULT=1` |
+| `qemu-boot.log` | QEMU serial console output |
+| `container.log` | Full Docker container stdout/stderr (added by CI) |
+| `qemu-screenshot.png` | QEMU monitor screendump (if a GPU device is present) |
+| *(distro files)* | Any files your tests or hooks write to `$ARTIFACTS_DIR` |
 
 ## Local Testing
 
 ### Run against a pre-built image
 
 ```bash
-# From your distro's repo root
-cd testing
+cd your-distro/testing
 
-# Copy the shared framework
-mkdir -p custompios
-cp -r /path/to/CustomPiOS/src/distro_testing/scripts custompios/scripts
-cp -r /path/to/CustomPiOS/src/distro_testing/tests custompios/tests
-
-# Build the Docker image
-DOCKER_BUILDKIT=0 docker build -t my-distro-e2e .
+# Build the test container (pulls shared scripts automatically)
+DOCKER_BUILDKIT=0 docker build -t my-e2e .
 
 # Run tests
 mkdir -p artifacts
 docker run --rm \
     -v "$PWD/artifacts:/output" \
-    -v "/path/to/my-distro.img:/input/image.img:ro" \
+    -v "/path/to/my-distro-arm64.img:/input/image.img:ro" \
     -e ARTIFACTS_DIR=/output \
     -e DISTRO_NAME="My Distro" \
-    my-distro-e2e
+    my-e2e
+```
+
+### Test against a CustomPiOS feature branch
+
+Override the `CUSTOMPIOS_TAG` build arg to use scripts from a different branch:
+
+```bash
+DOCKER_BUILDKIT=0 docker build \
+    --build-arg CUSTOMPIOS_TAG=feature-e2e \
+    -t my-e2e .
 ```
 
 ### Debug a failing test
@@ -287,15 +332,25 @@ docker run -d --name debug-test \
     -v "/path/to/image.img:/input/image.img:ro" \
     -e ARTIFACTS_DIR=/output \
     -e KEEP_ALIVE=true \
-    my-distro-e2e
+    my-e2e
 
 # Watch logs
 docker logs -f debug-test
 
-# SSH into the running guest (from inside the container)
+# SSH into the QEMU guest (from inside the container)
 docker exec -it debug-test sshpass -p raspberry ssh \
     -o StrictHostKeyChecking=no -p 2222 pi@localhost
 
 # Check QEMU serial log
 docker exec -it debug-test cat /tmp/qemu-serial.log
 ```
+
+## QEMU Screenshots
+
+The entrypoint attempts a QEMU monitor screendump after tests complete. For distros with a GUI, add a virtual GPU:
+
+```yaml
+    -e QEMU_EXTRA_ARGS="-device virtio-gpu-pci"
+```
+
+The screendump captures the virtual GPU framebuffer via the QEMU monitor socket. If no GPU device is added, the screendump will be empty. For richer screenshots (e.g. browser UI), use a `hooks/screenshot.sh` that captures from inside the guest (headless Chrome, xwd, etc.).
