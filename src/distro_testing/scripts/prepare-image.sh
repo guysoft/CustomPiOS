@@ -71,17 +71,20 @@ chmod 0644 /etc/ssh/ssh_host_ecdsa_key.pub
 chmod 0644 /etc/ssh/ssh_host_ed25519_key.pub
 
 download /etc/shadow /tmp/shadow.bak
+download /etc/passwd /tmp/passwd.bak
 
 umount /
 GFEOF
 
-echo 'Setting pi user password...'
+echo 'Setting pi user password and shell...'
 sed -i "s|^pi:[^:]*:|pi:${PIPASS}:|" /tmp/shadow.bak
+sed -i 's|^pi:\(.*\):/usr/sbin/nologin$|pi:\1:/bin/bash|' /tmp/passwd.bak
 
 guestfish -a "$OUTPUT_IMAGE" <<GFEOF2
 run
 mount /dev/sda2 /
 upload /tmp/shadow.bak /etc/shadow
+upload /tmp/passwd.bak /etc/passwd
 umount /
 GFEOF2
 
