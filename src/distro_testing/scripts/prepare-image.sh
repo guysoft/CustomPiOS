@@ -23,6 +23,13 @@ write /etc/fstab "proc /proc proc defaults 0 0\n/dev/vda1 /boot/firmware vfat de
 -rm /etc/systemd/system/multi-user.target.wants/userconfig.service
 -rm /usr/lib/systemd/system/userconfig.service
 
+# userconfig.service is what normally drops /etc/sudoers.d/010_pi-nopasswd.
+# Since we remove it, seed the file ourselves so test scripts (post-boot hooks,
+# apt-get installs, etc.) can use passwordless sudo over a non-TTY SSH session.
+mkdir-p /etc/sudoers.d
+write /etc/sudoers.d/010_pi-nopasswd "pi ALL=(ALL) NOPASSWD: ALL\n"
+chmod 0440 /etc/sudoers.d/010_pi-nopasswd
+
 mkdir-p /etc/ssh/sshd_config.d
 write /etc/ssh/sshd_config.d/99-qemu-test.conf "PasswordAuthentication yes\nPermitRootLogin yes\nKbdInteractiveAuthentication yes\n"
 
