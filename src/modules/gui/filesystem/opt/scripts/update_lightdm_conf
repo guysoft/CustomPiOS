@@ -1,6 +1,39 @@
 #!/bin/bash
+set -e
+
+LIGHTDM_CONF=/etc/lightdm/lightdm.conf
+TTY1_AUTOLOGIN_CONF=/etc/systemd/system/getty@tty1.service.d/autologin.conf
+
+set_lightdm_option() {
+    local key="$1"
+    local value="$2"
+
+    if grep -Eq "^#?${key}=" "${LIGHTDM_CONF}"; then
+        sed -i -E "s|^#?${key}=.*|${key}=${value}|" "${LIGHTDM_CONF}"
+    else
+        printf '%s=%s\n' "${key}" "${value}" >> "${LIGHTDM_CONF}"
+    fi
+}
+
 if [ ! -f /etc/updated_lightdm_conf ]; then
-    sed -i 's/UID_1000_PLACEHOLDER/'$(id -nu 1000)'/g' /etc/lightdm/lightdm.conf
+    gui_user="$(id -nu 1000)"
+
+    sed -i "s/UID_1000_PLACEHOLDER/${gui_user}/g" "${LIGHTDM_CONF}"
+
+    # raspi-config do_autologin uses a bitmask: 1=TTY, 2=GUI, 3=both.
+    # FullPageOS needs GUI autologin without opening a local tty shell.
+    if ! SUDO_USER="${gui_user}" raspi-config nonint do_autologin 2; then
+        rm -f "${TTY1_AUTOLOGIN_CONF}"
+        rmdir --ignore-fail-on-non-empty "$(dirname "${TTY1_AUTOLOGIN_CONF}")" 2>/dev/null || true
+        set_lightdm_option autologin-user "${gui_user}"
+    fi
+
+    set_lightdm_option user-session guisession
+    set_lightdm_option autologin-session guisession
+    set_lightdm_option autologin-user "${gui_user}"
+
+    systemctl daemon-reload || true
+    systemctl try-restart getty@tty1.service || true
+
     touch /etc/updated_lightdm_conf
-    # sudo shutdown -r now
 fi
