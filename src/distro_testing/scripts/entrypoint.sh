@@ -63,10 +63,32 @@ if [ "$SSH_WAIT_RC" -ne 0 ]; then
     exit 1
 fi
 
+# Run distro-specific boot-state checks before post-boot hooks mutate the image
+if [ -x /test/hooks/post-ssh.sh ]; then
+    echo ""
+    echo "--- Step 3b: Post-SSH checks ---"
+    set +e
+    if [ -n "$ARTIFACTS_DIR" ]; then
+        /test/hooks/post-ssh.sh localhost "$SSH_PORT" "$ARTIFACTS_DIR"
+    else
+        /test/hooks/post-ssh.sh localhost "$SSH_PORT"
+    fi
+    POST_SSH_RC=$?
+    set -e
+    if [ "$POST_SSH_RC" -ne 0 ]; then
+        echo "Post-SSH hook failed"
+        if [ -n "$ARTIFACTS_DIR" ]; then
+            cp "$LOG_FILE" "$ARTIFACTS_DIR/qemu-boot.log" 2>/dev/null || true
+            echo "$POST_SSH_RC" > "$ARTIFACTS_DIR/exit-code"
+        fi
+        exit "$POST_SSH_RC"
+    fi
+fi
+
 # Run distro-specific post-boot setup (e.g. install packages, restart services)
 if [ -x /test/hooks/post-boot.sh ]; then
     echo ""
-    echo "--- Step 3b: Post-boot setup ---"
+    echo "--- Step 3c: Post-boot setup ---"
     /test/hooks/post-boot.sh localhost "$SSH_PORT" || echo "WARNING: post-boot hook failed"
 fi
 
