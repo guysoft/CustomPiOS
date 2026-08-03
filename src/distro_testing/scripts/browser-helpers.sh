@@ -3,7 +3,7 @@
 # Source this file: source /test/scripts/browser-helpers.sh
 #
 # Provides:
-#   find_headless_browser        - locate a usable Chrome/Chromium binary
+#   find_headless_browser        - locate a usable Firefox/Chrome/Chromium binary
 #   headless_screenshot URL OUT  - capture a screenshot, optionally retrying
 #                                  until tesseract finds a regex in the page
 #
@@ -11,14 +11,17 @@
 # in the QEMU guest) and assume `timeout` is available. Tesseract and
 # dbus-run-session are optional but used when present.
 
-# Locate a real Chrome/Chromium binary; skip snap stubs because they
-# can't write screenshots to /tmp under confinement.
+# Locate a real Firefox/Chrome/Chromium binary; skip snap stubs because they
+# can't write screenshots to /tmp under confinement. Firefox is preferred
+# because its --screenshot CLI is stable across releases (ESR pins a major
+# version for ~12 months), avoiding Chrome 147+ --headless --screenshot
+# regressions in CI containers. Chrome/Chromium remain as fallback.
 # On success: sets BROWSER_PATH, prints the path, returns 0.
 # On failure: returns 1 and BROWSER_PATH is empty.
 find_headless_browser() {
     BROWSER_PATH=""
     local b path
-    for b in google-chrome-stable chromium chromium-browser; do
+    for b in firefox-esr firefox google-chrome-stable chromium chromium-browser; do
         path=$(command -v "$b" 2>/dev/null || true)
         [ -n "$path" ] || continue
         if "$path" --version 2>&1 | grep -qi "snap"; then
@@ -31,13 +34,14 @@ find_headless_browser() {
     return 1
 }
 
-# Capture a headless-Chrome screenshot of $1 to $2.
+# Capture a headless screenshot of $1 to $2.
 #
 # Usage:
 #   headless_screenshot <url> <output_png> [ocr_pattern] [attempts] [sleep_secs]
 #
 # Behavior:
 #   - Picks a browser via find_headless_browser if BROWSER_PATH is unset.
+#     Firefox is preferred; Chrome/Chromium are used as fallback.
 #   - Each attempt times out after 60s. If no image is produced, or the file
 #     is <= 10 KiB (typically a blank page), the attempt is rejected.
 #   - When ocr_pattern is given AND `tesseract` is installed, the captured
@@ -74,15 +78,28 @@ headless_screenshot() {
     local matched=0
     local attempt size
 
+    local is_firefox=0
+    case "$(basename "${BROWSER_PATH:-}")" in
+        firefox|firefox-esr) is_firefox=1 ;;
+    esac
+
     for attempt in $(seq 1 "$attempts"); do
         rm -f "$tmp_png"
-        timeout 60 $dbus_prefix "$BROWSER_PATH" --headless --no-sandbox --disable-gpu \
-            --disable-dev-shm-usage --disable-setuid-sandbox \
-            --disable-software-rasterizer --hide-scrollbars \
-            --virtual-time-budget=30000 \
-            --screenshot="$tmp_png" \
-            --window-size=1280,720 \
-            "$url" >/dev/null 2>&1 || true
+        if [ "$is_firefox" -eq 1 ]; then
+            # Firefox: --screenshot implies headless; --no-remote avoids
+            # profile clashes. The path is a separate arg (not --screenshot=).
+            timeout 60 $dbus_prefix "$BROWSER_PATH" --headless --no-remote \
+                --screenshot "$tmp_png" --window-size=1280,720 \
+                "$url" >/dev/null 2>&1 || true
+        else
+            timeout 60 $dbus_prefix "$BROWSER_PATH" --headless --no-sandbox --disable-gpu \
+                --disable-dev-shm-usage --disable-setuid-sandbox \
+                --disable-software-rasterizer --hide-scrollbars \
+                --virtual-time-budget=30000 \
+                --screenshot="$tmp_png" \
+                --window-size=1280,720 \
+                "$url" >/dev/null 2>&1 || true
+        fi
 
         if [ ! -f "$tmp_png" ]; then
             echo "  headless_screenshot: attempt $attempt: no image produced"
