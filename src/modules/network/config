@@ -17,3 +17,6 @@
 
 # Enable Network Manager boot folder support (bookworm)
 [ -n "$NETWORK_NETWORK_MANAGER" ] || NETWORK_NETWORK_MANAGER=yes
+
+# Enable/Disable rc.local/NTP quirks code
+[ -n "$NETWORK_ENABLE_NTP_QUIRKS" ] || NETWORK_ENABLE_NTP_QUIRKS=no
