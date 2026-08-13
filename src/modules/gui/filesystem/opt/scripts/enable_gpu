@@ -1,10 +1,17 @@
 #!/bin/bash
 if [ ! -f /etc/gpu_enabled ]; then
+    check="$(cat /proc/cpuinfo | grep 'Revision' | awk '{print $3}' | sed -e 's/[a-c]//')"
+    model_id=$((0x${check} & 0xffff))
+    if [ "$model_id" -ge 0x0040 ] 2>/dev/null; then
+        echo "enable_gpu: Pi 4+ or newer model detected, skipping GPU acceleration script"
+        touch /etc/gpu_enabled
+        exit 0
+    fi
+    echo "enable_gpu: Pi 3 or older detected, enabling GPU acceleration"
     sudo sed 's@matchbox-window-manager \&@compton -b -d :0 --backend glx --unredir-if-possible --glx-swap-method buffer-age --glx-no-stencil --paint-on-overlay --vsync opengl \nmatchbox-window-manager \&@g' -i /opt/custompios/scripts/scripts/start_gui
     sudo sed -i /boot/firmware/cmdline.txt -e "s/ quiet//"
     sudo sed -i /boot/firmware/cmdline.txt -e "s/ splash//"
     sudo sed -i /boot/firmware/cmdline.txt -e "s/ plymouth.ignore-serial-consoles//"
-    check="$(sudo cat /proc/cpuinfo | grep 'Revision' | awk '{print $3}' | sed -e 's/[a-c]//')"
     if [ "${check}" != "03111" ] && [ "${check}" != "03112" ]; then
         sudo sed -i /boot/firmware/config.txt -e "s/^\#dtoverlay=vc4-kms-v3d/dtoverlay=vc4-kms-v3d/"
         printf "dtoverlay=vc4-kms-v3d\n" | sudo tee -a /boot/firmware/config.txt
