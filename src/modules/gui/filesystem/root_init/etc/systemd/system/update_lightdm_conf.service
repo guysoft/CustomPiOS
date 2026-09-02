@@ -1,6 +1,12 @@
 [Unit]
 Description=on first boot set up the user name auto login in lightdm.service
 Before=lightdm.service
+# Run after the userconf-pi first-boot dialog: cancel-rename (inside
+# userconfig.service) applies do_boot_behaviour B3/B4 which re-creates the
+# getty@tty1 autologin drop-in and re-enables getty@tty1. If we run before
+# it, our cleanup is silently undone (GUI distros end up with a TTY
+# autologin shell - https://github.com/guysoft/FullPageOS/issues/639).
+After=userconfig.service
 [Service]
 ExecStart=/opt/custompios/scripts/update_lightdm_conf
 Type=oneshot
