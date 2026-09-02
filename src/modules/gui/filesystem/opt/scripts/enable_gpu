@@ -3,8 +3,14 @@ if [ ! -f /etc/gpu_enabled ]; then
     check="$(cat /proc/cpuinfo | grep 'Revision' | awk '{print $3}' | sed -e 's/[a-c]//')"
     model_id=$((0x${check} & 0xffff))
     if [ "$model_id" -ge 0x0040 ] 2>/dev/null; then
-        echo "enable_gpu: Pi 4+ or newer model detected, skipping GPU acceleration script"
-        touch /etc/gpu_enabled
+        reason="vc4/KMS acceleration is already provided by Raspberry Pi OS; legacy GPU setup skipped"
+        echo "enable_gpu: Pi 4+ or newer model detected; $reason"
+        {
+            printf 'status=already-enabled\n'
+            printf 'reason=%s\n' "$reason"
+            printf 'revision=%s\n' "$check"
+            printf 'model_id=0x%04x\n' "$model_id"
+        } | sudo tee /etc/gpu_enabled >/dev/null
         exit 0
     fi
     echo "enable_gpu: Pi 3 or older detected, enabling GPU acceleration"
