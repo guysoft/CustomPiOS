@@ -16,16 +16,26 @@ set_lightdm_option() {
 }
 
 if [ ! -f /etc/updated_lightdm_conf ]; then
-    gui_user="$(id -nu 1000)"
+    # uid 1000 may not exist yet if userconf-pi has not processed userconf.txt
+    # yet (first boot ordering); fall back to the placeholder name.
+    gui_user="$(id -nu 1000 2>/dev/null || true)"
+    if [ -z "${gui_user}" ]; then
+        gui_user="pi"
+    fi
 
     sed -i "s/UID_1000_PLACEHOLDER/${gui_user}/g" "${LIGHTDM_CONF}"
 
     # raspi-config do_autologin uses a bitmask: 1=TTY, 2=GUI, 3=both.
+    # (Older raspi-config versions without the bitmask return non-zero here,
+    # and we apply the GUI autologin manually below.)
     # FullPageOS needs GUI autologin without opening a local tty shell.
-    if ! SUDO_USER="${gui_user}" raspi-config nonint do_autologin 2; then
-        rm -f "${TTY1_AUTOLOGIN_CONF}"
-        rmdir --ignore-fail-on-non-empty "$(dirname "${TTY1_AUTOLOGIN_CONF}")" 2>/dev/null || true
-        set_lightdm_option autologin-user "${gui_user}"
+    # cancel-rename (userconf-pi) may have re-created the TTY autologin
+    # drop-in via do_boot_behaviour B3/B4 right before us (we are ordered
+    # After=userconfig.service), so always clean it up here.
+    rm -f "${TTY1_AUTOLOGIN_CONF}"
+    rmdir --ignore-fail-on-non-empty "$(dirname "${TTY1_AUTOLOGIN_CONF}")" 2>/dev/null || true
+    if SUDO_USER="${gui_user}" raspi-config nonint do_autologin 2 2>/dev/null; then
+        : # newer raspi-config: bitmask 2 = GUI-only autologin, TTY drop-in removed by raspi-config
     fi
 
     set_lightdm_option user-session guisession
