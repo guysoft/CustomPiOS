@@ -55,6 +55,9 @@ fi
 # The wizard is not reachable headlessly (no HDMI/KVM on the test jig), so mark
 # first boot as done and commit a real machine-id here.
 if [ ! -s /etc/machine-id ] || [ "$(cat /etc/machine-id)" = "uninitialized" ]; then
+    # The placeholder is read-only; systemd-machine-id-setup refuses to
+    # overwrite it, so remove it first.
+    rm -f /etc/machine-id
     if command -v systemd-machine-id-setup >/dev/null 2>&1; then
         systemd-machine-id-setup
     else
