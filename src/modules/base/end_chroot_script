@@ -49,24 +49,6 @@ else
   fi
 fi
 
-# Prevent systemd-firstboot (First Boot Wizard) from blocking first boot:
-# /etc/machine-id is "uninitialized" in a fresh image, which makes systemd
-# detect first boot and prompt for locale/keymap/timezone/root password on tty1.
-# The wizard is not reachable headlessly (no HDMI/KVM on the test jig), so mark
-# first boot as done and commit a real machine-id here.
-if [ ! -s /etc/machine-id ] || [ "$(cat /etc/machine-id)" = "uninitialized" ]; then
-    # The placeholder is read-only; systemd-machine-id-setup refuses to
-    # overwrite it, so remove it first.
-    rm -f /etc/machine-id
-    if command -v systemd-machine-id-setup >/dev/null 2>&1; then
-        systemd-machine-id-setup
-    else
-        : > /etc/machine-id
-    fi
-fi
-mkdir -p /var/lib/systemd
-touch /var/lib/systemd/first-boot-done
-
 #cleanup
 if [ "${BASE_APT_CLEAN}" = "yes" ]; then
     apt-get clean
