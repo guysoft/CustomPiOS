@@ -34,6 +34,12 @@ fi
 echo "$BASE_OVERRIDE_HOSTNAME" > /etc/hostname
 sed -i -e "s@${FILE_HOST_NAME}@$BASE_OVERRIDE_HOSTNAME@g" /etc/hosts
 
+# Raspberry Pi OS's systemd-firstboot wizard blocks headless GUI images on
+# tty1. Mask only that wizard; keep the image in first-boot state so
+# ConditionFirstBoot services (notably SSH host-key generation) still run.
+mkdir -p /etc/systemd/system
+ln -sf /dev/null /etc/systemd/system/systemd-firstboot.service
+
 if [ "${BASE_DISTRO}" == "ubuntu" ];then
     echo "127.0.0.1 ${BASE_OVERRIDE_HOSTNAME}" > /etc/hosts
 fi
