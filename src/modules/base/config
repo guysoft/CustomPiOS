@@ -111,6 +111,12 @@ fi
 #Keyboard
 [ -n "$BASE_CONFIG_KEYBOARD" ] || BASE_CONFIG_KEYBOARD=default
 
+# Guarantee headless first boot: seed every systemd-firstboot prompt
+# (locale, keymap, timezone, root password credential) at build time so
+# the wizard never blocks sysinit.target waiting for console input.
+# Set to "no" to keep the interactive first-boot wizard.
+[ -n "$BASE_FIRSTBOOT_NONINTERACTIVE" ] || BASE_FIRSTBOOT_NONINTERACTIVE=yes
+
 # Arch for now either armv7l, arm64 or aarch64
 [ -n "$BASE_ARCH" ] || BASE_ARCH=armv7l
 
