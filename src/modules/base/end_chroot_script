@@ -34,6 +34,24 @@ fi
 echo "$BASE_OVERRIDE_HOSTNAME" > /etc/hostname
 sed -i -e "s@${FILE_HOST_NAME}@$BASE_OVERRIDE_HOSTNAME@g" /etc/hosts
 
+# Headless first boot: systemd-firstboot.service runs its wizard with
+# StandardOutput/Error=tty and prompts on /dev/console. On Raspberry Pi 5
+# (kernel 6.12.47) the wizard child opening /dev/console deadlocks the boot:
+# sysinit.target stalls (SSH/LightDM never start) and every console writer
+# blocks — the whole boot looks frozen. Reproduced on hardware; the same image
+# completes first boot in QEMU. Verified fix: run the wizard with stdio
+# detached from the console. Prompts then read EOF and the wizard exits
+# immediately (verified: exit 0), the unit still runs (machine-id handling,
+# credentials, first-boot-complete.target all preserved — nothing masked).
+# Set BASE_FIRSTBOOT_NONINTERACTIVE=no to keep console stdio for distros
+# that attach a display/keyboard.
+if [ "${BASE_FIRSTBOOT_NONINTERACTIVE}" != "no" ]; then
+    echo "firstboot: detaching systemd-firstboot stdio from console (headless fix)"
+    mkdir -p /etc/systemd/system/systemd-firstboot.service.d
+    printf '[Service]\nStandardInput=null\nStandardOutput=null\nStandardError=null\n' \
+        > /etc/systemd/system/systemd-firstboot.service.d/headless.conf
+fi
+
 if [ "${BASE_DISTRO}" == "ubuntu" ];then
     echo "127.0.0.1 ${BASE_OVERRIDE_HOSTNAME}" > /etc/hosts
 fi
