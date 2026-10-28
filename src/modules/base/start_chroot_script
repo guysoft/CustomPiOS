@@ -165,6 +165,12 @@ then
     if [ "$BASE_BOARD" == "debian_lepotato" ]; then
          apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9165938D90FDDD2E
     fi
+  fi
+  # Install openssh-server for every base distro. Raspberry Pi OS trixie lite
+  # images no longer ship sshd, so touching /boot/ssh alone leaves
+  # sshswitch with nothing to enable -> a flashed image with no SSH at all
+  # (blocks headless debugging and hardware E2E).
+  if ! dpkg -s openssh-server >/dev/null 2>&1; then
     apt_update_skip
     apt-get install -y openssh-server
   fi
