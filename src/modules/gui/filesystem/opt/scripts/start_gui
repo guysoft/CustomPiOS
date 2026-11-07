@@ -18,6 +18,11 @@ then
   xset s noblank     # don't blank the video device
 fi
 
+# Start the optional compositor.
+if [ "GUI_ACCELERATION_PLACEHOLDER" == "yes" ]; then
+  /opt/custompios/scripts/enable_gpu --session
+fi
+
 matchbox-window-manager &
 
 GUI_SESSION_PLACEHOLDER

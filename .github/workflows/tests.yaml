@@ -3,7 +3,7 @@ name: Run Tests via Makefile
 on:
   push:
     branches:
-      - "*"
+      - "**"
     tags:
       - "*"
 
@@ -14,6 +14,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Test GPU session selection and board swaps
+        run: uv run --no-project --with pytest python -m pytest tests/test_gui_gpu.py -q
 
       # - name: Install dependencies
       #   run: |
