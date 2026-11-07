@@ -35,8 +35,6 @@ if [ "$GUI_INCLUDE_ACCELERATION" == "yes" ]
             mv /usr/share/X11/xorg.conf.d/99-fbturbo.conf /usr/share/X11/xorg.conf.d/99-fbturbo.~
         fi
         
-        systemctl enable enable_gpu_first_boot.service
-        
     else
         echo "gpu_mem=128" >> /"${BASE_BOOT_MOUNT_PATH}"/config.txt
 fi
