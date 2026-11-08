@@ -52,7 +52,7 @@ Developing
 Requirements
 ~~~~~~~~~~~~
 
-#. `qemu-arm-static <http://packages.debian.org/sid/qemu-user-static>`_ or gentoo qemu with static USE
+#. Static QEMU user emulators: ``qemu-user-binfmt`` + ``qemu-user`` on newer Debian/Ubuntu, ``qemu-user-static`` on older releases, or Gentoo qemu with static USE
 #. Downloaded `Raspbian <http://www.raspbian.org/>`_ image.
 #. root privileges for chroot
 #. Bash

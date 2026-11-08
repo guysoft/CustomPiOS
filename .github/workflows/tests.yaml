@@ -17,8 +17,8 @@ jobs:
 
       - uses: astral-sh/setup-uv@v6
 
-      - name: Test GPU session selection and board swaps
-        run: uv run --no-project --with pytest python -m pytest tests/test_gui_gpu.py -q
+      - name: Test GPU sessions and QEMU binary selection
+        run: uv run --no-project --with pytest python -m pytest tests/test_gui_gpu.py tests/test_qemu_binary.py -q
 
       # - name: Install dependencies
       #   run: |

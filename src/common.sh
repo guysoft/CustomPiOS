@@ -596,6 +596,24 @@ function load_module_config() {
   done
 }
 
+function copy_qemu_static() {
+    local arch="$1"
+    local binary
+
+    if ! binary="$(which "qemu-${arch}-static")"; then
+        # New Debian/Ubuntu qemu-user packages omit the -static suffix.
+        if ! binary="$(which "qemu-${arch}")"; then
+            echo "Error: install a static qemu-${arch} emulator" >&2
+            return 1
+        fi
+        if ! file -L "$binary" | grep -Eq 'statically linked|static-pie linked'; then
+            echo "Error: $binary is not a static QEMU binary" >&2
+            return 1
+        fi
+    fi
+    cp "$binary" "usr/bin/qemu-${arch}-static"
+}
+
 function setup_qemu_static() {
     # Copy the correct qemu-*-static binary into the chroot, if needed.
     # Usage: setup_qemu_static host_arch target_arch
@@ -614,7 +632,7 @@ function setup_qemu_static() {
                 ROOT="$(realpath .)" emerge --usepkgonly --oneshot --nodeps qemu
             else
                 if [[ "$target_arch" != "$host_arch" ]]; then
-                    cp "$(which qemu-arm-static)" usr/bin/qemu-arm-static
+                    copy_qemu_static arm
                 fi
             fi
         elif [[ "$target_arch" == "aarch64" ]] || [[ "$target_arch" == "arm64" ]]; then
@@ -622,13 +640,13 @@ function setup_qemu_static() {
                 ROOT="$(realpath .)" emerge --usepkgonly --oneshot --nodeps qemu
             else
                 if [[ "$target_arch" != "$host_arch" ]]; then
-                    cp "$(which qemu-aarch64-static)" usr/bin/qemu-aarch64-static
+                    copy_qemu_static aarch64
                 fi
             fi
         fi
     elif [[ ( "$target_arch" == "armv7l" || "$target_arch" == "armhf" ) && "$host_arch" != "armv7l" ]]; then
         # aarch64 host building armv7l/armhf: need 32-bit ARM emulation
-        cp "$(which qemu-arm-static)" usr/bin/qemu-arm-static
+        copy_qemu_static arm
     fi
     # Otherwise: same arch or armv7l host -- no QEMU needed
 }
@@ -653,7 +671,7 @@ function chroot_correct_qemu() {
     chmod 755 common.sh
 
     # Set up QEMU if needed
-    setup_qemu_static "$host_arch" "$target_arch"
+    setup_qemu_static "$host_arch" "$target_arch" || return
 
     # Execute chroot with appropriate QEMU setup
     if [[ "$host_arch" != "armv7l" ]] && [[ "$host_arch" != "aarch64" ]] && [[ "$host_arch" != "arm64" ]]; then
