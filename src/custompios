@@ -164,6 +164,7 @@ pushd "${BASE_WORKSPACE}"
     fi
     echo $ARMBIAN_CONFIG_TXT_FILE
     # if you need anything from common running in execute_chroot_script, export it here
+    export -f copy_qemu_static
     export -f setup_qemu_static
     export -f chroot_correct_qemu
     export -f execute_chroot_script
