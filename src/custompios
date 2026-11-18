@@ -30,13 +30,39 @@ function execute_chroot_script() {
   fi
 
   #black magic of qemu-arm-static
-  setup_qemu_static "$(uname -m)" "$BASE_ARCH"
-  
+  local force_qemu=0
+  if qemu_cpu_requested "$BASE_ARCH"; then
+    force_qemu=1
+  fi
+  setup_qemu_static "$(uname -m)" "$BASE_ARCH" "$force_qemu"
+
   cp $2 chroot_script
   chmod 755 chroot_script
   cp "${CUSTOM_PI_OS_PATH}"/common.sh common.sh
   chmod 755 common.sh
+
+  # sudo resets the environment, so a command the chroot runs through sudo
+  # would lose QEMU_CPU and fall back to qemu's default CPU. Keep it for the
+  # duration of the build.
+  local qemu_cpu_sudoers=
+  if [[ -n "${BASE_QEMU_CPU:-}" ]]
+  then
+    if [[ -d etc/sudoers.d ]]
+    then
+      qemu_cpu_sudoers=etc/sudoers.d/99-custompios-qemu-cpu
+      echo 'Defaults env_keep += "QEMU_CPU"' > "${qemu_cpu_sudoers}"
+      chmod 440 "${qemu_cpu_sudoers}"
+    else
+      echo "Warning: no etc/sudoers.d in the image, sudo will drop QEMU_CPU" >&2
+    fi
+  fi
+
   chroot_correct_qemu "$(uname -m)" "$BASE_ARCH" "$2" "${CUSTOM_PI_OS_PATH}"
+
+  if [[ -n "$qemu_cpu_sudoers" ]]
+  then
+    rm -f "$qemu_cpu_sudoers"
+  fi
   
   # Handle exported items
   if [ -d "custompios_export" ]; then
@@ -166,6 +192,8 @@ pushd "${BASE_WORKSPACE}"
     # if you need anything from common running in execute_chroot_script, export it here
     export -f copy_qemu_static
     export -f setup_qemu_static
+    export -f qemu_cpu_requested
+    export -f chroot_with_qemu
     export -f chroot_correct_qemu
     export -f execute_chroot_script
     bash -x "${CHROOT_SCRIPT}"

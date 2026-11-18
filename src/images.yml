@@ -4,6 +4,12 @@ images:
       type: rpi
       env:
         BASE_ARCH: armhf
+    raspberrypiarmv6:
+      description: "Official raspberrypi lite 32bit image, built for ARMv6 boards"
+      type: rpi
+      env:
+        BASE_ARCH: armhf
+        BASE_QEMU_CPU: arm1176
     raspberrypiarm64:
       description: "Official raspberrypi lite 64bit image"
       type: rpi

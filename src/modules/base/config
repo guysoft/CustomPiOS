@@ -12,11 +12,15 @@ BASE_VERSION=2.1.0
 [ -n "$BASE_BOARD" ] || BASE_BOARD="raspberrypiarmhf"
 [ -n "$BASE_OS" ] || BASE_OS="debian_bookworm"
 
+# Optional QEMU CPU model for images that target a specific ARM core, e.g.
+# arm1176 for the Raspberry Pi 1 / Zero. Empty keeps qemu's default CPU.
+[ -n "$BASE_QEMU_CPU" ] || BASE_QEMU_CPU=
+
 # TODO: UNIFY AND MAKE A SINGLE IMAGE FLOW, ATM THERE IS THE OLD AND NEW FLOW TOGETHER, UBUTU CAN GO IN ITS OWN
 
 echo "GOT BASE BOARD $BASE_BOARD"
 #[ -n "$BASE_SCRIPT_PATH" ] || BASE_SCRIPT_PATH=$CONFIG_DIR
-if [ "${BASE_BOARD}" == "raspberrypiarmhf" ]; then
+if [ "${BASE_BOARD}" == "raspberrypiarmhf" ] || [ "${BASE_BOARD}" == "raspberrypiarmv6" ]; then
     [ -n "$BASE_IMAGE_PATH" ] || BASE_IMAGE_PATH=${DIST_PATH}/image
 else
     [ -n "$BASE_IMAGE_PATH" ] || BASE_IMAGE_PATH=${DIST_PATH}/image-"${BASE_BOARD}"
