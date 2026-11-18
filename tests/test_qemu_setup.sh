@@ -21,7 +21,7 @@ setup_mocks() {
     chmod() { echo "Setting permissions $1 on $2"; }
     export -f chmod
 
-    chroot() { echo "Executing chroot with: $@"; }
+    chroot() { echo "Executing chroot (QEMU_CPU=${QEMU_CPU:-unset}) with: $@"; }
     export -f chroot
 
     grep() { 
@@ -190,6 +190,92 @@ run_copy_test_case() {
     fi
 }
 
+# CPU targeting tests: an image may request a specific ARM core (BASE_QEMU_CPU)
+declare -A cpu_test_matrix=(
+    # host:target:cpu -> every |-separated pattern must appear in the output
+    ["x86_64:armhf:arm1176"]="Emulating arm1176 CPU|QEMU_CPU=arm1176"
+    ["x86_64:armv7l:arm1176"]="Emulating arm1176 CPU|QEMU_CPU=arm1176"
+    ["armv7l:armhf:arm1176"]="Emulating arm1176 CPU|QEMU_CPU=arm1176"
+    ["aarch64:armhf:arm1176"]="Emulating arm1176 CPU|QEMU_CPU=arm1176"
+
+    # no CPU requested: behaviour is unchanged
+    ["armv7l:armhf:"]="not using qemu"
+    ["x86_64:armhf:"]="normal non-arm qemu"
+    ["x86_64:aarch64:"]="aarch64"
+)
+
+# Run a single CPU targeting test case
+run_cpu_test_case() {
+    local host="$1"
+    local target="$2"
+    local cpu="$3"
+    local key="${host}:${target}:${cpu}"
+    local expected_patterns="${cpu_test_matrix[$key]}"
+
+    print_test_header "CPU Target Test"
+    echo "Parameters:"
+    echo "  Host Architecture: $host"
+    echo "  Target Architecture: $target"
+    echo "  Requested CPU: ${cpu:-default}"
+    echo "  Expected Patterns: $expected_patterns"
+
+    local output
+    MOCK_OS=ubuntu
+    output=$(BASE_QEMU_CPU="$cpu" chroot_correct_qemu "$host" "$target" 2>&1)
+    local is_passed=true
+    local pattern
+
+    IFS='|' read -ra pattern_list <<< "$expected_patterns"
+    for pattern in "${pattern_list[@]}"; do
+        if [[ ! "$output" =~ $pattern ]]; then
+            is_passed=false
+        fi
+    done
+
+    echo -e "${BLUE}Command Output:${NC}"
+    echo "$output"
+
+    print_test_result "CPU Target Test ($key)" "$is_passed" "$output" "$expected_patterns"
+
+    if $is_passed; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Copy tests with an explicitly requested CPU model
+run_forced_copy_test_case() {
+    local host="$1"
+    local target="$2"
+    local test_name="Forced QEMU Copy Test"
+
+    print_test_header "$test_name"
+    echo "Parameters:"
+    echo "  Host Architecture: $host"
+    echo "  Target Architecture: $target"
+
+    local output
+    MOCK_OS=ubuntu
+    output=$(BASE_QEMU_CPU=arm1176 setup_qemu_static "$host" "$target" 1 2>&1)
+    local expected="Copying /usr/bin/qemu-arm-static to usr/bin/qemu-arm-static"
+    local is_passed=false
+
+    if [[ "$output" =~ $expected ]]; then
+        is_passed=true
+    fi
+
+    echo -e "${BLUE}Command Output:${NC}"
+    echo "${output:-(empty)}"
+    print_test_result "$test_name" "$is_passed" "$output" "$expected"
+
+    if $is_passed; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Run a single test case (for chroot_correct_qemu)
 run_test_case() {
     local host="$1"
@@ -304,6 +390,32 @@ run_tests() {
             ((tests_passed++))
         else
             failed_tests+=("$key")
+        fi
+    done
+
+    # Run CPU targeting tests (BASE_QEMU_CPU)
+    echo -e "${BLUE}Running CPU Target Tests (BASE_QEMU_CPU)${NC}"
+    for key in "${!cpu_test_matrix[@]}"; do
+        IFS=':' read -r host target cpu <<< "$key"
+        ((test_count++))
+
+        if run_cpu_test_case "$host" "$target" "$cpu"; then
+            ((tests_passed++))
+        else
+            failed_tests+=("cpu:$key")
+        fi
+    done
+
+    # Run forced copy tests (explicit CPU on a native ARM host)
+    echo -e "${BLUE}Running Forced QEMU Copy Tests${NC}"
+    for key in "armv7l:armhf" "x86_64:armhf"; do
+        IFS=':' read -r host target <<< "$key"
+        ((test_count++))
+
+        if run_forced_copy_test_case "$host" "$target"; then
+            ((tests_passed++))
+        else
+            failed_tests+=("forced-copy:$key")
         fi
     done
 

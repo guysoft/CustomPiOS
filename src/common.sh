@@ -616,9 +616,12 @@ function copy_qemu_static() {
 
 function setup_qemu_static() {
     # Copy the correct qemu-*-static binary into the chroot, if needed.
-    # Usage: setup_qemu_static host_arch target_arch
+    # Usage: setup_qemu_static host_arch target_arch [force_qemu]
+    # force_qemu=1 copies the emulator even when host and target match, which
+    # is needed when a specific CPU model is requested with BASE_QEMU_CPU.
     local host_arch="$1"
     local target_arch="$2"
+    local force_qemu="${3:-0}"
 
     if [[ -z "$host_arch" ]] || [[ -z "$target_arch" ]]; then
         echo "Error: setup_qemu_static requires host_arch and target_arch"
@@ -631,7 +634,7 @@ function setup_qemu_static() {
             if grep -q gentoo /etc/os-release; then
                 ROOT="$(realpath .)" emerge --usepkgonly --oneshot --nodeps qemu
             else
-                if [[ "$target_arch" != "$host_arch" ]]; then
+                if [[ "$target_arch" != "$host_arch" ]] || [[ "$force_qemu" == "1" ]]; then
                     copy_qemu_static arm
                 fi
             fi
@@ -644,11 +647,33 @@ function setup_qemu_static() {
                 fi
             fi
         fi
-    elif [[ ( "$target_arch" == "armv7l" || "$target_arch" == "armhf" ) && "$host_arch" != "armv7l" ]]; then
-        # aarch64 host building armv7l/armhf: need 32-bit ARM emulation
+    elif [[ ( "$target_arch" == "armv7l" || "$target_arch" == "armhf" ) && ( "$host_arch" != "armv7l" || "$force_qemu" == "1" ) ]]; then
+        # aarch64 host building armv7l/armhf, or an ARM host that explicitly
+        # targets a CPU model: need 32-bit ARM emulation
         copy_qemu_static arm
     fi
     # Otherwise: same arch or armv7l host -- no QEMU needed
+}
+
+function qemu_cpu_requested() {
+    # True when the image targets an explicit ARM CPU model via BASE_QEMU_CPU.
+    # Usage: qemu_cpu_requested target_arch
+    local target_arch="$1"
+    [[ -n "${BASE_QEMU_CPU:-}" ]] && { [[ "$target_arch" == "armv7l" ]] || [[ "$target_arch" == "armhf" ]]; }
+}
+
+function chroot_with_qemu() {
+    # Run a chroot through a QEMU binary, pinning the emulated CPU when the
+    # image requests one (e.g. arm1176 for the Raspberry Pi 1 / Zero).
+    # Usage: chroot_with_qemu qemu_binary command [args...]
+    local qemu_binary="$1"
+    shift
+    if [[ -n "${BASE_QEMU_CPU:-}" ]]; then
+        echo "Emulating ${BASE_QEMU_CPU} CPU with ${qemu_binary}"
+        QEMU_CPU="${BASE_QEMU_CPU}" chroot . "$qemu_binary" "$@"
+    else
+        chroot . "$qemu_binary" "$@"
+    fi
 }
 
 function chroot_correct_qemu() {
@@ -670,8 +695,14 @@ function chroot_correct_qemu() {
     cp "${custom_pi_os_path}/common.sh" common.sh
     chmod 755 common.sh
 
+    # A requested CPU model can only be honoured through QEMU, also on ARM hosts
+    local force_qemu=0
+    if qemu_cpu_requested "$target_arch"; then
+        force_qemu=1
+    fi
+
     # Set up QEMU if needed
-    setup_qemu_static "$host_arch" "$target_arch" || return
+    setup_qemu_static "$host_arch" "$target_arch" "$force_qemu" || return
 
     # Execute chroot with appropriate QEMU setup
     if [[ "$host_arch" != "armv7l" ]] && [[ "$host_arch" != "aarch64" ]] && [[ "$host_arch" != "arm64" ]]; then
@@ -680,17 +711,17 @@ function chroot_correct_qemu() {
             echo "Building on non-ARM device a armv7l system, using qemu-arm-static"
             if grep -q gentoo /etc/os-release; then
                 echo "Building on gentoo non-ARM device a armv7l system, using qemu-arm"
-                chroot . usr/bin/qemu-arm /bin/bash /chroot_script
+                chroot_with_qemu usr/bin/qemu-arm /bin/bash /chroot_script
             else
                 echo "Using normal non-arm qemu for armv7l"
-                chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
+                chroot_with_qemu usr/bin/qemu-arm-static /bin/bash /chroot_script
             fi
         elif [[ "$target_arch" == "aarch64" ]] || [[ "$target_arch" == "arm64" ]]; then
             echo "Building on non-ARM device a aarch64/arm64 system, using qemu-aarch64-static"
             if grep -q gentoo /etc/os-release; then
-                chroot . usr/bin/qemu-aarch64 /bin/bash /chroot_script
+                chroot_with_qemu usr/bin/qemu-aarch64 /bin/bash /chroot_script
             else
-                chroot . usr/bin/qemu-aarch64-static /bin/bash /chroot_script
+                chroot_with_qemu usr/bin/qemu-aarch64-static /bin/bash /chroot_script
             fi
         else
             echo "Unknown arch, building on: $host_arch image: $target_arch"
@@ -698,9 +729,14 @@ function chroot_correct_qemu() {
         fi
     elif [[ ( "$target_arch" == "armv7l" || "$target_arch" == "armhf" ) && "$host_arch" != "armv7l" ]]; then
         echo "Building on aarch64/arm64 device a armv7l system, using qemu-arm-static"
-        chroot . usr/bin/qemu-arm-static /bin/bash /chroot_script
+        chroot_with_qemu usr/bin/qemu-arm-static /bin/bash /chroot_script
     else
-        echo "Building on ARM device a armv7l/aarch64/arm64 system, not using qemu"
-        chroot . /bin/bash /chroot_script
+        if [[ "$force_qemu" == "1" ]]; then
+            echo "Building on ARM device, emulating ${BASE_QEMU_CPU} with qemu-arm-static"
+            chroot_with_qemu usr/bin/qemu-arm-static /bin/bash /chroot_script
+        else
+            echo "Building on ARM device a armv7l/aarch64/arm64 system, not using qemu"
+            chroot . /bin/bash /chroot_script
+        fi
     fi
 }
